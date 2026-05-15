@@ -1,61 +1,45 @@
 import React, { useState } from 'react';
-import { Box, Text, useInput, useApp } from 'ink';
+import { Box, useApp } from 'ink';
 import Splash from './Splash.js';
 import SettingsCommand from './commands/settings/index.js';
+import ChatCommand from './commands/chat/index.js';
 import { type Settings, THEMES } from './types/settings.js';
 import { ThemeContext } from './context/ThemeContext.js';
 import { loadSettings, saveSettings, getWorkspaceName } from './store.js';
 
-type ActiveCommand = null | 'settings';
+type Overlay = null | 'settings';
 
 export default function App(): React.JSX.Element {
 	const { exit } = useApp();
-	const [input, setInput] = useState<string>('');
-	const [activeCommand, setActiveCommand] = useState<ActiveCommand>(null);
+	const [overlay, setOverlay] = useState<Overlay>(null);
 	const [settings, setSettings] = useState<Settings>(() => loadSettings());
 	const workspaceName = getWorkspaceName();
-
-	const handleCommand = (raw: string) => {
-		const cmd = raw.trim().toLowerCase();
-		if (cmd === '/settings') { setActiveCommand('settings'); return; }
-		if (cmd === '/exit' || cmd === '/quit') { exit(); return; }
-	};
 
 	const handleSaveSettings = (updated: Settings) => {
 		setSettings(updated);
 		saveSettings(updated);
 	};
 
-	useInput((char: string, key) => {
-		if (activeCommand !== null) return;
-
-		if (key.ctrl && char === 'c') { exit(); return; }
-		if (key.escape) { setInput(''); return; }
-
-		if (key.backspace || key.delete) {
-			setInput(prev => prev.slice(0, -1));
-			return;
-		}
-
-		if (key.return) {
-			handleCommand(input);
-			setInput('');
-			return;
-		}
-
-		if (char) setInput(prev => prev + char);
-	});
+	const handleChatCommand = (cmd: string) => {
+		if (cmd === '/settings') { setOverlay('settings'); return; }
+		if (cmd === '/exit' || cmd === '/quit') { exit(); return; }
+	};
 
 	const theme = THEMES[settings.theme];
+	const activeModel =
+		settings.providers.anthropic.selectedModel ||
+		settings.providers.openai.selectedModel ||
+		settings.providers.google.selectedModel ||
+		'';
 
-	if (activeCommand === 'settings') {
+	if (overlay === 'settings') {
 		return (
 			<ThemeContext.Provider value={theme}>
 				<Box flexDirection="column">
 					<SettingsCommand
 						settings={settings}
 						onSave={handleSaveSettings}
-						onBack={() => setActiveCommand(null)}
+						onBack={() => setOverlay(null)}
 					/>
 				</Box>
 			</ThemeContext.Provider>
@@ -65,17 +49,12 @@ export default function App(): React.JSX.Element {
 	return (
 		<ThemeContext.Provider value={theme}>
 			<Box flexDirection="column">
-				<Splash workspace={{ name: workspaceName, model: settings.providers.anthropic.selectedModel || settings.providers.openai.selectedModel || settings.providers.google.selectedModel || '' }} />
-
-				<Box paddingLeft={1} paddingBottom={1}>
-					<Text color={theme.primary}>{'> '}</Text>
-					<Text color={theme.accent}>{input}</Text>
-					<Text color={theme.muted}>█</Text>
-				</Box>
-
-				<Box paddingLeft={1}>
-					<Text color={theme.muted} dimColor>/settings  /exit</Text>
-				</Box>
+				<Splash workspace={{ name: workspaceName, model: activeModel }} />
+				<ChatCommand
+					settings={settings}
+					onBack={exit}
+					onCommand={handleChatCommand}
+				/>
 			</Box>
 		</ThemeContext.Provider>
 	);
