@@ -5,18 +5,20 @@ import { useTheme } from '../../context/ThemeContext.js';
 import ChatMessage, { type ChatMessageData } from '../../components/ChatMessage.js';
 import CommandPalette, { PALETTE_ITEMS } from '../../components/CommandPalette.js';
 import { type Settings } from '../../types/settings.js';
+import { type PluginStore } from '../../types/plugins.js';
 import { resolveActiveProvider, getLanguageModel } from '../../llm.js';
-import { tools } from '../../tools/index.js';
+import { resolveActiveTools } from '../../pluginLoader.js';
 
 interface ChatCommandProps {
 	settings: Settings;
+	pluginStore: PluginStore;
 	onBack: () => void;
 	onCommand?: (cmd: string) => void;
 }
 
 type ChatStatus = 'idle' | 'streaming' | 'thinking';
 
-export default function ChatCommand({ settings, onBack, onCommand }: ChatCommandProps): React.JSX.Element {
+export default function ChatCommand({ settings, pluginStore, onBack, onCommand }: ChatCommandProps): React.JSX.Element {
 	const theme = useTheme();
 	const [messages, setMessages] = useState<ChatMessageData[]>([]);
 	const [input, setInput] = useState('');
@@ -55,13 +57,14 @@ export default function ChatCommand({ settings, onBack, onCommand }: ChatCommand
 		try {
 			const model = getLanguageModel(settings, provider);
 
+			const activeTools = resolveActiveTools(pluginStore);
 			const result = streamText({
 				model,
 				messages: [
 					...history,
 					{ role: 'user', content: text },
 				],
-				tools,
+				tools: activeTools,
 				stopWhen: stepCountIs(5),
 				onChunk: ({ chunk }) => {
 					if (chunk.type === 'text-delta') {

@@ -1,10 +1,12 @@
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'fs';
 import { join } from 'path';
 import { type Settings, type ProviderName, DEFAULT_SETTINGS } from './types/settings.js';
+import { type PluginStore, DEFAULT_PLUGIN_STORE } from './types/plugins.js';
 import { encryptKey, decryptKey } from './crypto.js';
 
 const UBERCLI_DIR = '.ubercli';
 const SETTINGS_FILE = 'settings.json';
+const PLUGINS_FILE = 'plugins.json';
 const PROVIDER_NAMES: ProviderName[] = ['anthropic', 'google', 'openai'];
 
 function getSettingsPath(): string {
@@ -73,5 +75,39 @@ export function saveSettings(settings: Settings): void {
 }
 
 export function getWorkspaceName(): string {
-	return process.cwd().split(/[\\/]/).pop() ?? process.cwd();
+	return process.cwd().split(/[\/]/).pop() ?? process.cwd();
+}
+
+function getPluginsPath(): string {
+	return join(process.cwd(), UBERCLI_DIR, PLUGINS_FILE);
+}
+
+export function loadPluginStore(): PluginStore {
+	const pluginsPath = getPluginsPath();
+	if (!existsSync(pluginsPath)) return structuredClone(DEFAULT_PLUGIN_STORE);
+	try {
+		const raw = readFileSync(pluginsPath, 'utf8');
+		const parsed = JSON.parse(raw) as Partial<PluginStore>;
+		const tools = (parsed.tools ?? DEFAULT_PLUGIN_STORE.tools).map(t =>
+			t.id.startsWith('builtin_') ? { ...t, kind: 'builtin' as const } : t
+		);
+		return {
+			...DEFAULT_PLUGIN_STORE,
+			...parsed,
+			tools,
+			profiles: parsed.profiles ?? DEFAULT_PLUGIN_STORE.profiles,
+		};
+	} catch {
+		return structuredClone(DEFAULT_PLUGIN_STORE);
+	}
+}
+
+export function savePluginStore(store: PluginStore): void {
+	const dir = join(process.cwd(), UBERCLI_DIR);
+	if (!existsSync(dir)) mkdirSync(dir, { recursive: true });
+	writeFileSync(
+		join(dir, PLUGINS_FILE),
+		JSON.stringify(store, null, 2) + '\n',
+		'utf8'
+	);
 }

@@ -16,7 +16,7 @@ export const getDateTime = tool({
 	execute: async ({ timezone }: z.infer<typeof inputSchema>) => {
 		const now = new Date();
 		const opts: Intl.DateTimeFormatOptions = {
-			timeZone: timezone,
+			...(timezone ? { timeZone: timezone } : {}),
 			weekday: 'long',
 			year: 'numeric',
 			month: 'long',

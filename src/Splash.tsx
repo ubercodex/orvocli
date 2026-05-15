@@ -40,8 +40,6 @@ export default function Splash({ workspace = DEFAULT_WORKSPACE }: SplashProps): 
 
 	return (
 		<Box flexDirection="column" paddingLeft={1} paddingTop={1} paddingBottom={1}>
-
-			{/* ── Branded box ── */}
 			<Box
 				flexDirection="column"
 				borderStyle="round"
@@ -49,6 +47,7 @@ export default function Splash({ workspace = DEFAULT_WORKSPACE }: SplashProps): 
 				paddingX={2}
 				paddingY={0}
 			>
+				{/* Logo rows — last row gets version appended inline */}
 				{LOGO.map((line, row) => (
 					<Box key={row} flexDirection="row">
 						{line.split('').map((char, col) => (
@@ -56,41 +55,41 @@ export default function Splash({ workspace = DEFAULT_WORKSPACE }: SplashProps): 
 								{char}
 							</Text>
 						))}
+						{row === LOGO.length - 1 && (
+							<>
+								<Text color={theme.border}>  │  </Text>
+								<Text color={theme.primary} bold>UBER CLI </Text>
+								<Text color={theme.secondary} bold>v{version}</Text>
+							</>
+						)}
 					</Box>
 				))}
 
-				<Box marginTop={1} justifyContent="flex-end">
-					<Text color={theme.primary} bold>UBER CLI  </Text>
-					<Text color={theme.secondary} bold>v{version}</Text>
+				{/* Compact status row */}
+				<Box gap={2} marginTop={1}>
+					<Box gap={1}>
+						<Text color={theme.muted}>workspace</Text>
+						<Text color={theme.border}>›</Text>
+						<Text color={workspace.name === DEFAULT_WORKSPACE.name ? theme.muted : theme.accent} bold>
+							{workspace.name}
+						</Text>
+					</Box>
+					<Text color={theme.border}>·</Text>
+					<Box gap={1}>
+						<Text color={theme.muted}>model</Text>
+						<Text color={theme.border}>›</Text>
+						<Text color={workspace.model === DEFAULT_WORKSPACE.model ? theme.muted : theme.accent} bold>
+							{workspace.model || 'none'}
+						</Text>
+					</Box>
+					<Text color={theme.border}>·</Text>
+					<Box gap={1}>
+						<Text color={theme.muted}>profile</Text>
+						<Text color={theme.border}>›</Text>
+						<Text color={theme.secondary} bold>{workspace.profile}</Text>
+					</Box>
 				</Box>
 			</Box>
-
-			{/* ── Workspace / model status ── */}
-			<Box
-				flexDirection="column"
-				borderStyle="single"
-				borderColor={theme.border}
-				paddingX={2}
-				paddingY={0}
-				marginTop={1}
-			>
-				<Box gap={1}>
-					<Text color={theme.primary} bold>Workspace</Text>
-					<Text color={theme.secondary}>›</Text>
-					<Text color={workspace.name === DEFAULT_WORKSPACE.name ? theme.muted : theme.accent}>
-						{workspace.name}
-					</Text>
-				</Box>
-
-				<Box gap={1}>
-					<Text color={theme.primary} bold>Model    </Text>
-					<Text color={theme.secondary}>›</Text>
-					<Text color={workspace.model === DEFAULT_WORKSPACE.model ? theme.muted : theme.accent}>
-						{workspace.model}
-					</Text>
-				</Box>
-			</Box>
-
 		</Box>
 	);
 }

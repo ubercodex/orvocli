@@ -8,8 +8,9 @@ export interface PaletteItem {
 }
 
 export const PALETTE_ITEMS: PaletteItem[] = [
-	{ cmd: '/settings', description: 'Open settings (theme, API keys, models)' },
-	{ cmd: '/exit',     description: 'Exit UBER CLI'                           },
+	{ cmd: '/settings', description: 'Open settings (theme, API keys, models)'  },
+	{ cmd: '/plugins',  description: 'Manage tools & profiles for LLM tool use' },
+	{ cmd: '/exit',     description: 'Exit UBER CLI'                            },
 ];
 
 interface CommandPaletteProps {

@@ -3,16 +3,19 @@ import { Box, useApp } from 'ink';
 import Splash from './Splash.js';
 import SettingsCommand from './commands/settings/index.js';
 import ChatCommand from './commands/chat/index.js';
+import PluginsCommand from './commands/plugins/index.js';
 import { type Settings, THEMES } from './types/settings.js';
+import { type PluginStore } from './types/plugins.js';
 import { ThemeContext } from './context/ThemeContext.js';
-import { loadSettings, saveSettings, getWorkspaceName } from './store.js';
+import { loadSettings, saveSettings, getWorkspaceName, loadPluginStore, savePluginStore } from './store.js';
 
-type Overlay = null | 'settings';
+type Overlay = null | 'settings' | 'plugins';
 
 export default function App(): React.JSX.Element {
 	const { exit } = useApp();
 	const [overlay, setOverlay] = useState<Overlay>(null);
 	const [settings, setSettings] = useState<Settings>(() => loadSettings());
+	const [pluginStore, setPluginStore] = useState<PluginStore>(() => loadPluginStore());
 	const workspaceName = getWorkspaceName();
 
 	const handleSaveSettings = (updated: Settings) => {
@@ -20,8 +23,14 @@ export default function App(): React.JSX.Element {
 		saveSettings(updated);
 	};
 
+	const handleSavePluginStore = (updated: PluginStore) => {
+		setPluginStore(updated);
+		savePluginStore(updated);
+	};
+
 	const handleChatCommand = (cmd: string) => {
 		if (cmd === '/settings') { setOverlay('settings'); return; }
+		if (cmd === '/plugins')  { setOverlay('plugins');  return; }
 		if (cmd === '/exit' || cmd === '/quit') { exit(); return; }
 	};
 
@@ -31,6 +40,7 @@ export default function App(): React.JSX.Element {
 		settings.providers.openai.selectedModel ||
 		settings.providers.google.selectedModel ||
 		'';
+	const activeProfile = pluginStore.profiles.find(p => p.id === pluginStore.activeProfileId)?.name ?? 'Default';
 
 	if (overlay === 'settings') {
 		return (
@@ -46,12 +56,26 @@ export default function App(): React.JSX.Element {
 		);
 	}
 
+	if (overlay === 'plugins') {
+		return (
+			<ThemeContext.Provider value={theme}>
+				<PluginsCommand
+					store={pluginStore}
+					settings={settings}
+					onSave={handleSavePluginStore}
+					onBack={() => setOverlay(null)}
+				/>
+			</ThemeContext.Provider>
+		);
+	}
+
 	return (
 		<ThemeContext.Provider value={theme}>
 			<Box flexDirection="column">
-				<Splash workspace={{ name: workspaceName, model: activeModel }} />
+				<Splash workspace={{ name: workspaceName, model: activeModel, profile: activeProfile }} />
 				<ChatCommand
 					settings={settings}
+					pluginStore={pluginStore}
 					onBack={exit}
 					onCommand={handleChatCommand}
 				/>
