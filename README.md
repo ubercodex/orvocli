@@ -9,8 +9,8 @@ A minimal, extensible command-line interface built with [Ink](https://github.com
 ## Installation
 
 ```bash
-git clone https://github.com/ubercodex/uber-cli.git
-cd uber-cli
+git clone https://github.com/ubercodex/ubercli.git
+cd ubercli
 npm install
 npm link
 ```
@@ -32,7 +32,7 @@ npm start     # run once
 
 UBER CLI is open source. If you build a tool, product, or project on top of it, a mention of **UBER CLI** in your README, about screen, or documentation is appreciated — it helps the project grow.
 
-> _"Built with [UBER CLI](https://github.com/ubercodex/uber-cli)"_
+> _"Built with [UBER CLI](https://github.com/ubercodex/ubercli)"_
 
 ## License
 
