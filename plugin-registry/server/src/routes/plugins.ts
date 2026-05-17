@@ -2,6 +2,7 @@ import type { FastifyInstance } from 'fastify';
 import { z } from 'zod';
 import { db } from '../db/index.js';
 import { randomBytes } from 'crypto';
+import { requireAdmin } from '../middleware/admin.js';
 
 // Shared types
 interface PluginParameter {
@@ -24,6 +25,7 @@ interface Plugin {
 	downloads: number;
 	createdAt: string;
 	updatedAt: string;
+	status: 'pending' | 'approved' | 'rejected';
 }
 
 const PluginParamSchema = z.object({
@@ -50,49 +52,17 @@ const UpdatePluginSchema = z.object({
 	tags: z.array(z.string()).max(5).optional(),
 });
 
+const ApprovePluginSchema = z.object({
+	reason: z.string().optional(),
+});
+
+const RejectPluginSchema = z.object({
+	reason: z.string().optional(),
+});
+
 export async function pluginRoutes(fastify: FastifyInstance) {
-	fastify.get('/plugins', async (request) => {
-		const { q, author, tag, limit = 50, offset = 0 } = request.query as {
-			q?: string;
-			author?: string;
-			tag?: string;
-			limit?: number;
-			offset?: number;
-		};
-
-		let query = 'SELECT * FROM plugins WHERE 1=1';
-		const params: unknown[] = [];
-
-		if (q) {
-			query += ' AND (name LIKE ? OR description LIKE ?)';
-			params.push(`%${q}%`, `%${q}%`);
-		}
-		if (author) {
-			query += ' AND author = ?';
-			params.push(author);
-		}
-		if (tag) {
-			query += ' AND tags LIKE ?';
-			params.push(`%${tag}%`);
-		}
-
-		query += ' ORDER BY downloads DESC, created_at DESC LIMIT ? OFFSET ?';
-		params.push(limit, offset);
-
-		const rows = db.prepare(query).all(...params) as Array<{
-			id: string;
-			author: string;
-			name: string;
-			version: string;
-			description: string;
-			code: string;
-			parameters: string;
-			tags: string;
-			downloads: number;
-			created_at: string;
-			updated_at: string;
-		}>;
-
+	fastify.get('/plugins', async () => {
+		const rows = db.prepare("SELECT * FROM plugins WHERE status = 'approved' ORDER BY created_at DESC").all() as any[];
 		const plugins: Plugin[] = rows.map((row) => ({
 			id: row.id,
 			author: row.author,
@@ -105,6 +75,7 @@ export async function pluginRoutes(fastify: FastifyInstance) {
 			downloads: row.downloads,
 			createdAt: row.created_at,
 			updatedAt: row.updated_at,
+			status: row.status,
 		}));
 
 		return { plugins, total: plugins.length };
@@ -165,8 +136,8 @@ export async function pluginRoutes(fastify: FastifyInstance) {
 
 		const id = randomBytes(16).toString('hex');
 		db.prepare(
-			`INSERT INTO plugins (id, author, name, version, description, code, parameters, tags, author_id)
-       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`
+			`INSERT INTO plugins (id, author, name, version, description, code, parameters, tags, author_id, status)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 'pending')`
 		).run(
 			id,
 			username,
@@ -179,7 +150,7 @@ export async function pluginRoutes(fastify: FastifyInstance) {
 			userId
 		);
 
-		return { id, author: username, name: input.name, version: '1.0.0' };
+		return { id, author: username, name: input.name, version: '1.0.0', status: 'pending', message: 'Plugin submitted for review' };
 	});
 
 	fastify.patch('/plugins/:author/:name', { onRequest: [fastify.authenticate] }, async (request, reply) => {
@@ -241,5 +212,68 @@ export async function pluginRoutes(fastify: FastifyInstance) {
 		}
 
 		return { success: true };
+	});
+
+	// Admin: Get pending plugins
+	fastify.get('/admin/plugins/pending', { onRequest: [fastify.authenticate, requireAdmin] }, async () => {
+		const rows = db.prepare("SELECT * FROM plugins WHERE status = 'pending' ORDER BY created_at DESC").all() as any[];
+		const plugins: Plugin[] = rows.map((row) => ({
+			id: row.id,
+			author: row.author,
+			name: row.name,
+			version: row.version,
+			description: row.description,
+			code: row.code,
+			parameters: JSON.parse(row.parameters) as PluginParameter[],
+			tags: JSON.parse(row.tags) as string[],
+			downloads: row.downloads,
+			createdAt: row.created_at,
+			updatedAt: row.updated_at,
+			status: row.status,
+		}));
+
+		return { plugins, total: plugins.length };
+	});
+
+	// Admin: Approve plugin
+	fastify.post('/admin/plugins/:id/approve', { onRequest: [fastify.authenticate, requireAdmin] }, async (request: any, reply: any) => {
+		const { id } = request.params as { id: string };
+		const username = (request.user as { userId: string; username: string }).username;
+
+		const plugin = db.prepare('SELECT id, status FROM plugins WHERE id = ?').get(id) as { id: string; status: string } | undefined;
+		if (!plugin) {
+			return reply.code(404).send({ error: 'Plugin not found' });
+		}
+
+		if (plugin.status !== 'pending') {
+			return reply.code(400).send({ error: `Plugin is already ${plugin.status}` });
+		}
+
+		db.prepare(
+			`UPDATE plugins SET status = 'approved', approved_by = ?, approved_at = datetime('now') WHERE id = ?`
+		).run(username, id);
+
+		return { success: true, message: 'Plugin approved' };
+	});
+
+	// Admin: Reject plugin
+	fastify.post('/admin/plugins/:id/reject', { onRequest: [fastify.authenticate, requireAdmin] }, async (request: any, reply: any) => {
+		const { id } = request.params as { id: string };
+		const username = (request.user as { userId: string; username: string }).username;
+
+		const plugin = db.prepare('SELECT id, status FROM plugins WHERE id = ?').get(id) as { id: string; status: string } | undefined;
+		if (!plugin) {
+			return reply.code(404).send({ error: 'Plugin not found' });
+		}
+
+		if (plugin.status !== 'pending') {
+			return reply.code(400).send({ error: `Plugin is already ${plugin.status}` });
+		}
+
+		db.prepare(
+			`UPDATE plugins SET status = 'rejected', approved_by = ?, approved_at = datetime('now') WHERE id = ?`
+		).run(username, id);
+
+		return { success: true, message: 'Plugin rejected' };
 	});
 }

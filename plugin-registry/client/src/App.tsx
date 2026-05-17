@@ -6,6 +6,7 @@ import Registry from './pages/Registry';
 import Contact from './pages/Contact';
 import Publish from './pages/Publish';
 import AuthCallback from './pages/AuthCallback';
+import AdminDashboard from './pages/AdminDashboard';
 import PluginDetail from './pages/PluginDetail';
 
 export default function App() {
@@ -17,6 +18,7 @@ export default function App() {
           <Route path="/registry" element={<Registry />} />
           <Route path="/contact" element={<Contact />} />
           <Route path="/publish" element={<Publish />} />
+          <Route path="/admin" element={<AdminDashboard />} />
           <Route path="/auth/callback" element={<AuthCallback />} />
           <Route path="/plugins/:author/:name" element={<PluginDetail />} />
         </Routes>

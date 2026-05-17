@@ -19,6 +19,10 @@ CREATE TABLE IF NOT EXISTS plugins (
   tags TEXT NOT NULL,
   downloads INTEGER DEFAULT 0,
   author_id TEXT NOT NULL,
+  status TEXT NOT NULL DEFAULT 'pending',
+  file_url TEXT,
+  approved_by TEXT,
+  approved_at TEXT,
   created_at TEXT NOT NULL DEFAULT (datetime('now')),
   updated_at TEXT NOT NULL DEFAULT (datetime('now')),
   UNIQUE(author, name),
@@ -29,4 +33,5 @@ CREATE INDEX IF NOT EXISTS idx_plugins_author ON plugins(author);
 CREATE INDEX IF NOT EXISTS idx_plugins_tags ON plugins(tags);
 CREATE INDEX IF NOT EXISTS idx_plugins_downloads ON plugins(downloads DESC);
 CREATE INDEX IF NOT EXISTS idx_plugins_created ON plugins(created_at DESC);
+CREATE INDEX IF NOT EXISTS idx_plugins_status ON plugins(status);
 `;
