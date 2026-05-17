@@ -42,16 +42,8 @@ ufw allow https
 ufw --force enable
 echo "✅ Firewall configured"
 
-# Create app directory
-APP_DIR="/var/www/ubercli-registry"
-echo "📁 Creating app directory at $APP_DIR..."
-mkdir -p $APP_DIR
-cd $APP_DIR
-
-# Clone or copy files
-echo "📥 Copying application files..."
-
-# Find the plugin-registry directory
+# Find the plugin-registry directory BEFORE changing directories
+echo "📥 Locating source files..."
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 REGISTRY_DIR="$(dirname "$SCRIPT_DIR")"
 
@@ -65,6 +57,13 @@ fi
 
 echo "📂 Found plugin-registry at: $REGISTRY_DIR"
 
+# Create app directory
+APP_DIR="/var/www/ubercli-registry"
+echo "📁 Creating app directory at $APP_DIR..."
+mkdir -p $APP_DIR
+
+# Copy files
+echo "📥 Copying application files..."
 cp -r "$REGISTRY_DIR/server" "$APP_DIR/"
 cp -r "$REGISTRY_DIR/client" "$APP_DIR/"
 cp -r "$REGISTRY_DIR/shared" "$APP_DIR/"
