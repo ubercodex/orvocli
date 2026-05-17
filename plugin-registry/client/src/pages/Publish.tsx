@@ -288,7 +288,11 @@ export default function Publish() {
                   onClick={() => fileInputRef.current?.click()}
                   className="relative w-full px-8 py-16 bg-[#0d0d24]/80 backdrop-blur-xl border-2 border-dashed border-cyan-500/30 rounded-2xl hover:border-cyan-500/60 hover:bg-[#0d0d24]/90 transition-all text-center group"
                 >
-                  <div className="text-7xl mb-6 group-hover:scale-110 transition-transform">�</div>
+                  <div className="mb-6 group-hover:scale-110 transition-transform">
+                    <svg className="w-20 h-20 mx-auto text-cyan-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+                    </svg>
+                  </div>
                   <div className="text-white font-bold text-2xl mb-3">Upload Your Plugin</div>
                   <div className="text-slate-400 text-base mb-6 max-w-md mx-auto">
                     Click here or drag and drop your plugin JSON file to get started
@@ -310,7 +314,11 @@ export default function Publish() {
                 <div className="relative p-6 bg-[#0d0d24]/80 backdrop-blur-xl border-2 border-green-500/30 rounded-2xl">
                   <div className="flex items-start justify-between mb-4">
                     <div className="flex items-center gap-3">
-                      <div className="text-4xl">✅</div>
+                      <div className="w-10 h-10 rounded-full bg-green-500/20 flex items-center justify-center">
+                        <svg className="w-6 h-6 text-green-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                        </svg>
+                      </div>
                       <div>
                         <div className="text-green-400 font-bold text-lg">Plugin Loaded Successfully</div>
                         <div className="text-slate-400 text-sm">Ready to publish</div>
@@ -400,7 +408,7 @@ export default function Publish() {
                   Submitting for Review...
                 </span>
               ) : (
-                '🚀 Submit for Review'
+                'Submit for Review'
               )}
             </button>
           )}
