@@ -43,6 +43,17 @@ This will:
 - Deploy both server and client
 - Setup auto-renewal for SSL
 
+## Update Deployed Application
+
+After pushing changes to GitHub:
+
+```bash
+# On your VPS
+sudo /var/www/ubercli-registry/update.sh
+```
+
+See [MAINTENANCE.md](./MAINTENANCE.md) for detailed maintenance guide.
+
 ## API Endpoints
 
 - `GET /api/plugins` — List/search plugins
@@ -52,6 +63,19 @@ This will:
 - `DELETE /api/plugins/:author/:name` — Unpublish
 - `POST /api/auth/github` — GitHub OAuth login
 - `GET /api/auth/me` — Get current user
+
+## Security
+
+✅ **Safe to publish on GitHub** - All secrets are in `.env` files (gitignored)
+
+The deployment automatically:
+- Excludes `.git` directory from web location
+- Blocks access to sensitive files via Nginx
+- Sets proper file permissions
+- Enables firewall (UFW)
+- Configures rate limiting
+
+See [SECURITY.md](./SECURITY.md) for details.
 
 ## Environment Variables
 

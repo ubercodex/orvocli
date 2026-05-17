@@ -62,13 +62,44 @@ APP_DIR="/var/www/ubercli-registry"
 echo "📁 Creating app directory at $APP_DIR..."
 mkdir -p $APP_DIR
 
-# Copy files
-echo "📥 Copying application files..."
-cp -r "$REGISTRY_DIR/server" "$APP_DIR/"
-cp -r "$REGISTRY_DIR/client" "$APP_DIR/"
-cp -r "$REGISTRY_DIR/shared" "$APP_DIR/"
+# Install rsync if not present
+if ! command -v rsync &> /dev/null; then
+  echo "📦 Installing rsync..."
+  apt-get install -y rsync
+fi
 
-echo "✅ Files copied successfully"
+# Copy files (excluding .git, node_modules, and other sensitive files)
+echo "📥 Copying application files (excluding .git, node_modules)..."
+rsync -av --exclude='.git' \
+          --exclude='.gitignore' \
+          --exclude='node_modules' \
+          --exclude='dist' \
+          --exclude='.env' \
+          --exclude='*.db' \
+          --exclude='*.log' \
+          --exclude='.DS_Store' \
+          "$REGISTRY_DIR/server/" "$APP_DIR/server/"
+
+rsync -av --exclude='.git' \
+          --exclude='.gitignore' \
+          --exclude='node_modules' \
+          --exclude='dist' \
+          --exclude='.env' \
+          --exclude='.DS_Store' \
+          "$REGISTRY_DIR/client/" "$APP_DIR/client/"
+
+rsync -av --exclude='.git' \
+          "$REGISTRY_DIR/shared/" "$APP_DIR/shared/"
+
+# Copy SSL setup script for later use
+cp "$SCRIPT_DIR/setup-ssl.sh" "$APP_DIR/"
+chmod +x "$APP_DIR/setup-ssl.sh"
+
+# Copy update script for later use
+cp "$SCRIPT_DIR/update.sh" "$APP_DIR/"
+chmod +x "$APP_DIR/update.sh"
+
+echo "✅ Files copied successfully (sensitive files excluded)"
 
 # Install server dependencies
 echo "📦 Installing server dependencies..."
@@ -164,9 +195,17 @@ cat > /etc/nginx/sites-available/ubercli << EOF
 limit_req_zone \$binary_remote_addr zone=api_limit:10m rate=10r/s;
 limit_req_zone \$binary_remote_addr zone=auth_limit:10m rate=5r/m;
 
+# Redirect www to non-www
 server {
     listen 80;
-    server_name $DOMAIN www.$DOMAIN;
+    server_name www.$DOMAIN;
+    return 301 http://$DOMAIN\$request_uri;
+}
+
+# Main server
+server {
+    listen 80;
+    server_name $DOMAIN;
 
     # Security headers
     add_header X-Frame-Options "SAMEORIGIN" always;
@@ -264,9 +303,21 @@ echo "✅ Nginx configured"
 
 # Setup SSL with Let's Encrypt
 echo "🔒 Setting up SSL certificate..."
-certbot --nginx -d $DOMAIN -d www.$DOMAIN --non-interactive --agree-tos -m $EMAIL --redirect
+echo "Attempting to get certificate for $DOMAIN and www.$DOMAIN..."
 
-echo "✅ SSL certificate installed"
+# Try with www subdomain first
+if certbot --nginx -d $DOMAIN -d www.$DOMAIN --non-interactive --agree-tos -m $EMAIL --redirect 2>/dev/null; then
+  echo "✅ SSL certificate installed for $DOMAIN and www.$DOMAIN"
+else
+  echo "⚠️  Failed to get certificate for www.$DOMAIN, trying without www..."
+  # Fallback to just the main domain
+  if certbot --nginx -d $DOMAIN --non-interactive --agree-tos -m $EMAIL --redirect; then
+    echo "✅ SSL certificate installed for $DOMAIN only"
+  else
+    echo "❌ SSL certificate installation failed"
+    echo "You can run the SSL setup later with: sudo /var/www/ubercli-registry/setup-ssl.sh $DOMAIN $EMAIL"
+  fi
+fi
 
 # Setup auto-renewal
 echo "⚙️  Setting up SSL auto-renewal..."
@@ -289,4 +340,11 @@ echo "  - Check server logs: journalctl -u ubercli-registry -f"
 echo "  - Restart server: systemctl restart ubercli-registry"
 echo "  - Check server status: systemctl status ubercli-registry"
 echo "  - Nginx logs: tail -f /var/log/nginx/error.log"
+echo ""
+echo "🔄 Update application (after pushing changes to GitHub):"
+echo "  - cd /opt/ubercli && git pull"
+echo "  - sudo $APP_DIR/update.sh"
+echo ""
+echo "🔒 Setup/renew SSL certificate:"
+echo "  - sudo $APP_DIR/setup-ssl.sh $DOMAIN your-email@example.com"
 echo ""
