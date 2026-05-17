@@ -32,34 +32,42 @@ export default function Browse() {
   );
 
   return (
-    <div className="min-h-screen bg-gray-950">
-      <nav className="border-b border-gray-800 bg-gray-950/50 backdrop-blur-sm">
+    <div className="min-h-screen bg-[#03030d] text-slate-200">
+      <nav className="fixed top-0 left-0 right-0 z-50 border-b border-cyan-500/8 bg-[#03030d]/85 backdrop-blur-xl">
         <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
           <Link to="/" className="flex items-center gap-3">
-            <div className="text-2xl font-bold bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">
-              UBER CLI
+            <div className="w-8 h-8 rounded-lg flex items-center justify-center bg-gradient-to-br from-cyan-500 to-violet-600">
+              <span className="text-white font-bold text-sm font-mono">U</span>
             </div>
-            <span className="text-gray-500">Plugin Registry</span>
+            <span className="font-bold text-white">Uber CLI</span>
+            <span className="text-slate-500 text-sm">Plugin Registry</span>
           </Link>
         </div>
       </nav>
 
-      <div className="max-w-7xl mx-auto px-6 py-12">
-        <h1 className="text-4xl font-bold mb-8 text-white">Browse Plugins</h1>
+      <div className="max-w-7xl mx-auto px-6 py-24 pt-32">
+        <h1 className="text-5xl font-black mb-4 text-white">Browse Plugins</h1>
+        <p className="text-slate-400 mb-8">Discover community-built tools to supercharge your terminal</p>
         
         <input
           type="text"
-          placeholder="Search plugins..."
+          placeholder="Search by name, author, or description..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          className="w-full px-6 py-4 bg-gray-900 border border-gray-800 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-purple-500 transition"
+          className="w-full px-6 py-4 bg-[#0d0d24]/60 border border-cyan-500/20 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:border-cyan-500/50 focus:ring-2 focus:ring-cyan-500/20 transition backdrop-blur-xl"
         />
 
         {loading ? (
-          <div className="text-center py-32 text-gray-500">Loading plugins...</div>
+          <div className="text-center py-32 text-slate-500">
+            <div className="inline-block w-8 h-8 border-4 border-cyan-500/20 border-t-cyan-500 rounded-full animate-spin mb-4"></div>
+            <div>Loading plugins...</div>
+          </div>
         ) : filtered.length === 0 ? (
-          <div className="text-center py-32 text-gray-500">
-            {search ? 'No plugins found matching your search' : 'No plugins available yet. Be the first to publish!'}
+          <div className="text-center py-32">
+            <div className="text-6xl mb-4">🔍</div>
+            <div className="text-slate-400 text-lg">
+              {search ? 'No plugins found matching your search' : 'No plugins available yet. Be the first to publish!'}
+            </div>
           </div>
         ) : (
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mt-8">
@@ -67,23 +75,26 @@ export default function Browse() {
               <Link
                 key={plugin.id}
                 to={`/plugins/${plugin.author}/${plugin.name}`}
-                className="p-6 bg-gray-900 border border-gray-800 rounded-xl hover:border-purple-500 transition group"
+                className="p-6 bg-[#0d0d24]/60 backdrop-blur-xl border border-cyan-500/12 rounded-2xl hover:border-cyan-500/30 hover:shadow-lg hover:shadow-cyan-500/10 transition group"
               >
                 <div className="flex items-start justify-between mb-3">
                   <div>
-                    <h3 className="text-xl font-bold text-white group-hover:text-purple-400 transition">
+                    <h3 className="text-xl font-bold text-white group-hover:text-cyan-400 transition">
                       {plugin.name}
                     </h3>
-                    <p className="text-sm text-gray-500">by {plugin.author}</p>
+                    <p className="text-sm text-slate-500">by {plugin.author}</p>
                   </div>
-                  <div className="text-sm text-gray-500">
-                    ↓ {plugin.downloads.toLocaleString()}
+                  <div className="text-sm text-slate-500 flex items-center gap-1">
+                    <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M9 19l3 3m0 0l3-3m-3 3V10" />
+                    </svg>
+                    {plugin.downloads.toLocaleString()}
                   </div>
                 </div>
-                <p className="text-gray-400 mb-4 line-clamp-2">{plugin.description}</p>
+                <p className="text-slate-400 mb-4 line-clamp-2 text-sm">{plugin.description}</p>
                 <div className="flex flex-wrap gap-2">
                   {plugin.tags.slice(0, 3).map(tag => (
-                    <span key={tag} className="px-2 py-1 bg-gray-800 text-gray-400 text-xs rounded">
+                    <span key={tag} className="px-2 py-1 bg-cyan-500/10 text-cyan-400 text-xs rounded-full border border-cyan-500/20">
                       {tag}
                     </span>
                   ))}
