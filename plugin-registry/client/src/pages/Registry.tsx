@@ -67,14 +67,72 @@ export default function Registry() {
             <div>Loading plugins...</div>
           </div>
         ) : filtered.length === 0 ? (
-          <div className="text-center py-32">
-            <div className="text-6xl mb-4">🔍</div>
-            <div className="text-slate-400 text-lg mb-2">
-              {search ? 'No plugins found matching your search' : 'No plugins available yet'}
-            </div>
-            <p className="text-slate-500 text-sm">
-              {search ? 'Try a different search term' : 'Be the first to publish a plugin!'}
-            </p>
+          <div className="text-center py-20">
+            {search ? (
+              <>
+                <div className="text-7xl mb-6">🔍</div>
+                <h2 className="text-2xl font-bold text-white mb-3">No plugins found</h2>
+                <p className="text-slate-400 text-lg mb-8">
+                  No plugins match "{search}"
+                </p>
+                <button
+                  onClick={() => setSearch('')}
+                  className="px-6 py-3 bg-cyan-500/20 text-cyan-400 border border-cyan-500/30 rounded-xl hover:bg-cyan-500/30 transition"
+                >
+                  Clear Search
+                </button>
+              </>
+            ) : (
+              <div className="max-w-2xl mx-auto">
+                <div className="relative mb-8">
+                  <div className="absolute inset-0 bg-gradient-to-r from-cyan-500/10 to-violet-500/10 rounded-3xl blur-2xl"></div>
+                  <div className="relative text-8xl mb-6">🚀</div>
+                </div>
+                <h2 className="text-3xl font-black text-white mb-4">No Plugins Yet</h2>
+                <p className="text-slate-400 text-lg mb-8 max-w-md mx-auto">
+                  The registry is empty. Be the first to share your amazing tools with the community!
+                </p>
+                
+                <div className="bg-[#0d0d24]/60 backdrop-blur-xl border border-cyan-500/12 rounded-2xl p-8 mb-8">
+                  <h3 className="text-white font-bold mb-4 text-left">How to publish a plugin:</h3>
+                  <div className="space-y-3 text-left text-sm text-slate-300">
+                    <div className="flex gap-3">
+                      <span className="text-cyan-400">1.</span>
+                      <span>Create a tool in Uber CLI using <code className="px-2 py-1 bg-black/30 rounded text-cyan-400">/plugins</code></span>
+                    </div>
+                    <div className="flex gap-3">
+                      <span className="text-cyan-400">2.</span>
+                      <span>Export it from <code className="px-2 py-1 bg-black/30 rounded text-cyan-400">.ubercli/plugins.json</code></span>
+                    </div>
+                    <div className="flex gap-3">
+                      <span className="text-cyan-400">3.</span>
+                      <span>Upload the JSON file to the registry</span>
+                    </div>
+                    <div className="flex gap-3">
+                      <span className="text-cyan-400">4.</span>
+                      <span>Wait for admin approval</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                  <Link
+                    to="/publish"
+                    className="px-8 py-4 bg-gradient-to-r from-cyan-500 to-violet-600 text-white font-bold rounded-xl hover:shadow-lg hover:shadow-cyan-500/30 transition"
+                  >
+                    📤 Publish Your Plugin
+                  </Link>
+                  <a
+                    href="https://github.com/ubercodex/ubercli#readme"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="px-8 py-4 bg-white/5 border border-white/12 text-slate-200 font-semibold rounded-xl hover:bg-white/9 transition"
+                  >
+                    📖 Read Documentation
+                  </a>
+                </div>
+              </div>
+            )}
           </div>
         ) : (
           <>
