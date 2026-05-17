@@ -14,8 +14,7 @@ import {
 	getOrCreateBranchMemory,
 } from '../../memory.js';
 import {
-	shouldCompact, compactBranchMemory,
-	estimateConversationTokens,
+	compactBranchMemory,
 } from '../../memoryCompactor.js';
 import { type WorkspaceMemory } from '../../types/memory.js';
 
@@ -64,19 +63,27 @@ export default function ChatCommand({ settings, pluginStore, onBack, onCommand, 
 
 	const extractErrorMessage = (err: unknown): string => {
 		if (!(err instanceof Error)) return String(err);
+		
 		/* AI SDK RetryError — pull the last error's message */
 		const anyErr = err as unknown as Record<string, unknown>;
 		if (anyErr['lastError'] instanceof Error) {
 			return extractErrorMessage(anyErr['lastError']);
 		}
-		/* AI SDK APICallError — extract first line of message (skip URL/stack noise) */
+		
 		const msg = err.message;
-		/* Rate limit: grab the human part before the quota metric line */
-		const rateLimitMatch = msg.match(/You exceeded[^\n]*/);
-		if (rateLimitMatch) {
-			const retryMatch = msg.match(/Please retry in ([\d.]+)s/);
-			const retryPart = retryMatch ? `  Retry in ${Math.ceil(parseFloat(retryMatch[1]))}s.` : '';
-			return `Rate limited: quota exceeded for this model.${retryPart}`;
+		
+		/* Detect rate limit / quota errors */
+		if (msg.includes('quota') || msg.includes('rate limit') || msg.includes('RESOURCE_EXHAUSTED')) {
+			if (msg.includes('gemini')) {
+				return '⚠️ Gemini API quota exceeded (20 requests/day on free tier). Switch to another model in /settings or wait until tomorrow.';
+			}
+			if (msg.includes('claude') || msg.includes('anthropic')) {
+				return '⚠️ Claude API rate limit exceeded. Please wait a moment or check your API quota.';
+			}
+			if (msg.includes('openai') || msg.includes('gpt')) {
+				return '⚠️ OpenAI API rate limit exceeded. Please wait a moment or check your API quota.';
+			}
+			return '⚠️ API quota/rate limit exceeded. Try switching models in /settings or wait a moment.';
 		}
 		/* Generic: first non-empty line only */
 		const firstLine = msg.split('\n').find(l => l.trim()) ?? msg;
@@ -100,23 +107,7 @@ export default function ChatCommand({ settings, pluginStore, onBack, onCommand, 
 			content: m.content,
 		})).filter(m => m.role === 'user' || m.role === 'assistant');
 
-		const convTokens = estimateConversationTokens([...history, { role: 'user', content: text }]);
-		const memTokens  = memory.branches[branchKey.current]?.tokenEstimate ?? 0;
-
-		let currentMemory = memory;
-
-		if (shouldCompact(settings, convTokens, memTokens)) {
-			setStatus('compacting');
-			try {
-				currentMemory = await compactBranchMemory(settings, currentMemory, branchKey.current);
-				saveWorkspaceMemory(currentMemory);
-				setMemory(currentMemory);
-			} catch {
-				/* compaction failed silently — continue without interrupting */
-			}
-		}
-
-		const systemPrompt = buildSystemPrompt(currentMemory, branchKey.current);
+		const systemPrompt = buildSystemPrompt(memory, branchKey.current);
 
 		setStatus('streaming');
 
@@ -176,7 +167,7 @@ export default function ChatCommand({ settings, pluginStore, onBack, onCommand, 
 			}
 
 			/* persist turn to memory */
-			const updated = appendTurns(currentMemory, branchKey.current, [
+			const updated = appendTurns(memory, branchKey.current, [
 				{ role: 'user', content: text },
 				{ role: 'assistant', content: fullText },
 			]);
