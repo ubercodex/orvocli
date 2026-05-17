@@ -272,7 +272,6 @@ export default function Publish() {
         <form onSubmit={handleSubmit} className="space-y-6">
           {/* File Upload */}
           <div>
-            <label className="block text-white font-semibold mb-2">Plugin JSON File *</label>
             <input
               ref={fileInputRef}
               type="file"
@@ -280,19 +279,59 @@ export default function Publish() {
               onChange={handleFileUpload}
               className="hidden"
             />
-            <button
-              type="button"
-              onClick={() => fileInputRef.current?.click()}
-              className="w-full px-6 py-12 bg-[#0d0d24]/60 border-2 border-dashed border-cyan-500/30 rounded-xl hover:border-cyan-500/50 hover:bg-[#0d0d24]/80 transition text-center"
-            >
-              <div className="text-6xl mb-4">📁</div>
-              <div className="text-white font-semibold mb-2">
-                {pluginData ? '✓ Plugin Loaded' : 'Click to Upload Plugin JSON'}
+            
+            {!pluginData ? (
+              <div className="relative">
+                <div className="absolute inset-0 bg-gradient-to-r from-cyan-500/5 to-violet-500/5 rounded-2xl blur-xl"></div>
+                <button
+                  type="button"
+                  onClick={() => fileInputRef.current?.click()}
+                  className="relative w-full px-8 py-16 bg-[#0d0d24]/80 backdrop-blur-xl border-2 border-dashed border-cyan-500/30 rounded-2xl hover:border-cyan-500/60 hover:bg-[#0d0d24]/90 transition-all text-center group"
+                >
+                  <div className="text-7xl mb-6 group-hover:scale-110 transition-transform">�</div>
+                  <div className="text-white font-bold text-2xl mb-3">Upload Your Plugin</div>
+                  <div className="text-slate-400 text-base mb-6 max-w-md mx-auto">
+                    Click here or drag and drop your plugin JSON file to get started
+                  </div>
+                  <div className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-cyan-500/20 to-violet-500/20 border border-cyan-500/30 rounded-xl text-cyan-400 font-semibold">
+                    <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+                    </svg>
+                    Choose File
+                  </div>
+                  <div className="mt-6 text-slate-500 text-sm">
+                    Supports: .json files only
+                  </div>
+                </button>
               </div>
-              <div className="text-slate-500 text-sm">
-                {pluginData ? pluginData.name : 'Select a .json file containing your plugin'}
+            ) : (
+              <div className="relative">
+                <div className="absolute inset-0 bg-gradient-to-r from-green-500/5 to-cyan-500/5 rounded-2xl blur-xl"></div>
+                <div className="relative p-6 bg-[#0d0d24]/80 backdrop-blur-xl border-2 border-green-500/30 rounded-2xl">
+                  <div className="flex items-start justify-between mb-4">
+                    <div className="flex items-center gap-3">
+                      <div className="text-4xl">✅</div>
+                      <div>
+                        <div className="text-green-400 font-bold text-lg">Plugin Loaded Successfully</div>
+                        <div className="text-slate-400 text-sm">Ready to publish</div>
+                      </div>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setPluginData(null);
+                        setTags('');
+                        if (fileInputRef.current) fileInputRef.current.value = '';
+                      }}
+                      className="px-3 py-1 text-sm text-red-400 hover:text-red-300 hover:bg-red-500/10 rounded-lg transition"
+                    >
+                      Remove
+                    </button>
+                  </div>
+                  <div className="text-white font-mono text-lg">{pluginData.name}</div>
+                </div>
               </div>
-            </button>
+            )}
           </div>
 
           {/* Preview */}
@@ -347,26 +386,23 @@ export default function Publish() {
 
           {/* Submit */}
           {pluginData && (
-            <div className="flex gap-4">
-              <button
-                type="submit"
-                disabled={loading}
-                className="flex-1 px-6 py-3 rounded-xl font-semibold bg-gradient-to-r from-cyan-500 to-violet-600 text-white disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                {loading ? 'Submitting...' : 'Submit for Review'}
-              </button>
-              <button
-                type="button"
-                onClick={() => {
-                  setPluginData(null);
-                  setTags('');
-                  if (fileInputRef.current) fileInputRef.current.value = '';
-                }}
-                className="px-6 py-3 rounded-xl font-semibold bg-white/5 border border-white/12 text-slate-200 hover:bg-white/9 transition"
-              >
-                Clear
-              </button>
-            </div>
+            <button
+              type="submit"
+              disabled={loading}
+              className="w-full px-6 py-4 rounded-xl font-bold text-lg bg-gradient-to-r from-cyan-500 to-violet-600 text-white disabled:opacity-50 disabled:cursor-not-allowed hover:shadow-lg hover:shadow-cyan-500/30 transition-all"
+            >
+              {loading ? (
+                <span className="flex items-center justify-center gap-2">
+                  <svg className="animate-spin h-5 w-5" viewBox="0 0 24 24">
+                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none"></circle>
+                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                  </svg>
+                  Submitting for Review...
+                </span>
+              ) : (
+                '🚀 Submit for Review'
+              )}
+            </button>
           )}
         </form>
       </div>
