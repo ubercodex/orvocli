@@ -19,14 +19,13 @@ interface PluginFile {
 export default function Publish() {
   const { user, token } = useAuth();
   const navigate = useNavigate();
+  const fileInputRef = useRef<HTMLInputElement>(null);
   
-  const [name, setName] = useState('');
-  const [description, setDescription] = useState('');
-  const [code, setCode] = useState('');
+  const [pluginData, setPluginData] = useState<PluginFile | null>(null);
   const [tags, setTags] = useState('');
-  const [parameters, setParameters] = useState<PluginParameter[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [validationError, setValidationError] = useState<string | null>(null);
 
   if (!user || !token) {
     return (
@@ -49,22 +48,84 @@ export default function Publish() {
     );
   }
 
-  const addParameter = () => {
-    setParameters([...parameters, { name: '', type: 'string', description: '', required: false }]);
+  const validatePlugin = (data: any): data is PluginFile => {
+    setValidationError(null);
+
+    if (!data || typeof data !== 'object') {
+      setValidationError('Invalid JSON format');
+      return false;
+    }
+
+    if (!data.name || typeof data.name !== 'string') {
+      setValidationError('Missing or invalid "name" field (must be a string)');
+      return false;
+    }
+
+    if (!/^[a-z0-9-]+$/i.test(data.name)) {
+      setValidationError('Plugin name can only contain letters, numbers, and hyphens');
+      return false;
+    }
+
+    if (!data.description || typeof data.description !== 'string') {
+      setValidationError('Missing or invalid "description" field (must be a string)');
+      return false;
+    }
+
+    if (!data.code || typeof data.code !== 'string') {
+      setValidationError('Missing or invalid "code" field (must be a string)');
+      return false;
+    }
+
+    if (!Array.isArray(data.params)) {
+      setValidationError('Missing or invalid "params" field (must be an array)');
+      return false;
+    }
+
+    for (let i = 0; i < data.params.length; i++) {
+      const param = data.params[i];
+      if (!param.name || typeof param.name !== 'string') {
+        setValidationError(`Parameter ${i}: missing or invalid "name"`);
+        return false;
+      }
+      if (!['string', 'number', 'boolean'].includes(param.type)) {
+        setValidationError(`Parameter ${i}: type must be "string", "number", or "boolean"`);
+        return false;
+      }
+      if (!param.description || typeof param.description !== 'string') {
+        setValidationError(`Parameter ${i}: missing or invalid "description"`);
+        return false;
+      }
+      if (typeof param.required !== 'boolean') {
+        setValidationError(`Parameter ${i}: "required" must be true or false`);
+        return false;
+      }
+    }
+
+    return true;
   };
 
-  const removeParameter = (index: number) => {
-    setParameters(parameters.filter((_, i) => i !== index));
-  };
+  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
 
-  const updateParameter = (index: number, field: keyof PluginParameter, value: any) => {
-    const updated = [...parameters];
-    updated[index] = { ...updated[index], [field]: value };
-    setParameters(updated);
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      try {
+        const json = JSON.parse(event.target?.result as string);
+        if (validatePlugin(json)) {
+          setPluginData(json);
+        }
+      } catch (err) {
+        setValidationError('Invalid JSON file. Please check the format.');
+      }
+    };
+    reader.readAsText(file);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!pluginData) return;
+
     setLoading(true);
     setError(null);
 
@@ -77,11 +138,11 @@ export default function Publish() {
           'Authorization': `Bearer ${token}`,
         },
         body: JSON.stringify({
-          name,
-          description,
-          code,
+          name: pluginData.name,
+          description: pluginData.description,
+          code: pluginData.code,
           tags: tags.split(',').map(t => t.trim()).filter(Boolean),
-          parameters,
+          parameters: pluginData.params,
         }),
       });
 
@@ -91,6 +152,7 @@ export default function Publish() {
       }
 
       const data = await response.json();
+      alert('Plugin submitted for review! An admin will approve it soon.');
       navigate(`/plugins/${data.author}/${data.name}`);
     } catch (err) {
       setError((err as Error).message);
@@ -99,12 +161,100 @@ export default function Publish() {
     }
   };
 
+  const downloadExample = () => {
+    const example: PluginFile = {
+      name: "examplePlugin",
+      description: "An example plugin that demonstrates the format",
+      params: [
+        {
+          name: "message",
+          type: "string",
+          description: "A message to display",
+          required: true
+        }
+      ],
+      code: "// Your plugin code here\n// Use Node.js built-ins only\nreturn { result: `Hello, ${message}!` };"
+    };
+
+    const blob = new Blob([JSON.stringify(example, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'example-plugin.json';
+    a.click();
+    URL.revokeObjectURL(url);
+  };
+
   return (
     <div className="min-h-screen py-12 px-6">
-      <div className="max-w-4xl mx-auto">
+      <div className="max-w-5xl mx-auto">
         <div className="mb-8">
           <h1 className="text-4xl font-black text-white mb-2">Publish Plugin</h1>
-          <p className="text-slate-400">Share your tool with the Uber CLI community</p>
+          <p className="text-slate-400">Share your custom tool with the Uber CLI community</p>
+        </div>
+
+        {/* How to Create a Plugin */}
+        <div className="mb-8 p-6 bg-gradient-to-br from-cyan-500/10 to-violet-500/10 border border-cyan-500/20 rounded-2xl">
+          <h2 className="text-xl font-bold text-white mb-4">📝 How to Create a Plugin</h2>
+          <div className="space-y-3 text-sm text-slate-300">
+            <div className="flex gap-3">
+              <span className="text-cyan-400 font-bold">1.</span>
+              <div>
+                <strong>In Uber CLI:</strong> Run <code className="px-2 py-1 bg-black/30 rounded text-cyan-400">uber</code> and type <code className="px-2 py-1 bg-black/30 rounded text-cyan-400">/plugins</code>
+              </div>
+            </div>
+            <div className="flex gap-3">
+              <span className="text-cyan-400 font-bold">2.</span>
+              <div>
+                <strong>Create Tool:</strong> Select "+ New tool" and describe what you want (e.g., "Fetch weather from wttr.in")
+              </div>
+            </div>
+            <div className="flex gap-3">
+              <span className="text-cyan-400 font-bold">3.</span>
+              <div>
+                <strong>AI Generates:</strong> The AI will generate the plugin code for you
+              </div>
+            </div>
+            <div className="flex gap-3">
+              <span className="text-cyan-400 font-bold">4.</span>
+              <div>
+                <strong>Export:</strong> Find your plugin in <code className="px-2 py-1 bg-black/30 rounded text-cyan-400">.ubercli/plugins.json</code> in the tools array
+              </div>
+            </div>
+            <div className="flex gap-3">
+              <span className="text-cyan-400 font-bold">5.</span>
+              <div>
+                <strong>Format:</strong> Extract the tool object and save as a JSON file with this structure:
+                <pre className="mt-2 p-3 bg-black/30 rounded text-xs overflow-x-auto">
+{`{
+  "name": "yourPluginName",
+  "description": "What it does",
+  "params": [
+    {
+      "name": "paramName",
+      "type": "string",
+      "description": "What this param is for",
+      "required": true
+    }
+  ],
+  "code": "// Your JavaScript code here"
+}`}
+                </pre>
+              </div>
+            </div>
+            <div className="flex gap-3">
+              <span className="text-cyan-400 font-bold">6.</span>
+              <div>
+                <strong>Upload:</strong> Upload the JSON file below to publish it!
+              </div>
+            </div>
+          </div>
+          <button
+            onClick={downloadExample}
+            className="mt-4 px-4 py-2 bg-cyan-500/20 text-cyan-400 border border-cyan-500/30 rounded-lg text-sm hover:bg-cyan-500/30 transition"
+          >
+            ⬇ Download Example Plugin
+          </button>
         </div>
 
         {error && (
@@ -113,147 +263,111 @@ export default function Publish() {
           </div>
         )}
 
+        {validationError && (
+          <div className="mb-6 p-4 bg-yellow-500/10 border border-yellow-500/20 rounded-xl text-yellow-400">
+            <strong>Validation Error:</strong> {validationError}
+          </div>
+        )}
+
         <form onSubmit={handleSubmit} className="space-y-6">
-          {/* Plugin Name */}
+          {/* File Upload */}
           <div>
-            <label className="block text-white font-semibold mb-2">Plugin Name *</label>
+            <label className="block text-white font-semibold mb-2">Plugin JSON File *</label>
             <input
-              type="text"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              placeholder="my-awesome-plugin"
-              pattern="[a-z0-9-]+"
-              required
-              className="w-full px-4 py-3 bg-[#0d0d24]/60 border border-cyan-500/20 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:border-cyan-500/50 focus:ring-2 focus:ring-cyan-500/20"
+              ref={fileInputRef}
+              type="file"
+              accept=".json"
+              onChange={handleFileUpload}
+              className="hidden"
             />
-            <p className="text-slate-500 text-sm mt-1">Lowercase letters, numbers, and hyphens only</p>
-          </div>
-
-          {/* Description */}
-          <div>
-            <label className="block text-white font-semibold mb-2">Description *</label>
-            <textarea
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
-              placeholder="What does your plugin do?"
-              required
-              rows={3}
-              maxLength={500}
-              className="w-full px-4 py-3 bg-[#0d0d24]/60 border border-cyan-500/20 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:border-cyan-500/50 focus:ring-2 focus:ring-cyan-500/20 resize-none"
-            />
-            <p className="text-slate-500 text-sm mt-1">{description.length}/500 characters</p>
-          </div>
-
-          {/* Tags */}
-          <div>
-            <label className="block text-white font-semibold mb-2">Tags</label>
-            <input
-              type="text"
-              value={tags}
-              onChange={(e) => setTags(e.target.value)}
-              placeholder="weather, api, automation (comma-separated)"
-              className="w-full px-4 py-3 bg-[#0d0d24]/60 border border-cyan-500/20 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:border-cyan-500/50 focus:ring-2 focus:ring-cyan-500/20"
-            />
-          </div>
-
-          {/* Parameters */}
-          <div>
-            <div className="flex items-center justify-between mb-3">
-              <label className="block text-white font-semibold">Parameters</label>
-              <button
-                type="button"
-                onClick={addParameter}
-                className="px-3 py-1 text-sm bg-cyan-500/10 text-cyan-400 border border-cyan-500/20 rounded-lg hover:bg-cyan-500/20 transition"
-              >
-                + Add Parameter
-              </button>
-            </div>
-            
-            {parameters.length === 0 ? (
-              <p className="text-slate-500 text-sm">No parameters defined</p>
-            ) : (
-              <div className="space-y-3">
-                {parameters.map((param, index) => (
-                  <div key={index} className="p-4 bg-[#0d0d24]/60 border border-cyan-500/12 rounded-xl">
-                    <div className="grid grid-cols-2 gap-3 mb-3">
-                      <input
-                        type="text"
-                        value={param.name}
-                        onChange={(e) => updateParameter(index, 'name', e.target.value)}
-                        placeholder="Parameter name"
-                        className="px-3 py-2 bg-[#050510] border border-cyan-500/20 rounded-lg text-white text-sm"
-                      />
-                      <select
-                        value={param.type}
-                        onChange={(e) => updateParameter(index, 'type', e.target.value)}
-                        className="px-3 py-2 bg-[#050510] border border-cyan-500/20 rounded-lg text-white text-sm"
-                      >
-                        <option value="string">String</option>
-                        <option value="number">Number</option>
-                        <option value="boolean">Boolean</option>
-                      </select>
-                    </div>
-                    <input
-                      type="text"
-                      value={param.description}
-                      onChange={(e) => updateParameter(index, 'description', e.target.value)}
-                      placeholder="Description"
-                      className="w-full px-3 py-2 bg-[#050510] border border-cyan-500/20 rounded-lg text-white text-sm mb-3"
-                    />
-                    <div className="flex items-center justify-between">
-                      <label className="flex items-center gap-2 text-sm text-slate-400">
-                        <input
-                          type="checkbox"
-                          checked={param.required}
-                          onChange={(e) => updateParameter(index, 'required', e.target.checked)}
-                          className="rounded"
-                        />
-                        Required
-                      </label>
-                      <button
-                        type="button"
-                        onClick={() => removeParameter(index)}
-                        className="text-red-400 text-sm hover:text-red-300"
-                      >
-                        Remove
-                      </button>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
-
-          {/* Code */}
-          <div>
-            <label className="block text-white font-semibold mb-2">Plugin Code *</label>
-            <textarea
-              value={code}
-              onChange={(e) => setCode(e.target.value)}
-              placeholder="export default async function myPlugin(params) { ... }"
-              required
-              rows={12}
-              className="w-full px-4 py-3 bg-[#0d0d24]/60 border border-cyan-500/20 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:border-cyan-500/50 focus:ring-2 focus:ring-cyan-500/20 resize-none font-mono text-sm"
-            />
-          </div>
-
-          {/* Submit */}
-          <div className="flex gap-4">
-            <button
-              type="submit"
-              disabled={loading}
-              className="flex-1 px-6 py-3 rounded-xl font-semibold bg-gradient-to-r from-cyan-500 to-violet-600 text-white disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              {loading ? 'Publishing...' : 'Publish Plugin'}
-            </button>
             <button
               type="button"
-              onClick={() => navigate('/registry')}
-              className="px-6 py-3 rounded-xl font-semibold bg-white/5 border border-white/12 text-slate-200 hover:bg-white/9 transition"
+              onClick={() => fileInputRef.current?.click()}
+              className="w-full px-6 py-12 bg-[#0d0d24]/60 border-2 border-dashed border-cyan-500/30 rounded-xl hover:border-cyan-500/50 hover:bg-[#0d0d24]/80 transition text-center"
             >
-              Cancel
+              <div className="text-6xl mb-4">📁</div>
+              <div className="text-white font-semibold mb-2">
+                {pluginData ? '✓ Plugin Loaded' : 'Click to Upload Plugin JSON'}
+              </div>
+              <div className="text-slate-500 text-sm">
+                {pluginData ? pluginData.name : 'Select a .json file containing your plugin'}
+              </div>
             </button>
           </div>
+
+          {/* Preview */}
+          {pluginData && (
+            <div className="p-6 bg-[#0d0d24]/60 border border-cyan-500/12 rounded-xl">
+              <h3 className="text-white font-bold mb-4">Plugin Preview</h3>
+              <div className="space-y-3 text-sm">
+                <div>
+                  <span className="text-slate-500">Name:</span>
+                  <span className="text-white ml-2 font-mono">{pluginData.name}</span>
+                </div>
+                <div>
+                  <span className="text-slate-500">Description:</span>
+                  <span className="text-white ml-2">{pluginData.description}</span>
+                </div>
+                <div>
+                  <span className="text-slate-500">Parameters:</span>
+                  <span className="text-white ml-2">{pluginData.params.length}</span>
+                </div>
+                {pluginData.params.length > 0 && (
+                  <div className="ml-4 space-y-1">
+                    {pluginData.params.map((param, i) => (
+                      <div key={i} className="text-xs text-slate-400">
+                        • {param.name} ({param.type}) - {param.required ? 'required' : 'optional'}
+                      </div>
+                    ))}
+                  </div>
+                )}
+                <div>
+                  <span className="text-slate-500">Code:</span>
+                  <pre className="mt-2 p-3 bg-[#050510] border border-cyan-500/20 rounded-lg text-white text-xs overflow-x-auto max-h-48">
+                    {pluginData.code}
+                  </pre>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Tags */}
+          {pluginData && (
+            <div>
+              <label className="block text-white font-semibold mb-2">Tags (Optional)</label>
+              <input
+                type="text"
+                value={tags}
+                onChange={(e) => setTags(e.target.value)}
+                placeholder="weather, api, automation (comma-separated)"
+                className="w-full px-4 py-3 bg-[#0d0d24]/60 border border-cyan-500/20 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:border-cyan-500/50 focus:ring-2 focus:ring-cyan-500/20"
+              />
+            </div>
+          )}
+
+          {/* Submit */}
+          {pluginData && (
+            <div className="flex gap-4">
+              <button
+                type="submit"
+                disabled={loading}
+                className="flex-1 px-6 py-3 rounded-xl font-semibold bg-gradient-to-r from-cyan-500 to-violet-600 text-white disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {loading ? 'Submitting...' : 'Submit for Review'}
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  setPluginData(null);
+                  setTags('');
+                  if (fileInputRef.current) fileInputRef.current.value = '';
+                }}
+                className="px-6 py-3 rounded-xl font-semibold bg-white/5 border border-white/12 text-slate-200 hover:bg-white/9 transition"
+              >
+                Clear
+              </button>
+            </div>
+          )}
         </form>
       </div>
     </div>
