@@ -1,16 +1,26 @@
 import { Routes, Route } from 'react-router-dom';
-import Home from './pages/Home';
-import Browse from './pages/Browse';
+import { AuthProvider } from './context/AuthContext';
+import Layout from './components/Layout';
+import NewHome from './pages/NewHome';
+import Registry from './pages/Registry';
+import Contact from './pages/Contact';
+import Publish from './pages/Publish';
+import AuthCallback from './pages/AuthCallback';
 import PluginDetail from './pages/PluginDetail';
 
 export default function App() {
   return (
-    <div className="min-h-screen">
-      <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/browse" element={<Browse />} />
-        <Route path="/plugins/:author/:name" element={<PluginDetail />} />
-      </Routes>
-    </div>
+    <AuthProvider>
+      <Layout>
+        <Routes>
+          <Route path="/" element={<NewHome />} />
+          <Route path="/registry" element={<Registry />} />
+          <Route path="/contact" element={<Contact />} />
+          <Route path="/publish" element={<Publish />} />
+          <Route path="/auth/callback" element={<AuthCallback />} />
+          <Route path="/plugins/:author/:name" element={<PluginDetail />} />
+        </Routes>
+      </Layout>
+    </AuthProvider>
   );
 }
