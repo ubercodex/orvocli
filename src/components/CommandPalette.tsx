@@ -10,7 +10,6 @@ export interface PaletteItem {
 export const PALETTE_ITEMS: PaletteItem[] = [
 	{ cmd: '/settings', description: 'Open settings (theme, API keys, models)'  },
 	{ cmd: '/plugins',  description: 'Manage tools & profiles for LLM tool use' },
-	{ cmd: '/plugins install <name>', description: 'Install plugin from registry (e.g., ubercodex-get-disk-space)' },
 	{ cmd: '/memory',   description: 'View or clear workspace memory'           },
 	{ cmd: '/exit',     description: 'Exit UBER CLI'                            },
 ];

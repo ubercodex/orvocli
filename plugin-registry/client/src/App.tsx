@@ -7,7 +7,7 @@ import Contact from './pages/Contact';
 import Publish from './pages/Publish';
 import MyPlugins from './pages/MyPlugins';
 import AuthCallback from './pages/AuthCallback';
-import AdminDashboard from './pages/AdminDashboard';
+import AdminPanel from './pages/AdminPanel';
 import PluginDetail from './pages/PluginDetail';
 
 export default function App() {
@@ -20,7 +20,7 @@ export default function App() {
           <Route path="/contact" element={<Contact />} />
           <Route path="/publish" element={<Publish />} />
           <Route path="/my-plugins" element={<MyPlugins />} />
-          <Route path="/admin" element={<AdminDashboard />} />
+          <Route path="/admin" element={<AdminPanel />} />
           <Route path="/auth/callback" element={<AuthCallback />} />
           <Route path="/plugins/:author/:name" element={<PluginDetail />} />
         </Routes>

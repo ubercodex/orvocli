@@ -15,7 +15,11 @@ import { loadWorkspaceMemory, saveWorkspaceMemory } from './memory.js';
 
 type Overlay = null | 'settings' | 'plugins' | 'plugin-install' | 'memory';
 
-export default function App(): React.JSX.Element {
+interface AppProps {
+	initialCommand?: string;
+}
+
+export default function App({ initialCommand }: AppProps = {}): React.JSX.Element {
 	const { exit } = useApp();
 	const [overlay, setOverlay] = useState<Overlay>(null);
 	const [settings, setSettings] = useState<Settings>(() => loadSettings());
@@ -24,6 +28,13 @@ export default function App(): React.JSX.Element {
 	const [hasTyped, setHasTyped] = useState(false);
 	const [pluginToInstall, setPluginToInstall] = useState<string>('');
 	const workspaceName = getWorkspaceName();
+
+	// Handle initial command from CLI args
+	React.useEffect(() => {
+		if (initialCommand) {
+			handleChatCommand(initialCommand);
+		}
+	}, [initialCommand]);
 
 	const handleSaveSettings = (updated: Settings) => {
 		setSettings(updated);

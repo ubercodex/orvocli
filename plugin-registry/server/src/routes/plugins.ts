@@ -299,4 +299,78 @@ export async function pluginRoutes(fastify: FastifyInstance) {
 
 		return { success: true, message: 'Plugin rejected' };
 	});
+
+	// Admin: Get all plugins or filter by status
+	fastify.get('/admin/plugins', { onRequest: [fastify.authenticate, requireAdmin] }, async (request: any) => {
+		const { status } = request.query as { status?: string };
+		
+		let query = 'SELECT * FROM plugins';
+		const params: any[] = [];
+		
+		if (status && ['pending', 'approved', 'rejected'].includes(status)) {
+			query += ' WHERE status = ?';
+			params.push(status);
+		}
+		
+		query += ' ORDER BY created_at DESC';
+		
+		const rows = db.prepare(query).all(...params) as any[];
+		const plugins: Plugin[] = rows.map((row) => ({
+			id: row.id,
+			author: row.author,
+			name: row.name,
+			version: row.version,
+			description: row.description,
+			code: row.code,
+			parameters: JSON.parse(row.parameters) as PluginParameter[],
+			tags: JSON.parse(row.tags) as string[],
+			downloads: row.downloads,
+			createdAt: row.created_at,
+			updatedAt: row.updated_at,
+			status: row.status,
+		}));
+
+		return { plugins, total: plugins.length };
+	});
+
+	// Admin: Get statistics
+	fastify.get('/admin/stats', { onRequest: [fastify.authenticate, requireAdmin] }, async () => {
+		const totalPlugins = db.prepare('SELECT COUNT(*) as count FROM plugins').get() as { count: number };
+		const pendingPlugins = db.prepare("SELECT COUNT(*) as count FROM plugins WHERE status = 'pending'").get() as { count: number };
+		const approvedPlugins = db.prepare("SELECT COUNT(*) as count FROM plugins WHERE status = 'approved'").get() as { count: number };
+		const rejectedPlugins = db.prepare("SELECT COUNT(*) as count FROM plugins WHERE status = 'rejected'").get() as { count: number };
+		const totalDownloads = db.prepare('SELECT SUM(downloads) as total FROM plugins').get() as { total: number };
+		const totalUsers = db.prepare('SELECT COUNT(DISTINCT author) as count FROM plugins').get() as { count: number };
+
+		return {
+			totalPlugins: totalPlugins.count,
+			pendingPlugins: pendingPlugins.count,
+			approvedPlugins: approvedPlugins.count,
+			rejectedPlugins: rejectedPlugins.count,
+			totalDownloads: totalDownloads.total || 0,
+			totalUsers: totalUsers.count,
+		};
+	});
+
+	// Admin: Get list of admins
+	fastify.get('/admin/admins', { onRequest: [fastify.authenticate, requireAdmin] }, async () => {
+		const adminUsernames = process.env.ADMIN_GITHUB_USERNAMES?.split(',').map(u => u.trim()) || [];
+		const admins = adminUsernames.map(username => ({ username }));
+		
+		return { admins, total: admins.length };
+	});
+
+	// Admin: Delete plugin permanently
+	fastify.delete('/admin/plugins/:id', { onRequest: [fastify.authenticate, requireAdmin] }, async (request: any, reply: any) => {
+		const { id } = request.params as { id: string };
+
+		const plugin = db.prepare('SELECT id FROM plugins WHERE id = ?').get(id);
+		if (!plugin) {
+			return reply.code(404).send({ error: 'Plugin not found' });
+		}
+
+		db.prepare('DELETE FROM plugins WHERE id = ?').run(id);
+
+		return { success: true, message: 'Plugin deleted permanently' };
+	});
 }
