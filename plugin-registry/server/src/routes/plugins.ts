@@ -61,8 +61,24 @@ const RejectPluginSchema = z.object({
 });
 
 export async function pluginRoutes(fastify: FastifyInstance) {
-	fastify.get('/plugins', async () => {
-		const rows = db.prepare("SELECT * FROM plugins WHERE status = 'approved' ORDER BY created_at DESC").all() as any[];
+	fastify.get('/plugins', async (request: any) => {
+		const { author } = request.query as { author?: string };
+		
+		let query = "SELECT * FROM plugins";
+		const params: any[] = [];
+		
+		if (author) {
+			// If author is specified, show all their plugins (any status)
+			query += " WHERE author = ?";
+			params.push(author);
+		} else {
+			// Otherwise, only show approved plugins
+			query += " WHERE status = 'approved'";
+		}
+		
+		query += " ORDER BY created_at DESC";
+		
+		const rows = db.prepare(query).all(...params) as any[];
 		const plugins: Plugin[] = rows.map((row) => ({
 			id: row.id,
 			author: row.author,
