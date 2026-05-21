@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Link, useParams } from 'react-router-dom';
+import { Link, useParams, useNavigate } from 'react-router-dom';
 
 interface Plugin {
   id: string;
@@ -17,6 +17,7 @@ interface Plugin {
 
 export default function PluginDetail() {
   const { author, name } = useParams<{ author: string; name: string }>();
+  const navigate = useNavigate();
   const [plugin, setPlugin] = useState<Plugin | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -65,9 +66,12 @@ export default function PluginDetail() {
       </nav>
 
       <div className="max-w-5xl mx-auto px-6 py-12">
-        <Link to="/browse" className="text-gray-500 hover:text-white mb-6 inline-block">
-          ← Back to browse
-        </Link>
+        <button 
+          onClick={() => navigate(-1)} 
+          className="text-gray-500 hover:text-white mb-6 inline-flex items-center gap-2"
+        >
+          ← Back
+        </button>
 
         <div className="mb-8">
           <h1 className="text-5xl font-bold text-white mb-2">{plugin.name}</h1>

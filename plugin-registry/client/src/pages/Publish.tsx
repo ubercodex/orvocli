@@ -152,8 +152,8 @@ export default function Publish() {
       }
 
       const data = await response.json();
-      alert('Plugin submitted for review! An admin will approve it soon.');
-      navigate(`/plugins/${data.author}/${data.name}`);
+      alert('✅ Plugin submitted for review! An admin will approve it soon.');
+      navigate('/my-plugins');
     } catch (err) {
       setError((err as Error).message);
     } finally {

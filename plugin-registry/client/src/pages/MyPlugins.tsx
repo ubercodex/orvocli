@@ -148,9 +148,10 @@ export default function MyPlugins() {
 
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
               {plugins.map(plugin => (
-                <div
+                <Link
                   key={plugin.id}
-                  className="p-6 bg-[#0d0d24]/60 backdrop-blur-xl border border-cyan-500/12 rounded-2xl hover:border-cyan-500/30 transition"
+                  to={`/plugins/${user?.username}/${plugin.name}`}
+                  className="p-6 bg-[#0d0d24]/60 backdrop-blur-xl border border-cyan-500/12 rounded-2xl hover:border-cyan-500/30 transition block"
                 >
                   <div className="flex items-start justify-between mb-3">
                     <div className="flex-1">
@@ -192,27 +193,7 @@ export default function MyPlugins() {
                     )}
                   </div>
 
-                  {plugin.status === 'approved' && (
-                    <Link
-                      to={`/plugins/${user?.username}/${plugin.name}`}
-                      className="block text-center px-4 py-2 bg-cyan-500/20 text-cyan-400 border border-cyan-500/30 rounded-lg text-sm hover:bg-cyan-500/30 transition"
-                    >
-                      View Plugin
-                    </Link>
-                  )}
-
-                  {plugin.status === 'pending' && (
-                    <div className="text-center px-4 py-2 bg-yellow-500/10 text-yellow-400 border border-yellow-500/20 rounded-lg text-sm">
-                      Waiting for approval
-                    </div>
-                  )}
-
-                  {plugin.status === 'rejected' && (
-                    <div className="text-center px-4 py-2 bg-red-500/10 text-red-400 border border-red-500/20 rounded-lg text-sm">
-                      Rejected - Contact admin
-                    </div>
-                  )}
-                </div>
+                </Link>
               ))}
             </div>
           </>
