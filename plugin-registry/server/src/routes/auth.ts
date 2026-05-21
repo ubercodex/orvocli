@@ -62,12 +62,21 @@ export async function authRoutes(fastify: FastifyInstance) {
 			.split(',')
 			.map(u => u.trim())
 			.filter(Boolean);
+		
+		const isAdmin = adminUsernames.includes(user.username);
+		
+		console.log('=== ADMIN CHECK ===');
+		console.log('ADMIN_GITHUB_USERNAMES env:', process.env.ADMIN_GITHUB_USERNAMES);
+		console.log('Parsed admin usernames:', adminUsernames);
+		console.log('Current user username:', user.username);
+		console.log('Is admin?', isAdmin);
+		console.log('==================');
 
 		return { 
 			token, 
 			user: {
 				...user,
-				isAdmin: adminUsernames.includes(user.username)
+				isAdmin
 			}
 		};
 	});
