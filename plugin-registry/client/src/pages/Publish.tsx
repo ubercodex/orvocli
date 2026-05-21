@@ -193,68 +193,28 @@ export default function Publish() {
           <p className="text-slate-400">Share your custom tool with the Uber CLI community</p>
         </div>
 
-        {/* How to Create a Plugin */}
-        <div className="mb-8 p-6 bg-gradient-to-br from-cyan-500/10 to-violet-500/10 border border-cyan-500/20 rounded-2xl">
-          <h2 className="text-xl font-bold text-white mb-4">📝 How to Create a Plugin</h2>
-          <div className="space-y-3 text-sm text-slate-300">
-            <div className="flex gap-3">
-              <span className="text-cyan-400 font-bold">1.</span>
-              <div>
-                <strong>In Uber CLI:</strong> Run <code className="px-2 py-1 bg-black/30 rounded text-cyan-400">uber</code> and type <code className="px-2 py-1 bg-black/30 rounded text-cyan-400">/plugins</code>
+        {/* Quick Export Tip */}
+        <div className="mb-6 p-5 bg-gradient-to-r from-green-500/20 to-cyan-500/20 border-2 border-green-500/40 rounded-2xl">
+          <div className="flex items-start gap-4">
+            <div className="text-4xl">⚡</div>
+            <div>
+              <h3 className="text-lg font-bold text-white mb-2">Quick Export from CLI</h3>
+              <p className="text-slate-300 text-sm mb-3">
+                Already created a plugin in Uber CLI? Export it instantly!
+              </p>
+              <div className="flex items-center gap-2 text-sm flex-wrap">
+                <span className="text-slate-400">In CLI:</span>
+                <code className="px-3 py-1.5 bg-black/40 rounded text-cyan-400 font-mono">/plugins</code>
+                <span className="text-slate-400">→</span>
+                <code className="px-3 py-1.5 bg-black/40 rounded text-cyan-400 font-mono">Manage Tools</code>
+                <span className="text-slate-400">→ Select your tool →</span>
+                <kbd className="px-3 py-1.5 bg-gradient-to-br from-green-500/30 to-green-600/30 border border-green-500/50 rounded text-green-300 font-bold shadow-lg">E</kbd>
               </div>
-            </div>
-            <div className="flex gap-3">
-              <span className="text-cyan-400 font-bold">2.</span>
-              <div>
-                <strong>Create Tool:</strong> Select "+ New tool" and describe what you want (e.g., "Fetch weather from wttr.in")
-              </div>
-            </div>
-            <div className="flex gap-3">
-              <span className="text-cyan-400 font-bold">3.</span>
-              <div>
-                <strong>AI Generates:</strong> The AI will generate the plugin code for you
-              </div>
-            </div>
-            <div className="flex gap-3">
-              <span className="text-cyan-400 font-bold">4.</span>
-              <div>
-                <strong>Export:</strong> Find your plugin in <code className="px-2 py-1 bg-black/30 rounded text-cyan-400">.ubercli/plugins.json</code> in the tools array
-              </div>
-            </div>
-            <div className="flex gap-3">
-              <span className="text-cyan-400 font-bold">5.</span>
-              <div>
-                <strong>Format:</strong> Extract the tool object and save as a JSON file with this structure:
-                <pre className="mt-2 p-3 bg-black/30 rounded text-xs overflow-x-auto">
-{`{
-  "name": "yourPluginName",
-  "description": "What it does",
-  "params": [
-    {
-      "name": "paramName",
-      "type": "string",
-      "description": "What this param is for",
-      "required": true
-    }
-  ],
-  "code": "// Your JavaScript code here"
-}`}
-                </pre>
-              </div>
-            </div>
-            <div className="flex gap-3">
-              <span className="text-cyan-400 font-bold">6.</span>
-              <div>
-                <strong>Upload:</strong> Upload the JSON file below to publish it!
-              </div>
+              <p className="text-xs text-slate-400 mt-2">
+                💾 The JSON file will be saved to your workspace root. Upload it below!
+              </p>
             </div>
           </div>
-          <button
-            onClick={downloadExample}
-            className="mt-4 px-4 py-2 bg-cyan-500/20 text-cyan-400 border border-cyan-500/30 rounded-lg text-sm hover:bg-cyan-500/30 transition"
-          >
-            ⬇ Download Example Plugin
-          </button>
         </div>
 
         {error && (
@@ -269,7 +229,7 @@ export default function Publish() {
           </div>
         )}
 
-        <form onSubmit={handleSubmit} className="space-y-6">
+        <form onSubmit={handleSubmit} className="space-y-6 mb-8">
           {/* File Upload */}
           <div>
             <input
@@ -413,6 +373,76 @@ export default function Publish() {
             </button>
           )}
         </form>
+
+        {/* Detailed Instructions */}
+        <div className="p-6 bg-gradient-to-br from-cyan-500/10 to-violet-500/10 border border-cyan-500/20 rounded-2xl">
+          <h2 className="text-xl font-bold text-white mb-4">📝 How to Create a Plugin</h2>
+          <div className="space-y-3 text-sm text-slate-300">
+            <div className="flex gap-3">
+              <span className="text-cyan-400 font-bold">1.</span>
+              <div>
+                <strong>In Uber CLI:</strong> Run <code className="px-2 py-1 bg-black/30 rounded text-cyan-400">uber</code> and type <code className="px-2 py-1 bg-black/30 rounded text-cyan-400">/plugins</code>
+              </div>
+            </div>
+            <div className="flex gap-3">
+              <span className="text-cyan-400 font-bold">2.</span>
+              <div>
+                <strong>Manage Tools:</strong> Select "Manage Tools" from the plugins menu
+              </div>
+            </div>
+            <div className="flex gap-3">
+              <span className="text-cyan-400 font-bold">3.</span>
+              <div>
+                <strong>Create Tool:</strong> Navigate to the bottom and select "+ New tool", then describe what you want (e.g., "Fetch weather from wttr.in")
+              </div>
+            </div>
+            <div className="flex gap-3">
+              <span className="text-cyan-400 font-bold">4.</span>
+              <div>
+                <strong>AI Generates:</strong> The AI will generate the plugin code for you
+              </div>
+            </div>
+            <div className="flex gap-3">
+              <span className="text-cyan-400 font-bold">5.</span>
+              <div>
+                <strong>Export:</strong> Navigate back to your tool in the list and press <code className="px-2 py-1 bg-black/30 rounded text-cyan-400">E</code> to export it as a JSON file
+              </div>
+            </div>
+            <div className="flex gap-3">
+              <span className="text-cyan-400 font-bold">6.</span>
+              <div>
+                <strong>Verify Format:</strong> The exported JSON file should have this structure:
+                <pre className="mt-2 p-3 bg-black/30 rounded text-xs overflow-x-auto">
+{`{
+  "name": "yourPluginName",
+  "description": "What it does",
+  "params": [
+    {
+      "name": "paramName",
+      "type": "string",
+      "description": "What this param is for",
+      "required": true
+    }
+  ],
+  "code": "// Your JavaScript code here"
+}`}
+                </pre>
+              </div>
+            </div>
+            <div className="flex gap-3">
+              <span className="text-cyan-400 font-bold">7.</span>
+              <div>
+                <strong>Upload:</strong> Upload the JSON file above to publish it!
+              </div>
+            </div>
+          </div>
+          <button
+            onClick={downloadExample}
+            className="mt-4 px-4 py-2 bg-cyan-500/20 text-cyan-400 border border-cyan-500/30 rounded-lg text-sm hover:bg-cyan-500/30 transition"
+          >
+            ⬇ Download Example Plugin
+          </button>
+        </div>
       </div>
     </div>
   );
