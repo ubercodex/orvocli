@@ -84,7 +84,7 @@ export default function PluginDetail() {
             <div className="text-lg font-semibold text-white">{plugin.version}</div>
           </div>
           <div className="p-4 bg-gray-900 border border-gray-800 rounded-lg">
-            <div className="text-sm text-gray-500">Downloads</div>
+            <div className="text-sm text-gray-500">Views</div>
             <div className="text-lg font-semibold text-white">{plugin.downloads.toLocaleString()}</div>
           </div>
           <div className="p-4 bg-gray-900 border border-gray-800 rounded-lg">

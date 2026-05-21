@@ -4,6 +4,7 @@ import Splash from './Splash.js';
 import SettingsCommand from './commands/settings/index.js';
 import ChatCommand from './commands/chat/index.js';
 import PluginsCommand from './commands/plugins/index.js';
+import Installer from './commands/plugins/installer.js';
 import MemoryCommand from './commands/memory/index.js';
 import { type Settings, THEMES } from './types/settings.js';
 import { type PluginStore } from './types/plugins.js';
@@ -12,7 +13,7 @@ import { ThemeContext } from './context/ThemeContext.js';
 import { loadSettings, saveSettings, getWorkspaceName, loadPluginStore, savePluginStore } from './store.js';
 import { loadWorkspaceMemory, saveWorkspaceMemory } from './memory.js';
 
-type Overlay = null | 'settings' | 'plugins' | 'memory';
+type Overlay = null | 'settings' | 'plugins' | 'plugin-install' | 'memory';
 
 export default function App(): React.JSX.Element {
 	const { exit } = useApp();
@@ -21,6 +22,7 @@ export default function App(): React.JSX.Element {
 	const [pluginStore, setPluginStore] = useState<PluginStore>(() => loadPluginStore());
 	const [memory, setMemory] = useState<WorkspaceMemory>(() => loadWorkspaceMemory());
 	const [hasTyped, setHasTyped] = useState(false);
+	const [pluginToInstall, setPluginToInstall] = useState<string>('');
 	const workspaceName = getWorkspaceName();
 
 	const handleSaveSettings = (updated: Settings) => {
@@ -41,6 +43,14 @@ export default function App(): React.JSX.Element {
 	const handleChatCommand = (cmd: string) => {
 		if (cmd === '/settings') { setOverlay('settings'); return; }
 		if (cmd === '/plugins')  { setOverlay('plugins');  return; }
+		if (cmd.startsWith('/plugins install ')) {
+			const pluginName = cmd.replace('/plugins install ', '').trim();
+			if (pluginName) {
+				setOverlay('plugin-install');
+				setPluginToInstall(pluginName);
+			}
+			return;
+		}
 		if (cmd === '/memory')   { setOverlay('memory');   return; }
 		if (cmd === '/exit' || cmd === '/quit') { exit(); return; }
 	};
@@ -74,6 +84,19 @@ export default function App(): React.JSX.Element {
 				<PluginsCommand
 					store={pluginStore}
 					settings={settings}
+					onSave={handleSavePluginStore}
+					onBack={() => setOverlay(null)}
+				/>
+			</ThemeContext.Provider>
+		);
+	}
+
+	if (overlay === 'plugin-install') {
+		return (
+			<ThemeContext.Provider value={theme}>
+				<Installer
+					pluginName={pluginToInstall}
+					store={pluginStore}
 					onSave={handleSavePluginStore}
 					onBack={() => setOverlay(null)}
 				/>
