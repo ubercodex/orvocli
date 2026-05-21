@@ -57,7 +57,19 @@ export async function authRoutes(fastify: FastifyInstance) {
 
 		const token = fastify.jwt.sign({ userId: user.id, username: user.username });
 
-		return { token, user };
+		// Check if user is admin
+		const adminUsernames = (process.env.ADMIN_GITHUB_USERNAMES || '')
+			.split(',')
+			.map(u => u.trim())
+			.filter(Boolean);
+
+		return { 
+			token, 
+			user: {
+				...user,
+				isAdmin: adminUsernames.includes(user.username)
+			}
+		};
 	});
 
 	fastify.get('/auth/me', { onRequest: [fastify.authenticate] }, async (request) => {
