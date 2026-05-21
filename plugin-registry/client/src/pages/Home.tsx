@@ -315,8 +315,11 @@ export default function Home() {
               <a href="https://github.com/ubercodex/ubercli/issues" target="_blank" rel="noopener noreferrer" className="hover:text-cyan-400 transition-colors">Issues</a>
               <a href="#contact" className="hover:text-cyan-400 transition-colors">Contact</a>
             </div>
-            <div className="text-xs text-slate-600">
-              © 2026 Uber CLI. MIT License.
+            <div className="flex flex-col gap-1 text-xs text-slate-600 text-right">
+              <div>© 2026 Uber CLI. MIT License.</div>
+              <div className="text-slate-700">
+                ⚠️ Not affiliated with Uber Technologies Inc.
+              </div>
             </div>
           </div>
         </div>

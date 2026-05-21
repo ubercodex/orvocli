@@ -173,9 +173,14 @@ export default function Layout({ children }: LayoutProps) {
           </div>
 
           {/* Bottom Bar */}
-          <div className="pt-8 border-t border-cyan-500/8 flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-slate-500">
-            <div>© 2026 Uber CLI. Released under the MIT License.</div>
-            <div className="flex items-center gap-4">
+          <div className="pt-8 border-t border-cyan-500/8 flex flex-col md:flex-row justify-between items-center gap-4 text-sm">
+            <div className="flex flex-col gap-2 text-slate-500">
+              <div>© 2026 Uber CLI. Released under the MIT License.</div>
+              <div className="text-xs text-slate-600">
+                ⚠️ Not affiliated with Uber Technologies Inc. or any related entities.
+              </div>
+            </div>
+            <div className="flex items-center gap-4 text-slate-500">
               <span>Built with ❤️ by the community</span>
             </div>
           </div>
