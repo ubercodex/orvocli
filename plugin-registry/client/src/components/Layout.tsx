@@ -87,6 +87,15 @@ export default function Layout({ children }: LayoutProps) {
                     >
                       My Plugins
                     </Link>
+                    {user.isAdmin && (
+                      <Link
+                        to="/admin"
+                        onClick={() => setShowUserMenu(false)}
+                        className="block px-4 py-3 text-sm text-yellow-400 hover:bg-yellow-500/10 transition border-t border-cyan-500/20"
+                      >
+                        ⚡ Admin Panel
+                      </Link>
+                    )}
                     <button
                       onClick={() => {
                         logout();

@@ -61,8 +61,19 @@ export async function authRoutes(fastify: FastifyInstance) {
 	});
 
 	fastify.get('/auth/me', { onRequest: [fastify.authenticate] }, async (request) => {
-		const userId = (request.user as { userId: string }).userId;
-		const user = db.prepare('SELECT id, username, email, avatar, created_at FROM users WHERE id = ?').get(userId);
-		return user;
+		const userId = (request.user as { userId: string; username: string }).userId;
+		const username = (request.user as { userId: string; username: string }).username;
+		const user = db.prepare('SELECT id, username, email, avatar, created_at FROM users WHERE id = ?').get(userId) as any;
+		
+		// Check if user is admin
+		const adminUsernames = (process.env.ADMIN_GITHUB_USERNAMES || '')
+			.split(',')
+			.map(u => u.trim())
+			.filter(Boolean);
+		
+		return {
+			...user,
+			isAdmin: adminUsernames.includes(username)
+		};
 	});
 }

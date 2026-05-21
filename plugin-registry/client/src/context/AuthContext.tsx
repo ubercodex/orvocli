@@ -4,6 +4,7 @@ interface User {
   id: string;
   username: string;
   avatarUrl: string;
+  isAdmin?: boolean;
 }
 
 interface AuthContextType {
@@ -29,9 +30,36 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     if (savedToken && savedUser) {
       setToken(savedToken);
       setUser(JSON.parse(savedUser));
+      // Fetch fresh user data to get isAdmin status
+      fetchUserData(savedToken);
     }
     setIsLoading(false);
   }, []);
+
+  const fetchUserData = async (authToken: string) => {
+    try {
+      const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:3001/api';
+      const response = await fetch(`${apiUrl}/auth/me`, {
+        headers: {
+          'Authorization': `Bearer ${authToken}`
+        }
+      });
+      
+      if (response.ok) {
+        const userData = await response.json();
+        const updatedUser = {
+          id: userData.id,
+          username: userData.username,
+          avatarUrl: userData.avatar,
+          isAdmin: userData.isAdmin
+        };
+        setUser(updatedUser);
+        localStorage.setItem('auth_user', JSON.stringify(updatedUser));
+      }
+    } catch (error) {
+      console.error('Failed to fetch user data:', error);
+    }
+  };
 
   const login = async (code: string) => {
     const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:3001/api';

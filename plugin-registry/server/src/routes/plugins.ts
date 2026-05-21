@@ -126,33 +126,41 @@ export async function pluginRoutes(fastify: FastifyInstance) {
 	});
 
 	fastify.post('/plugins', { onRequest: [fastify.authenticate] }, async (request, reply) => {
-		const userId = (request.user as { userId: string; username: string }).userId;
-		const username = (request.user as { userId: string; username: string }).username;
+		try {
+			const userId = (request.user as { userId: string; username: string }).userId;
+			const username = (request.user as { userId: string; username: string }).username;
 
-		const input = CreatePluginSchema.parse(request.body);
+			const input = CreatePluginSchema.parse(request.body);
 
-		const existing = db.prepare('SELECT id FROM plugins WHERE author = ? AND name = ?').get(username, input.name);
-		if (existing) {
-			return reply.code(409).send({ error: 'Plugin already exists. Use PATCH to update.' });
+			const existing = db.prepare('SELECT id FROM plugins WHERE author = ? AND name = ?').get(username, input.name);
+			if (existing) {
+				return reply.code(409).send({ error: 'Plugin already exists. Use PATCH to update.' });
+			}
+
+			const id = randomBytes(16).toString('hex');
+			db.prepare(
+				`INSERT INTO plugins (id, author, name, version, description, code, parameters, tags, author_id, status)
+	       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 'pending')`
+			).run(
+				id,
+				username,
+				input.name,
+				'1.0.0',
+				input.description,
+				input.code,
+				JSON.stringify(input.parameters),
+				JSON.stringify(input.tags),
+				userId
+			);
+
+			return { id, author: username, name: input.name, version: '1.0.0', status: 'pending', message: 'Plugin submitted for review' };
+		} catch (error: any) {
+			console.error('Error creating plugin:', error);
+			if (error.name === 'ZodError') {
+				return reply.code(400).send({ error: 'Validation error', details: error.errors });
+			}
+			return reply.code(500).send({ error: error.message || 'Internal server error' });
 		}
-
-		const id = randomBytes(16).toString('hex');
-		db.prepare(
-			`INSERT INTO plugins (id, author, name, version, description, code, parameters, tags, author_id, status)
-       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 'pending')`
-		).run(
-			id,
-			username,
-			input.name,
-			'1.0.0',
-			input.description,
-			input.code,
-			JSON.stringify(input.parameters),
-			JSON.stringify(input.tags),
-			userId
-		);
-
-		return { id, author: username, name: input.name, version: '1.0.0', status: 'pending', message: 'Plugin submitted for review' };
 	});
 
 	fastify.patch('/plugins/:author/:name', { onRequest: [fastify.authenticate] }, async (request, reply) => {
