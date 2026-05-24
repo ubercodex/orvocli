@@ -114,13 +114,13 @@ export default function Registry() {
                     </div>
                   </div>
                   
-                  <div className="mt-6 p-4 bg-gradient-to-r from-green-500/10 to-cyan-500/10 border border-green-500/20 rounded-xl">
+                  <div className="mt-6 p-4 bg-gradient-to-r from-green-500/10 to-cyan-500/10 border border-green-500/20 rounded-xl text-left">
                     <div className="flex items-start gap-3">
                       <div className="text-2xl">⚡</div>
                       <div>
                         <p className="text-white font-semibold text-sm mb-1">Quick Export Tip</p>
                         <p className="text-slate-300 text-xs mb-2">In the CLI, select your tool and press <kbd className="px-2 py-1 bg-green-500/20 border border-green-500/30 rounded text-green-400 font-mono font-bold">E</kbd> to export instantly!</p>
-                        <div className="flex items-center gap-2 text-xs text-slate-400">
+                        <div className="flex items-center gap-2 text-xs text-slate-400 flex-wrap">
                           <code className="px-2 py-1 bg-black/30 rounded text-cyan-400">/plugins</code>
                           <span>→</span>
                           <span>Manage Tools</span>
