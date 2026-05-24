@@ -94,23 +94,40 @@ export default function Registry() {
                 </p>
                 
                 <div className="bg-[#0d0d24]/60 backdrop-blur-xl border border-cyan-500/12 rounded-2xl p-8 mb-8">
-                  <h3 className="text-white font-bold mb-4 text-left">How to publish a plugin:</h3>
+                  <h3 className="text-white font-bold mb-4 text-left">Quick Start:</h3>
                   <div className="space-y-3 text-left text-sm text-slate-300">
                     <div className="flex gap-3">
-                      <span className="text-cyan-400">1.</span>
-                      <span>Create a tool in Orvo using <code className="px-2 py-1 bg-black/30 rounded text-cyan-400">/plugins</code></span>
+                      <span className="text-cyan-400 font-bold">1.</span>
+                      <span>Open Orvo and type <code className="px-2 py-1 bg-black/30 rounded text-cyan-400">/plugins</code></span>
                     </div>
                     <div className="flex gap-3">
-                      <span className="text-cyan-400">2.</span>
-                      <span>Export it from <code className="px-2 py-1 bg-black/30 rounded text-cyan-400">.orvo/plugins.json</code></span>
+                      <span className="text-cyan-400 font-bold">2.</span>
+                      <span>Select "+ New tool" and describe what you want to create</span>
                     </div>
                     <div className="flex gap-3">
-                      <span className="text-cyan-400">3.</span>
-                      <span>Upload the JSON file to the registry</span>
+                      <span className="text-cyan-400 font-bold">3.</span>
+                      <span>AI will generate the plugin code for you</span>
                     </div>
                     <div className="flex gap-3">
-                      <span className="text-cyan-400">4.</span>
-                      <span>Wait for admin approval</span>
+                      <span className="text-cyan-400 font-bold">4.</span>
+                      <span>Export from <code className="px-2 py-1 bg-black/30 rounded text-cyan-400">.orvo/plugins.json</code> and upload here</span>
+                    </div>
+                  </div>
+                  
+                  <div className="mt-6 p-4 bg-gradient-to-r from-green-500/10 to-cyan-500/10 border border-green-500/20 rounded-xl">
+                    <div className="flex items-start gap-3">
+                      <div className="text-2xl">⚡</div>
+                      <div>
+                        <p className="text-white font-semibold text-sm mb-1">Quick Export Tip</p>
+                        <p className="text-slate-300 text-xs mb-2">In the CLI, select your tool and press <kbd className="px-2 py-1 bg-green-500/20 border border-green-500/30 rounded text-green-400 font-mono font-bold">E</kbd> to export instantly!</p>
+                        <div className="flex items-center gap-2 text-xs text-slate-400">
+                          <code className="px-2 py-1 bg-black/30 rounded text-cyan-400">/plugins</code>
+                          <span>→</span>
+                          <span>Manage Tools</span>
+                          <span>→ Select tool →</span>
+                          <kbd className="px-2 py-1 bg-green-500/20 border border-green-500/30 rounded text-green-400 font-bold">E</kbd>
+                        </div>
+                      </div>
                     </div>
                   </div>
                 </div>

@@ -77,10 +77,10 @@ export default function NewHome() {
                   <div className="mt-2"><span className="text-slate-500">&gt;</span> <span className="text-white">/plugins</span></div>
                   <div className="text-slate-500 text-xs mt-1">→ + New tool</div>
                   <div className="mt-2 text-slate-300 text-xs">Describe what the tool should do:</div>
-                  <div className="text-violet-400 text-xs">Fetch weather data from wttr.in API</div>
+                  <div className="text-violet-400 text-xs">Calculate compound interest with principal and rate</div>
                   <div className="mt-1 text-slate-500 text-xs">⟳ Generating with AI...</div>
-                  <div className="text-cyan-400 text-xs mt-1">✓ <span className="text-slate-300">Created</span> <span className="text-green-400">getWeather.ts</span></div>
-                  <div className="mt-2 text-slate-300 text-xs">Tool ready! Now you can ask about weather.</div>
+                  <div className="text-cyan-400 text-xs mt-1">✓ <span className="text-slate-300">Created</span> <span className="text-green-400">calculateInterest.ts</span></div>
+                  <div className="mt-2 text-slate-300 text-xs">Tool ready! Now you can calculate interest.</div>
                   <div className="mt-3"><span className="text-slate-500">&gt;</span> <span className="animate-blink text-cyan-400">▌</span></div>
                 </div>
               </div>
