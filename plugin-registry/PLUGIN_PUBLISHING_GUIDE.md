@@ -20,9 +20,9 @@ The plugin registry allows you to share custom tools you've created with the Orv
    - Select "+ New tool"
 
 3. **Describe Your Tool**
-   - Example: "Fetch current weather from wttr.in API"
-   - Example: "Get cryptocurrency prices from CoinGecko"
-   - Example: "Read and parse CSV files"
+   - Example: "Calculate compound interest with principal and rate"
+   - Example: "Convert temperature between Celsius and Fahrenheit"
+   - Example: "Generate random passwords with custom length"
 
 4. **AI Generates the Code**
    - The AI will generate a complete plugin with:
@@ -82,17 +82,29 @@ Your plugin JSON file should look like this:
 
 ```json
 {
-  "name": "getWeather",
-  "description": "Fetch current weather from wttr.in API",
+  "name": "calculateInterest",
+  "description": "Calculate compound interest",
   "params": [
     {
-      "name": "location",
-      "type": "string",
-      "description": "City name or location",
+      "name": "principal",
+      "type": "number",
+      "description": "Principal amount",
+      "required": true
+    },
+    {
+      "name": "rate",
+      "type": "number",
+      "description": "Annual interest rate (as decimal)",
+      "required": true
+    },
+    {
+      "name": "years",
+      "type": "number",
+      "description": "Number of years",
       "required": true
     }
   ],
-  "code": "const https = require('https');\n\nreturn new Promise((resolve, reject) => {\n  https.get(`https://wttr.in/${location}?format=j1`, (res) => {\n    let data = '';\n    res.on('data', chunk => data += chunk);\n    res.on('end', () => resolve(JSON.parse(data)));\n  }).on('error', reject);\n});"
+  "code": "const amount = principal * Math.pow(1 + rate, years);\nconst interest = amount - principal;\nreturn { principal, rate, years, amount: amount.toFixed(2), interest: interest.toFixed(2) };"
 }
 ```
 
@@ -260,10 +272,10 @@ To update your plugin:
 
 Check out these example plugins for inspiration:
 
-1. **Weather Plugin**: Fetch weather data
-2. **Crypto Price**: Get cryptocurrency prices
-3. **File Parser**: Parse CSV/JSON files
-4. **System Info**: Get system information
-5. **Time Converter**: Convert between timezones
+1. **Interest Calculator**: Calculate compound interest
+2. **Temperature Converter**: Convert between Celsius and Fahrenheit
+3. **Password Generator**: Generate secure random passwords
+4. **Unit Converter**: Convert between different units
+5. **Text Analyzer**: Count words, characters, and sentences
 
 Happy plugin creating! 🚀
