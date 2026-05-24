@@ -60,6 +60,13 @@ export default function Home() {
 
         <div className="relative max-w-6xl mx-auto w-full grid lg:grid-cols-2 gap-16 items-center">
           <div className="animate-fade-up">
+            {/* ASCII Logo */}
+            <pre className="font-mono text-sm sm:text-base mb-6 text-transparent bg-gradient-to-r from-cyan-400 via-violet-400 to-purple-400 bg-clip-text font-bold leading-tight">
+{`▄▀▀▄ █▀▀▄ █   █ ▄▀▀▄
+█  █ █▄▄▀ ▀▄ ▄▀ █  █
+ ▀▀  ▀  ▀   ▀    ▀▀ `}
+            </pre>
+
             <div className="inline-flex items-center gap-2 px-4 py-2 mb-6 bg-cyan-500/8 text-cyan-400 border border-cyan-500/20 rounded-full text-xs font-semibold uppercase tracking-wider">
               <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse"></span>
               Open Source · Community Powered
