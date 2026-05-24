@@ -45,7 +45,7 @@ export default function NewHome() {
                   Browse Plugins →
                 </Link>
                 <a
-                  href="https://github.com/ubercodex/ubercli#readme"
+                  href="https://github.com/ubercodex/orvocli#readme"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="flex items-center gap-2 px-6 py-3 rounded-xl font-semibold text-sm bg-white/5 border border-white/12 text-slate-200 hover:bg-white/9 transition-all"
@@ -69,11 +69,11 @@ export default function NewHome() {
                   <div className="w-3 h-3 rounded-full bg-red-500"></div>
                   <div className="w-3 h-3 rounded-full bg-yellow-500"></div>
                   <div className="w-3 h-3 rounded-full bg-green-500"></div>
-                  <span className="ml-2 text-xs text-slate-500 font-mono">uber /plugins</span>
+                  <span className="ml-2 text-xs text-slate-500 font-mono">orvo /plugins</span>
                 </div>
                 <div className="p-5 font-mono text-sm leading-7">
-                  <div><span className="text-slate-500">$</span> <span className="text-cyan-400">uber</span></div>
-                  <div className="text-slate-500 text-xs">Uber CLI v0.1.2 · claude-sonnet-4-5</div>
+                  <div><span className="text-slate-500">$</span> <span className="text-cyan-400">orvo</span></div>
+                  <div className="text-slate-500 text-xs">Orvo v0.1.2 · claude-sonnet-4-5</div>
                   <div className="mt-2"><span className="text-slate-500">&gt;</span> <span className="text-white">/plugins</span></div>
                   <div className="text-slate-500 text-xs mt-1">→ + New tool</div>
                   <div className="mt-2 text-slate-300 text-xs">Describe what the tool should do:</div>
@@ -127,11 +127,11 @@ export default function NewHome() {
           <div className="bg-gradient-to-br from-cyan-500/10 to-violet-500/10 border border-cyan-500/20 rounded-3xl p-12">
             <h2 className="text-4xl font-black text-white mb-4">Ready to get started?</h2>
             <p className="text-slate-400 text-lg mb-8">
-              Install Uber CLI and start building with AI-powered tools
+              Install Orvo and start building with AI-powered tools
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <a
-                href="https://github.com/ubercodex/ubercli#installation"
+                href="https://github.com/ubercodex/orvocli#installation"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="px-8 py-4 rounded-xl font-semibold bg-gradient-to-r from-cyan-500 to-violet-600 text-white shadow-lg shadow-cyan-500/30 hover:shadow-cyan-500/50 transition-all"

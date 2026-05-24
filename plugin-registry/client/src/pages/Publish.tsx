@@ -190,7 +190,7 @@ export default function Publish() {
       <div className="max-w-5xl mx-auto">
         <div className="mb-8">
           <h1 className="text-4xl font-black text-white mb-2">Publish Plugin</h1>
-          <p className="text-slate-400">Share your custom tool with the Uber CLI community</p>
+          <p className="text-slate-400">Share your custom tool with the Orvo community</p>
         </div>
 
         {/* Quick Export Tip */}
@@ -200,7 +200,7 @@ export default function Publish() {
             <div>
               <h3 className="text-lg font-bold text-white mb-2">Quick Export from CLI</h3>
               <p className="text-slate-300 text-sm mb-3">
-                Already created a plugin in Uber CLI? Export it instantly!
+                Already created a plugin in Orvo? Export it instantly!
               </p>
               <div className="flex items-center gap-2 text-sm flex-wrap">
                 <span className="text-slate-400">In CLI:</span>
@@ -381,7 +381,7 @@ export default function Publish() {
             <div className="flex gap-3">
               <span className="text-cyan-400 font-bold">1.</span>
               <div>
-                <strong>In Uber CLI:</strong> Run <code className="px-2 py-1 bg-black/30 rounded text-cyan-400">uber</code> and type <code className="px-2 py-1 bg-black/30 rounded text-cyan-400">/plugins</code>
+                <strong>In Orvo:</strong> Run <code className="px-2 py-1 bg-black/30 rounded text-cyan-400">orvo</code> and type <code className="px-2 py-1 bg-black/30 rounded text-cyan-400">/plugins</code>
               </div>
             </div>
             <div className="flex gap-3">

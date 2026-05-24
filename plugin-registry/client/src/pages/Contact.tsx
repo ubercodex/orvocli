@@ -19,7 +19,7 @@ export default function Contact() {
         <div className="grid md:grid-cols-2 gap-6 mb-12">
           {/* GitHub Issues */}
           <a
-            href="https://github.com/ubercodex/ubercli/issues"
+            href="https://github.com/ubercodex/orvocli/issues"
             target="_blank"
             rel="noopener noreferrer"
             className="block bg-[#0d0d24]/60 backdrop-blur-xl border border-cyan-500/12 rounded-2xl p-8 hover:border-cyan-500/30 hover:shadow-lg hover:shadow-cyan-500/10 transition-all group"
@@ -47,7 +47,7 @@ export default function Contact() {
 
           {/* Email */}
           <a
-            href="mailto:support@ubercli.com"
+            href="mailto:support@orvocli.com"
             className="block bg-[#0d0d24]/60 backdrop-blur-xl border border-violet-500/12 rounded-2xl p-8 hover:border-violet-500/30 hover:shadow-lg hover:shadow-violet-500/10 transition-all group"
           >
             <div className="flex items-start gap-4">
@@ -77,7 +77,7 @@ export default function Contact() {
           <h2 className="text-2xl font-bold text-white mb-4">More Resources</h2>
           <div className="grid sm:grid-cols-2 gap-4">
             <a
-              href="https://github.com/ubercodex/ubercli#readme"
+              href="https://github.com/ubercodex/orvocli#readme"
               target="_blank"
               rel="noopener noreferrer"
               className="flex items-center gap-3 p-4 bg-white/5 rounded-xl hover:bg-white/10 transition-colors group"
@@ -92,7 +92,7 @@ export default function Contact() {
             </a>
 
             <a
-              href="https://github.com/ubercodex/ubercli/discussions"
+              href="https://github.com/ubercodex/orvocli/discussions"
               target="_blank"
               rel="noopener noreferrer"
               className="flex items-center gap-3 p-4 bg-white/5 rounded-xl hover:bg-white/10 transition-colors group"
@@ -107,7 +107,7 @@ export default function Contact() {
             </a>
 
             <a
-              href="https://github.com/ubercodex/ubercli"
+              href="https://github.com/ubercodex/orvocli"
               target="_blank"
               rel="noopener noreferrer"
               className="flex items-center gap-3 p-4 bg-white/5 rounded-xl hover:bg-white/10 transition-colors group"
@@ -122,7 +122,7 @@ export default function Contact() {
             </a>
 
             <a
-              href="https://github.com/ubercodex/ubercli/blob/main/LICENSE"
+              href="https://github.com/ubercodex/orvocli/blob/main/LICENSE"
               target="_blank"
               rel="noopener noreferrer"
               className="flex items-center gap-3 p-4 bg-white/5 rounded-xl hover:bg-white/10 transition-colors group"

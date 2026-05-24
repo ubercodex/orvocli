@@ -1,10 +1,10 @@
 {
-  "name": "uber-cli",
-  "version": "0.1.15",
-  "description": "UBER CLI - powered by Ink",
+  "name": "orvo",
+  "version": "0.1.17",
+  "description": "Orvo CLI - powered by Ink",
   "type": "module",
   "bin": {
-    "uber": "./bin/uber.js"
+    "orvo": "./bin/orvo.js"
   },
   "scripts": {
     "start": "tsx src/cli.tsx",

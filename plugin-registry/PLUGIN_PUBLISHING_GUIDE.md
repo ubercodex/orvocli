@@ -1,18 +1,18 @@
 # Plugin Publishing Guide
 
-Complete guide for creating and publishing plugins to the Uber CLI Plugin Registry.
+Complete guide for creating and publishing plugins to the Orvo Plugin Registry.
 
 ## 🎯 Overview
 
-The plugin registry allows you to share custom tools you've created with the Uber CLI community. Plugins are reviewed by admins before being published.
+The plugin registry allows you to share custom tools you've created with the Orvo community. Plugins are reviewed by admins before being published.
 
 ## 📝 How to Create a Plugin
 
-### Step 1: Create Your Tool in Uber CLI
+### Step 1: Create Your Tool in Orvo
 
-1. **Open Uber CLI**
+1. **Open Orvo**
    ```bash
-   uber
+   orvo
    ```
 
 2. **Navigate to Plugins**
@@ -38,11 +38,11 @@ The plugin registry allows you to share custom tools you've created with the Ube
 ### Step 2: Export Your Plugin
 
 1. **Find Your Plugin File**
-   - Location: `.ubercli/plugins.json` in your workspace
+   - Location: `.orvo/plugins.json` in your workspace
    - This file contains all your custom tools
 
 2. **Extract the Tool Object**
-   - Open `.ubercli/plugins.json`
+   - Open `.orvo/plugins.json`
    - Find your tool in the `tools` array
    - It will look like this:
    ```json
@@ -162,7 +162,7 @@ Your plugin JSON file should look like this:
 
 ### Step 1: Sign In
 
-1. Go to [ubercli.com](https://ubercli.com)
+1. Go to [orvocli.com](https://orvocli.com)
 2. Click "Sign in with GitHub"
 3. Authorize the app
 
@@ -188,16 +188,16 @@ Your plugin JSON file should look like this:
 
 Other users can install your plugin by:
 
-1. Finding it in the registry at [ubercli.com/registry](https://ubercli.com/registry)
+1. Finding it in the registry at [orvocli.com/registry](https://orvocli.com/registry)
 2. Viewing the plugin details
 3. Copying the code or downloading the JSON
-4. Adding it to their `.ubercli/plugins.json` file
+4. Adding it to their `.orvo/plugins.json` file
 
 ### Updating Your Plugin
 
 To update your plugin:
 
-1. Make changes in your local Uber CLI
+1. Make changes in your local Orvo
 2. Export the updated plugin
 3. Re-upload to the registry
 4. Wait for admin approval
@@ -252,9 +252,9 @@ To update your plugin:
 
 ## 📞 Support
 
-- **Issues**: [GitHub Issues](https://github.com/ubercodex/ubercli/issues)
-- **Email**: support@ubercli.com
-- **Discussions**: [GitHub Discussions](https://github.com/ubercodex/ubercli/discussions)
+- **Issues**: [GitHub Issues](https://github.com/ubercodex/orvocli/issues)
+- **Email**: support@orvocli.com
+- **Discussions**: [GitHub Discussions](https://github.com/ubercodex/orvocli/discussions)
 
 ## 🎉 Example Plugins
 

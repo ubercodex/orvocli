@@ -4,13 +4,13 @@ import { type Settings, type ProviderName, DEFAULT_SETTINGS } from './types/sett
 import { type PluginStore, DEFAULT_PLUGIN_STORE } from './types/plugins.js';
 import { encryptKey, decryptKey } from './crypto.js';
 
-const UBERCLI_DIR = '.ubercli';
+const ORVO_DIR = '.orvo';
 const SETTINGS_FILE = 'settings.json';
 const PLUGINS_FILE = 'plugins.json';
 const PROVIDER_NAMES: ProviderName[] = ['anthropic', 'google', 'openai'];
 
 function getSettingsPath(): string {
-	return join(process.cwd(), UBERCLI_DIR, SETTINGS_FILE);
+	return join(process.cwd(), ORVO_DIR, SETTINGS_FILE);
 }
 
 function decryptProviderKeys(settings: Settings): Settings {
@@ -64,7 +64,7 @@ export function loadSettings(): Settings {
 }
 
 export function saveSettings(settings: Settings): void {
-	const dir = join(process.cwd(), UBERCLI_DIR);
+	const dir = join(process.cwd(), ORVO_DIR);
 	if (!existsSync(dir)) mkdirSync(dir, { recursive: true });
 	const encrypted = encryptProviderKeys(settings);
 	writeFileSync(
@@ -79,7 +79,7 @@ export function getWorkspaceName(): string {
 }
 
 function getPluginsPath(): string {
-	return join(process.cwd(), UBERCLI_DIR, PLUGINS_FILE);
+	return join(process.cwd(), ORVO_DIR, PLUGINS_FILE);
 }
 
 export function loadPluginStore(): PluginStore {
@@ -103,7 +103,7 @@ export function loadPluginStore(): PluginStore {
 }
 
 export function savePluginStore(store: PluginStore): void {
-	const dir = join(process.cwd(), UBERCLI_DIR);
+	const dir = join(process.cwd(), ORVO_DIR);
 	if (!existsSync(dir)) mkdirSync(dir, { recursive: true });
 	writeFileSync(
 		join(dir, PLUGINS_FILE),

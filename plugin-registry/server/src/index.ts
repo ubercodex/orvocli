@@ -9,7 +9,7 @@ import { pluginRoutes } from './routes/plugins.js';
 const fastify = Fastify({ logger: true });
 
 await fastify.register(cors, {
-	origin: process.env.NODE_ENV === 'production' ? 'https://ubercli.com' : '*',
+	origin: process.env.NODE_ENV === 'production' ? 'https://orvocli.com' : '*',
 });
 
 await fastify.register(jwt, {

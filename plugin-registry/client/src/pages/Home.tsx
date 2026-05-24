@@ -27,19 +27,19 @@ export default function Home() {
       <nav className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-6 py-4 bg-[#03030d]/85 backdrop-blur-xl border-b border-cyan-500/8">
         <div className="flex items-center gap-3">
           <div className="w-8 h-8 rounded-lg flex items-center justify-center bg-gradient-to-br from-cyan-500 to-violet-600">
-            <span className="text-white font-bold text-sm font-mono">U</span>
+            <span className="text-white font-bold text-sm font-mono">O</span>
           </div>
-          <span className="font-bold text-white tracking-tight">Uber CLI</span>
+          <span className="font-bold text-white tracking-tight">Orvo</span>
           <span className="px-3 py-1 text-xs font-semibold uppercase tracking-wider bg-cyan-500/10 text-cyan-400 border border-cyan-500/20 rounded-full">
             Plugin Registry
           </span>
         </div>
         <div className="flex items-center gap-4">
           <Link to="/browse" className="text-sm text-slate-400 hover:text-cyan-400 transition-colors hidden sm:block">Browse</Link>
-          <a href="https://github.com/ubercodex/ubercli/issues" target="_blank" rel="noopener noreferrer" className="text-sm text-slate-400 hover:text-cyan-400 transition-colors hidden sm:block">Issues</a>
+          <a href="https://github.com/ubercodex/orvocli/issues" target="_blank" rel="noopener noreferrer" className="text-sm text-slate-400 hover:text-cyan-400 transition-colors hidden sm:block">Issues</a>
           <a href="#contact" className="text-sm text-slate-400 hover:text-cyan-400 transition-colors hidden sm:block">Contact</a>
           <a
-            href="https://github.com/ubercodex/ubercli"
+            href="https://github.com/ubercodex/orvocli"
             target="_blank"
             rel="noopener noreferrer"
             className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium bg-white/6 border border-white/10 text-slate-200 hover:bg-white/10 transition-all"
@@ -68,11 +68,11 @@ export default function Home() {
             <h1 className="text-5xl sm:text-6xl lg:text-7xl font-black leading-none tracking-tight mb-6">
               <span className="text-white">Plugin</span><br/>
               <span className="bg-gradient-to-r from-cyan-300 via-indigo-400 to-purple-400 bg-clip-text text-transparent">Registry</span><br/>
-              <span className="text-white">for Uber CLI</span>
+              <span className="text-white">for Orvo</span>
             </h1>
 
             <p className="text-slate-400 text-lg leading-relaxed mb-8 max-w-lg">
-              Discover and share custom AI tools for Uber CLI. Describe what you need, AI generates the code, and you can publish it here for everyone.
+              Discover and share custom AI tools for Orvo. Describe what you need, AI generates the code, and you can publish it here for everyone.
             </p>
 
             <div className="flex flex-wrap gap-4">
@@ -83,7 +83,7 @@ export default function Home() {
                 Browse Plugins →
               </Link>
               <a
-                href="https://github.com/ubercodex/ubercli"
+                href="https://github.com/ubercodex/orvocli"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="flex items-center gap-2 px-6 py-3 rounded-xl font-semibold text-sm bg-white/5 border border-white/12 text-slate-200 hover:bg-white/9 transition-all"
@@ -107,11 +107,11 @@ export default function Home() {
                 <div className="w-3 h-3 rounded-full bg-red-500"></div>
                 <div className="w-3 h-3 rounded-full bg-yellow-500"></div>
                 <div className="w-3 h-3 rounded-full bg-green-500"></div>
-                <span className="ml-2 text-xs text-slate-500 font-mono">uber /plugins</span>
+                <span className="ml-2 text-xs text-slate-500 font-mono">orvo /plugins</span>
               </div>
               <div className="p-5 font-mono text-sm leading-7">
-                <div><span className="text-slate-500">$</span> <span className="text-cyan-400">uber</span></div>
-                <div className="text-slate-500 text-xs">Uber CLI v0.1.2 · claude-sonnet-4-5</div>
+                <div><span className="text-slate-500">$</span> <span className="text-cyan-400">orvo</span></div>
+                <div className="text-slate-500 text-xs">Orvo v0.1.2 · claude-sonnet-4-5</div>
                 <div className="mt-2"><span className="text-slate-500">&gt;</span> <span className="text-white">/plugins</span></div>
                 <div className="text-slate-500 text-xs mt-1">→ + New tool</div>
                 <div className="mt-2 text-slate-300 text-xs">Describe what the tool should do:</div>
@@ -146,12 +146,12 @@ export default function Home() {
         </div>
       </div>
 
-      {/* What is Uber CLI */}
+      {/* What is Orvo */}
       <section id="about" className="py-28 px-6">
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-16 reveal opacity-0 translate-y-5 transition-all duration-600">
             <div className="inline-block px-4 py-2 mb-4 bg-cyan-500/8 text-cyan-400 border border-cyan-500/20 rounded-full text-xs font-semibold uppercase tracking-wider">
-              What is Uber CLI
+              What is Orvo
             </div>
             <h2 className="text-4xl sm:text-5xl font-black text-white mb-4">Your terminal. Supercharged.</h2>
             <p className="text-slate-400 text-lg max-w-2xl mx-auto">
@@ -258,7 +258,7 @@ export default function Home() {
 
           <div className="grid md:grid-cols-2 gap-6 reveal opacity-0 translate-y-5 transition-all duration-600">
             <a
-              href="https://github.com/ubercodex/ubercli/issues"
+              href="https://github.com/ubercodex/orvocli/issues"
               target="_blank"
               rel="noopener noreferrer"
               className="bg-[#0d0d24]/60 backdrop-blur-xl border border-cyan-500/12 rounded-2xl p-8 hover:border-cyan-500/30 hover:shadow-lg hover:shadow-cyan-500/10 transition-all group"
@@ -277,7 +277,7 @@ export default function Home() {
             </a>
 
             <a
-              href="mailto:support@ubercli.com"
+              href="mailto:support@orvocli.com"
               className="bg-[#0d0d24]/60 backdrop-blur-xl border border-violet-500/12 rounded-2xl p-8 hover:border-violet-500/30 hover:shadow-lg hover:shadow-violet-500/10 transition-all group"
             >
               <div className="flex items-start gap-4">
@@ -302,24 +302,21 @@ export default function Home() {
           <div className="flex flex-col md:flex-row justify-between items-center gap-6">
             <div className="flex items-center gap-3">
               <div className="w-8 h-8 rounded-lg flex items-center justify-center bg-gradient-to-br from-cyan-500 to-violet-600">
-                <span className="text-white font-bold text-sm font-mono">U</span>
+                <span className="text-white font-bold text-sm font-mono">O</span>
               </div>
               <div>
-                <div className="font-bold text-white">Uber CLI</div>
+                <div className="font-bold text-white">Orvo</div>
                 <div className="text-xs text-slate-500">Plugin Registry</div>
               </div>
             </div>
             <div className="flex items-center gap-6 text-sm text-slate-400">
               <Link to="/browse" className="hover:text-cyan-400 transition-colors">Browse</Link>
-              <a href="https://github.com/ubercodex/ubercli" target="_blank" rel="noopener noreferrer" className="hover:text-cyan-400 transition-colors">GitHub</a>
-              <a href="https://github.com/ubercodex/ubercli/issues" target="_blank" rel="noopener noreferrer" className="hover:text-cyan-400 transition-colors">Issues</a>
+              <a href="https://github.com/ubercodex/orvocli" target="_blank" rel="noopener noreferrer" className="hover:text-cyan-400 transition-colors">GitHub</a>
+              <a href="https://github.com/ubercodex/orvocli/issues" target="_blank" rel="noopener noreferrer" className="hover:text-cyan-400 transition-colors">Issues</a>
               <a href="#contact" className="hover:text-cyan-400 transition-colors">Contact</a>
             </div>
             <div className="flex flex-col gap-1 text-xs text-slate-600 text-right">
-              <div>© 2026 Uber CLI. MIT License.</div>
-              <div className="text-slate-700">
-                ⚠️ Not affiliated with Uber Technologies Inc.
-              </div>
+              <div>© 2026 Orvo. MIT License.</div>
             </div>
           </div>
         </div>

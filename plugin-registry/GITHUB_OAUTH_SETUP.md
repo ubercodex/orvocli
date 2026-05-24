@@ -7,10 +7,10 @@ This guide explains how to set up GitHub OAuth for the plugin registry to enable
 1. Go to [GitHub Developer Settings](https://github.com/settings/developers)
 2. Click **"New OAuth App"**
 3. Fill in the application details:
-   - **Application name**: `Uber CLI Plugin Registry` (or your preferred name)
-   - **Homepage URL**: `https://ubercli.com` (or your domain)
-   - **Authorization callback URL**: `https://ubercli.com/auth/callback`
-   - **Application description**: (optional) "Plugin registry for Uber CLI"
+   - **Application name**: `Orvo Plugin Registry` (or your preferred name)
+   - **Homepage URL**: `https://orvocli.com` (or your domain)
+   - **Authorization callback URL**: `https://orvocli.com/auth/callback`
+   - **Application description**: (optional) "Plugin registry for Orvo CLI"
 
 4. Click **"Register application"**
 
@@ -47,7 +47,7 @@ NODE_ENV=production
 Edit `plugin-registry/client/.env`:
 
 ```bash
-VITE_API_URL=https://ubercli.com/api
+VITE_API_URL=https://orvocli.com/api
 VITE_GITHUB_CLIENT_ID=your_client_id_here
 ```
 

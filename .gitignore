@@ -1,7 +1,7 @@
 node_modules/
 dist/
-.ubercli/
-deploy-uber.sh
+.orvo/
+deploy-orvo.sh
 
 # Environment files (secrets)
 .env

@@ -31,10 +31,10 @@ export default function Layout({ children }: LayoutProps) {
         <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
           <Link to="/" className="flex items-center gap-3 group">
             <div className="w-8 h-8 rounded-lg flex items-center justify-center bg-gradient-to-br from-cyan-500 to-violet-600 group-hover:shadow-lg group-hover:shadow-cyan-500/30 transition-all">
-              <span className="text-white font-bold text-sm font-mono">U</span>
+              <span className="text-white font-bold text-sm font-mono">O</span>
             </div>
             <div>
-              <div className="font-bold text-white tracking-tight">Uber CLI</div>
+              <div className="font-bold text-white tracking-tight">Orvo</div>
               <div className="text-xs text-slate-500">Plugin Registry</div>
             </div>
           </Link>
@@ -136,10 +136,10 @@ export default function Layout({ children }: LayoutProps) {
             <div className="md:col-span-2">
               <div className="flex items-center gap-3 mb-4">
                 <div className="w-8 h-8 rounded-lg flex items-center justify-center bg-gradient-to-br from-cyan-500 to-violet-600">
-                  <span className="text-white font-bold text-sm font-mono">U</span>
+                  <span className="text-white font-bold text-sm font-mono">O</span>
                 </div>
                 <div>
-                  <div className="font-bold text-white">Uber CLI</div>
+                  <div className="font-bold text-white">Orvo</div>
                   <div className="text-xs text-slate-500">Plugin Registry</div>
                 </div>
               </div>
@@ -156,7 +156,7 @@ export default function Layout({ children }: LayoutProps) {
                 <li><Link to="/" className="text-slate-400 hover:text-cyan-400 transition-colors">Home</Link></li>
                 <li><Link to="/registry" className="text-slate-400 hover:text-cyan-400 transition-colors">Browse Registry</Link></li>
                 <li><Link to="/contact" className="text-slate-400 hover:text-cyan-400 transition-colors">Contact</Link></li>
-                <li><a href="https://github.com/ubercodex/ubercli#readme" target="_blank" rel="noopener noreferrer" className="text-slate-400 hover:text-cyan-400 transition-colors">Documentation</a></li>
+                <li><a href="https://github.com/ubercodex/orvocli#readme" target="_blank" rel="noopener noreferrer" className="text-slate-400 hover:text-cyan-400 transition-colors">Documentation</a></li>
               </ul>
             </div>
 
@@ -164,10 +164,10 @@ export default function Layout({ children }: LayoutProps) {
             <div>
               <h3 className="text-white font-semibold mb-3 text-sm">Community</h3>
               <ul className="space-y-2 text-sm">
-                <li><a href="https://github.com/ubercodex/ubercli" target="_blank" rel="noopener noreferrer" className="text-slate-400 hover:text-cyan-400 transition-colors">GitHub</a></li>
-                <li><a href="https://github.com/ubercodex/ubercli/issues" target="_blank" rel="noopener noreferrer" className="text-slate-400 hover:text-cyan-400 transition-colors">Issues</a></li>
-                <li><a href="https://github.com/ubercodex/ubercli/discussions" target="_blank" rel="noopener noreferrer" className="text-slate-400 hover:text-cyan-400 transition-colors">Discussions</a></li>
-                <li><a href="mailto:support@ubercli.com" className="text-slate-400 hover:text-cyan-400 transition-colors">Email</a></li>
+                <li><a href="https://github.com/ubercodex/orvocli" target="_blank" rel="noopener noreferrer" className="text-slate-400 hover:text-cyan-400 transition-colors">GitHub</a></li>
+                <li><a href="https://github.com/ubercodex/orvocli/issues" target="_blank" rel="noopener noreferrer" className="text-slate-400 hover:text-cyan-400 transition-colors">Issues</a></li>
+                <li><a href="https://github.com/ubercodex/orvocli/discussions" target="_blank" rel="noopener noreferrer" className="text-slate-400 hover:text-cyan-400 transition-colors">Discussions</a></li>
+                <li><a href="mailto:support@orvocli.com" className="text-slate-400 hover:text-cyan-400 transition-colors">Email</a></li>
               </ul>
             </div>
           </div>
@@ -175,10 +175,7 @@ export default function Layout({ children }: LayoutProps) {
           {/* Bottom Bar */}
           <div className="pt-8 border-t border-cyan-500/8 flex flex-col md:flex-row justify-between items-center gap-4 text-sm">
             <div className="flex flex-col gap-2 text-slate-500">
-              <div>© 2026 Uber CLI. Released under the MIT License.</div>
-              <div className="text-xs text-slate-600">
-                ⚠️ Not affiliated with Uber Technologies Inc. or any related entities.
-              </div>
+              <div>© 2026 Orvo. Released under the MIT License.</div>
             </div>
             <div className="flex items-center gap-4 text-slate-500">
               <span>Built with ❤️ by the community</span>

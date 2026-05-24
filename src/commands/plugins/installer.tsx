@@ -19,7 +19,7 @@ export default function Installer({ pluginName, store, onSave, onBack }: Install
 	useEffect(() => {
 		const installPlugin = async () => {
 			try {
-				const apiUrl = process.env.UBER_REGISTRY_URL || 'https://ubercli.com/api';
+				const apiUrl = process.env.ORVO_REGISTRY_URL || 'https://orvocli.com/api';
 				
 				// Parse plugin name (format: author-pluginname)
 				const parts = pluginName.split('-');

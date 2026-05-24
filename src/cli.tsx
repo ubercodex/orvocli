@@ -9,7 +9,7 @@ process.on('unhandledRejection', () => { /* handled inside React components */ }
 const args = process.argv.slice(2);
 const command = args.join(' ');
 
-// Check if it's a direct command (e.g., uber /plugins install name)
+// Check if it's a direct command (e.g., orvo /plugins install name)
 let initialCommand: string | undefined;
 if (command.startsWith('/plugins install ') || command.startsWith('/settings') || command.startsWith('/memory')) {
 	initialCommand = command;

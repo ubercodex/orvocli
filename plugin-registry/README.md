@@ -1,6 +1,6 @@
-# UberCLI Plugin Registry
+# Orvo Plugin Registry
 
-Central registry for sharing UberCLI plugins. Browse, install, and publish plugins at **ubercli.com**.
+Central registry for sharing Orvo plugins. Browse, install, and publish plugins at **orvocli.com**.
 
 ## Structure
 
@@ -33,7 +33,7 @@ npm run dev
 ```bash
 cd plugin-registry/deploy
 chmod +x deploy.sh
-sudo ./deploy.sh ubercli.com your-email@example.com
+sudo ./deploy.sh orvocli.com your-email@example.com
 ```
 
 This will:
@@ -49,7 +49,7 @@ After pushing changes to GitHub:
 
 ```bash
 # On your VPS
-sudo /var/www/ubercli-registry/update.sh
+sudo /var/www/orvocli-registry/update.sh
 ```
 
 See [MAINTENANCE.md](./MAINTENANCE.md) for detailed maintenance guide.
@@ -90,6 +90,6 @@ PORT=3001
 
 ### Client (.env)
 ```
-VITE_API_URL=https://ubercli.com/api
+VITE_API_URL=https://orvocli.com/api
 VITE_GITHUB_CLIENT_ID=your-github-oauth-app-id
 ```

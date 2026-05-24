@@ -1,14 +1,14 @@
 #!/bin/bash
 set -e
 
-echo "🔄 UberCLI Plugin Registry Update Script"
+echo "🔄 Orvo Plugin Registry Update Script"
 echo "========================================"
 echo ""
 
 # Configuration
-REPO_DIR="/opt/ubercli"
-APP_DIR="/var/www/ubercli-registry"
-SERVICE_NAME="ubercli-registry"
+REPO_DIR="/opt/orvocli"
+APP_DIR="/var/www/orvocli-registry"
+SERVICE_NAME="orvocli-registry"
 
 # Check if running as root
 if [ "$EUID" -ne 0 ]; then 
@@ -20,7 +20,7 @@ fi
 if [ ! -d "$REPO_DIR" ]; then
   echo "❌ Repository not found at $REPO_DIR"
   echo "Please clone the repository first:"
-  echo "  git clone https://github.com/ubercodex/ubercli.git /opt/ubercli"
+  echo "  git clone https://github.com/ubercodex/orvocli.git /opt/orvocli"
   exit 1
 fi
 
@@ -28,7 +28,7 @@ fi
 if [ ! -d "$APP_DIR" ]; then
   echo "❌ Application not found at $APP_DIR"
   echo "Please run the initial deployment first:"
-  echo "  cd /opt/ubercli/plugin-registry/deploy"
+  echo "  cd /opt/orvocli/plugin-registry/deploy"
   echo "  sudo ./deploy.sh <domain> <email>"
   exit 1
 fi
@@ -148,7 +148,7 @@ chmod -R 755 "$APP_DIR/client/dist"
 
 # Restart service
 echo "🔄 Restarting service..."
-systemctl restart ubercli-registry
+systemctl restart orvocli-registry
 
 # Reload nginx to pick up new static files
 echo "🔄 Reloading nginx..."
@@ -156,12 +156,12 @@ nginx -t && systemctl reload nginx
 
 # Verify service status
 echo "✅ Checking service status..."
-if systemctl is-active --quiet ubercli-registry; then
+if systemctl is-active --quiet orvocli-registry; then
   echo "✅ Service is running"
-  systemctl status ubercli-registry --no-pager -l
+  systemctl status orvocli-registry --no-pager -l
 else
   echo "❌ Service failed to start"
-  journalctl -u ubercli-registry -n 50 --no-pager
+  journalctl -u orvocli-registry -n 50 --no-pager
   echo "📜 Error logs:"
   journalctl -u $SERVICE_NAME -n 20 --no-pager
   echo ""

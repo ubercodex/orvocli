@@ -22,25 +22,25 @@ Hidden files (.*), source maps (.map), admin panels
 ```
 
 **What this prevents:**
-- ❌ `https://ubercli.com/server/.env` → 403 Forbidden
-- ❌ `https://ubercli.com/server/data/registry.db` → 403 Forbidden
-- ❌ `https://ubercli.com/deploy/deploy.sh` → 403 Forbidden
-- ❌ `https://ubercli.com/.git/config` → 403 Forbidden
+- ❌ `https://orvocli.com/server/.env` → 403 Forbidden
+- ❌ `https://orvocli.com/server/data/registry.db` → 403 Forbidden
+- ❌ `https://orvocli.com/deploy/deploy.sh` → 403 Forbidden
+- ❌ `https://orvocli.com/.git/config` → 403 Forbidden
 
 ### 2. **File System Permissions**
 
 ```bash
 # .env files - root only
-chmod 600 /var/www/ubercli-registry/server/.env
+chmod 600 /var/www/orvocli-registry/server/.env
 
 # Database directory - root only
-chmod 700 /var/www/ubercli-registry/server/data/
+chmod 700 /var/www/orvocli-registry/server/data/
 
 # Source code - root only
-chmod 600 /var/www/ubercli-registry/server/src/*
+chmod 600 /var/www/orvocli-registry/server/src/*
 
 # Public files - world readable
-chmod 755 /var/www/ubercli-registry/client/dist/
+chmod 755 /var/www/orvocli-registry/client/dist/
 ```
 
 **What this prevents:**
@@ -111,7 +111,7 @@ JWT_SECRET=$(openssl rand -base64 32)
 
 ### 8. **Database Location**
 
-SQLite database is stored in `/var/www/ubercli-registry/server/data/registry.db`
+SQLite database is stored in `/var/www/orvocli-registry/server/data/registry.db`
 
 **Protected by:**
 - Nginx path blocking (`/server/` → 403)
@@ -123,14 +123,14 @@ SQLite database is stored in `/var/www/ubercli-registry/server/data/registry.db`
 ### Scenario 1: "I know the source code, I'll download the .env file"
 
 ```bash
-curl https://ubercli.com/server/.env
+curl https://orvocli.com/server/.env
 # → 403 Forbidden (Nginx blocks /server/ path)
 ```
 
 ### Scenario 2: "I'll try to access the database directly"
 
 ```bash
-curl https://ubercli.com/server/data/registry.db
+curl https://orvocli.com/server/data/registry.db
 # → 403 Forbidden (Nginx blocks .db extension + /server/ path)
 
 # Even if they bypass Nginx somehow:
@@ -164,7 +164,7 @@ curl http://your-vps-ip:3001/api/plugins
 ### 1. **Keep Dependencies Updated**
 
 ```bash
-cd /var/www/ubercli-registry/server
+cd /var/www/orvocli-registry/server
 npm audit
 npm update
 ```
@@ -179,7 +179,7 @@ tail -f /var/log/nginx/access.log
 tail -f /var/log/nginx/error.log
 
 # Server logs
-journalctl -u ubercli-registry -f
+journalctl -u orvocli-registry -f
 ```
 
 ### 3. **Fail2Ban (Optional)**
@@ -195,7 +195,7 @@ apt-get install fail2ban
 
 ```bash
 # Backup database
-cp /var/www/ubercli-registry/server/data/registry.db ~/backups/registry-$(date +%Y%m%d).db
+cp /var/www/orvocli-registry/server/data/registry.db ~/backups/registry-$(date +%Y%m%d).db
 ```
 
 ### 5. **SSL/TLS Only**
@@ -214,7 +214,7 @@ Never commit `.env` files to git:
 
 ## Reporting Security Issues
 
-If you find a security vulnerability, please email: security@ubercli.com
+If you find a security vulnerability, please email: security@orvocli.com
 
 **Do not** open a public GitHub issue for security vulnerabilities.
 

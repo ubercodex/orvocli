@@ -45,7 +45,7 @@ export default function Registry() {
             Discover <span className="bg-gradient-to-r from-violet-400 to-purple-400 bg-clip-text text-transparent">Plugins</span>
           </h1>
           <p className="text-slate-400 text-lg max-w-2xl">
-            Browse community-built tools to extend your Uber CLI. Find plugins for APIs, automation, databases, and more.
+            Browse community-built tools to extend Orvo. Find plugins for APIs, automation, databases, and more.
           </p>
         </div>
         
@@ -90,7 +90,7 @@ export default function Registry() {
                 </div>
                 <h2 className="text-3xl font-black text-white mb-4">No Approved Plugins Yet</h2>
                 <p className="text-slate-400 text-lg mb-8 max-w-md mx-auto">
-                  The registry is waiting for its first approved plugin. Create a tool in Uber CLI and publish it here!
+                  The registry is waiting for its first approved plugin. Create a tool in Orvo and publish it here!
                 </p>
                 
                 <div className="bg-[#0d0d24]/60 backdrop-blur-xl border border-cyan-500/12 rounded-2xl p-8 mb-8">
@@ -98,11 +98,11 @@ export default function Registry() {
                   <div className="space-y-3 text-left text-sm text-slate-300">
                     <div className="flex gap-3">
                       <span className="text-cyan-400">1.</span>
-                      <span>Create a tool in Uber CLI using <code className="px-2 py-1 bg-black/30 rounded text-cyan-400">/plugins</code></span>
+                      <span>Create a tool in Orvo using <code className="px-2 py-1 bg-black/30 rounded text-cyan-400">/plugins</code></span>
                     </div>
                     <div className="flex gap-3">
                       <span className="text-cyan-400">2.</span>
-                      <span>Export it from <code className="px-2 py-1 bg-black/30 rounded text-cyan-400">.ubercli/plugins.json</code></span>
+                      <span>Export it from <code className="px-2 py-1 bg-black/30 rounded text-cyan-400">.orvo/plugins.json</code></span>
                     </div>
                     <div className="flex gap-3">
                       <span className="text-cyan-400">3.</span>
@@ -123,7 +123,7 @@ export default function Registry() {
                     📤 Publish Your Plugin
                   </Link>
                   <a
-                    href="https://github.com/ubercodex/ubercli#readme"
+                    href="https://github.com/ubercodex/orvocli#readme"
                     target="_blank"
                     rel="noopener noreferrer"
                     className="px-8 py-4 bg-white/5 border border-white/12 text-slate-200 font-semibold rounded-xl hover:bg-white/9 transition"

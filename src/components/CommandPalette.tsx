@@ -11,7 +11,7 @@ export const PALETTE_ITEMS: PaletteItem[] = [
 	{ cmd: '/settings', description: 'Open settings (theme, API keys, models)'  },
 	{ cmd: '/plugins',  description: 'Manage tools & profiles for LLM tool use' },
 	{ cmd: '/memory',   description: 'View or clear workspace memory'           },
-	{ cmd: '/exit',     description: 'Exit UBER CLI'                            },
+	{ cmd: '/exit',     description: 'Exit Orvo'                                 },
 ];
 
 interface CommandPaletteProps {

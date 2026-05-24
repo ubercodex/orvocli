@@ -1,6 +1,6 @@
 MIT License
 
-Copyright (c) 2026 UBER CLI Contributors
+Copyright (c) 2026 Orvo CLI Contributors
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -12,11 +12,11 @@ furnished to do so, subject to the following conditions:
 The above copyright notice and this permission notice shall be included in all
 copies or substantial portions of the Software.
 
-If you use UBER CLI as a foundation for your own CLI tool or project, it is
-encouraged (though not required) to acknowledge UBER CLI in your documentation,
+If you use Orvo CLI as a foundation for your own CLI tool or project, it is
+encouraged (though not required) to acknowledge Orvo CLI in your documentation,
 README, or about screen — for example:
 
-    "Built with UBER CLI — https://github.com/your-username/uber-cli"
+    "Built with Orvo CLI — https://github.com/ubercodex/orvocli"
 
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
