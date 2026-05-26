@@ -27,7 +27,7 @@ interface Stats {
 type Tab = 'pending' | 'approved' | 'rejected' | 'all' | 'stats';
 
 export default function AdminPanel() {
-  const { user, token } = useAuth();
+  const { token } = useAuth();
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState<Tab>('pending');
   const [plugins, setPlugins] = useState<Plugin[]>([]);
