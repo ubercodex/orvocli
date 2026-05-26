@@ -30,9 +30,6 @@ export default function Layout({ children }: LayoutProps) {
       <header className="fixed top-0 left-0 right-0 z-50 bg-[#03030d]/85 backdrop-blur-xl border-b border-cyan-500/8">
         <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
           <Link to="/" className="flex items-center gap-3 group">
-            <div className="w-8 h-8 rounded-lg flex items-center justify-center bg-gradient-to-br from-cyan-500 to-violet-600 group-hover:shadow-lg group-hover:shadow-cyan-500/30 transition-all">
-              <span className="text-white font-bold text-sm font-mono">O</span>
-            </div>
             <div>
               <div className="font-bold text-white tracking-tight">ZAL CLI</div>
               <div className="text-xs text-slate-500">Plugin Registry</div>
