@@ -11,7 +11,13 @@ const command = args.join(' ');
 
 // Check if it's a direct command (e.g., zal /plugins install name)
 let initialCommand: string | undefined;
-if (command.startsWith('/plugins install ') || command.startsWith('/settings') || command.startsWith('/memory')) {
+if (
+	command.startsWith('/plugins install ') || 
+	command.startsWith('/profiles install ') || 
+	command.startsWith('/profiles install-default ') ||
+	command.startsWith('/settings') || 
+	command.startsWith('/memory')
+) {
 	initialCommand = command;
 }
 

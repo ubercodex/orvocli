@@ -1,5 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Box, Text } from 'ink';
+import { useInput } from 'ink';
 import { randomBytes } from 'crypto';
 import { useTheme } from '../../context/ThemeContext.js';
 import { type PluginStore, type PluginTool, type ToolProfile } from '../../types/plugins.js';
@@ -23,8 +24,13 @@ export default function ProfileInstaller({
 	const [status, setStatus] = useState<'loading' | 'success' | 'error'>('loading');
 	const [message, setMessage] = useState('Fetching profile from registry...');
 	const [progress, setProgress] = useState('');
+	const hasRun = useRef(false);
 
 	useEffect(() => {
+		// Prevent multiple runs
+		if (hasRun.current) return;
+		hasRun.current = true;
+
 		const installProfile = async () => {
 			try {
 				const apiUrl = process.env.ZAL_REGISTRY_URL || 'https://zalcli.com/api';
@@ -61,10 +67,14 @@ export default function ProfileInstaller({
 				// Check if profile already exists
 				const existing = store.profiles.find(p => p.name === profile.name);
 				if (existing) {
-					throw new Error(`Profile "${profile.name}" already exists`);
+					setMessage(`Profile "${profile.name}" already exists. Reinstalling...`);
+					await new Promise(resolve => setTimeout(resolve, 1000)); // Show message briefly
+					// Remove the old profile so we can reinstall it
+					const filteredProfiles = store.profiles.filter(p => p.name !== profile.name);
+					store = { ...store, profiles: filteredProfiles };
 				}
 				
-				setMessage(`Installing profile with ${profile.plugins.length} plugins...`);
+				setMessage(`Installing profile "${profile.name}" with ${profile.plugins.length} plugins...`);
 				
 				// Install all plugins from the profile
 				const newTools: PluginTool[] = [];
@@ -124,25 +134,23 @@ export default function ProfileInstaller({
 				setMessage(`✅ Successfully installed profile "${profile.name}"${defaultMsg}!`);
 				setProgress(`Installed ${newTools.length} new plugins, reused ${installedPluginIds.length - newTools.length} existing`);
 				
-				// Auto-close after 3 seconds
-				setTimeout(() => {
-					onBack();
-				}, 3000);
-				
 			} catch (error: any) {
 				setStatus('error');
 				setMessage(`❌ ${error.message || 'Installation failed'}`);
 				setProgress('');
-				
-				// Auto-close after 4 seconds
-				setTimeout(() => {
-					onBack();
-				}, 4000);
 			}
 		};
 		
 		installProfile();
-	}, [profileName, store, onSave, onBack, setAsDefault]);
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, []);
+
+	// Handle key press to exit when done
+	useInput((input, key) => {
+		if (status !== 'loading' && (key.return || key.escape || input === ' ')) {
+			onBack();
+		}
+	});
 
 	const color = status === 'loading' ? theme.muted : status === 'success' ? 'green' : 'red';
 
@@ -165,6 +173,12 @@ export default function ProfileInstaller({
 			{status === 'loading' && (
 				<Box marginTop={1}>
 					<Text color={theme.muted}>Please wait...</Text>
+				</Box>
+			)}
+			
+			{status !== 'loading' && (
+				<Box marginTop={1}>
+					<Text color={theme.muted}>Press Enter, Space, or Esc to continue...</Text>
 				</Box>
 			)}
 		</Box>
