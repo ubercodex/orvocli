@@ -1,8 +1,6 @@
-```
-▀▀█ ▄▀▀▄ █   
-▄▀  █▀▀█ █   
-▀▀▀ ▀  ▀ ▀▀▀
-```
+<div align="center">
+  <img src="ZAL.jpg" alt="ZAL" width="400"/>
+</div>
 
 An AI-powered terminal assistant built with [Ink](https://github.com/vadimdemedes/ink) and TypeScript. Chat with multiple LLM providers, extend the AI with custom tools, and manage tool profiles — all from your terminal.
 
