@@ -6,6 +6,13 @@ import { initDatabase } from './db/index.js';
 import { authRoutes } from './routes/auth.js';
 import { pluginRoutes } from './routes/plugins.js';
 
+// Log environment variables on startup
+console.log('🔧 Environment check:');
+console.log('NODE_ENV:', process.env.NODE_ENV);
+console.log('ADMIN_GITHUB_USERNAMES:', process.env.ADMIN_GITHUB_USERNAMES);
+console.log('GITHUB_CLIENT_ID:', process.env.GITHUB_CLIENT_ID ? '✓ Set' : '✗ Missing');
+console.log('JWT_SECRET:', process.env.JWT_SECRET ? '✓ Set' : '✗ Missing');
+
 const fastify = Fastify({ logger: true });
 
 await fastify.register(cors, {
