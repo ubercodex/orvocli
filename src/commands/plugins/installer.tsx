@@ -67,10 +67,23 @@ export default function Installer({ pluginName, store, onSave, onBack }: Install
 					enabled: true,
 				};
 				
+				// Add tool to the active profile
+				const activeProfileId = store.activeProfileId || 'default';
+				const updatedProfiles = store.profiles.map(profile => {
+					if (profile.id === activeProfileId) {
+						return {
+							...profile,
+							toolIds: [...profile.toolIds, newTool.id],
+						};
+					}
+					return profile;
+				});
+				
 				// Add to store
 				const updatedStore: PluginStore = {
 					...store,
 					tools: [...store.tools, newTool],
+					profiles: updatedProfiles,
 				};
 				
 				onSave(updatedStore);
