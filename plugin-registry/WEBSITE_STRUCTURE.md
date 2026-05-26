@@ -6,7 +6,7 @@ The website has been restructured from a single landing page to a multi-page app
 ## Pages
 
 ### 1. **Home** (`/`)
-- **Purpose**: Introduce Orvo and its features
+- **Purpose**: Introduce ZAL and its features
 - **Content**:
   - Hero section with terminal mockup showing tool creation
   - Feature grid (Multi-Provider AI, Plugin System, Tool Profiles, etc.)
@@ -66,7 +66,7 @@ Wraps all pages with:
 ## Navigation Structure
 
 ```
-/                    → Home (About Orvo)
+/                    → Home (About ZAL)
 /registry            → Browse Plugins
 /contact             → Get in Touch
 /plugins/:author/:name → Plugin Detail

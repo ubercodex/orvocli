@@ -1,7 +1,7 @@
 node_modules/
 dist/
-.orvo/
-deploy-orvo.sh
+.zal/
+deploy-zal.sh
 
 # Environment files (secrets)
 .env

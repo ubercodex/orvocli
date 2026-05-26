@@ -6,9 +6,9 @@ import { getWorkspace } from './index.js';
 import type { ChatMessageData } from '../components/ChatMessage.js';
 
 // Two-layer memory system:
-//   1. Shared baseline at <workspace>/.orvo/memory/shared.md — facts that hold across
+//   1. Shared baseline at <workspace>/.zal/memory/shared.md — facts that hold across
 //      every branch (architecture, conventions, run commands, project structure).
-//   2. Per-branch overlay at <workspace>/.orvo/memory/<branch>.md —
+//   2. Per-branch overlay at <workspace>/.zal/memory/<branch>.md —
 //      branch-specific in-flight work, decisions, gotchas, current tasks.
 // Both are loaded into the system prompt every turn. Background updates after
 // each turn target the overlay when inside a git repo, otherwise the shared file.
@@ -18,7 +18,7 @@ import type { ChatMessageData } from '../components/ChatMessage.js';
 const execFileP = promisify(execFile);
 
 const SHARED_MEMORY_FILENAME = 'shared.md';
-const BRANCH_MEMORY_SUBDIR = path.join('.orvo', 'memory');
+const BRANCH_MEMORY_SUBDIR = path.join('.zal', 'memory');
 
 export const MEMORY_TOKEN_LIMIT = 10000;
 // Rough estimate: ~4 characters per token
@@ -128,13 +128,13 @@ async function ensureGitignore(): Promise<void> {
   } catch (err) {
     if ((err as NodeJS.ErrnoException).code !== 'ENOENT') throw err;
   }
-  const marker = '# Orvo per-branch workspace memory';
+  const marker = '# ZAL per-branch workspace memory';
   if (cur.includes(marker)) return;
   const sep = cur === '' || cur.endsWith('\n') ? '' : '\n';
   const block =
     `${sep}\n${marker}\n` +
-    `orvo-memory*.md\n` +
-    `.orvo/\n`;
+    `zal-memory*.md\n` +
+    `.zal/\n`;
   await fs.writeFile(gi, cur + block, 'utf8');
 }
 
@@ -156,8 +156,8 @@ function buildMemoryUpdatePrompt(
 ): string {
   const role =
     target === 'branch'
-      ? `the per-branch memory overlay (current branch: ${branch}) for the Orvo coding agent`
-      : `the shared workspace memory file for the Orvo coding agent`;
+      ? `the per-branch memory overlay (current branch: ${branch}) for the ZAL coding agent`
+      : `the shared workspace memory file for the ZAL coding agent`;
   const scope =
     target === 'branch'
       ? `Capture only branch-specific work: in-flight changes, decisions tied ` +

@@ -3,7 +3,7 @@
 ## Prerequisites
 
 1. **Ubuntu VPS** with root access
-2. **Domain** pointing to your VPS IP (orvocli.com)
+2. **Domain** pointing to your VPS IP (zalcli.com)
 3. **GitHub OAuth App** created at https://github.com/settings/developers
 
 ## Step 1: Create GitHub OAuth App
@@ -11,9 +11,9 @@
 1. Go to https://github.com/settings/developers
 2. Click "New OAuth App"
 3. Fill in:
-   - **Application name**: Orvo Plugin Registry
-   - **Homepage URL**: https://orvocli.com
-   - **Authorization callback URL**: https://orvocli.com/auth/callback
+   - **Application name**: ZAL Plugin Registry
+   - **Homepage URL**: https://zalcli.com
+   - **Authorization callback URL**: https://zalcli.com/auth/callback
 4. Save the **Client ID** and **Client Secret**
 
 ## Step 2: Deploy to VPS
@@ -22,14 +22,14 @@ SSH into your Ubuntu server and run:
 
 ```bash
 # Clone the repo
-git clone https://github.com/ubercodex/orvocli.git
+git clone https://github.com/ubercodex/zalcli.git
 
 # Navigate to deploy directory
-cd orvocli/plugin-registry/deploy
+cd zalcli/plugin-registry/deploy
 
 # Make script executable and run
 chmod +x deploy.sh
-sudo ./deploy.sh orvocli.com your-email@example.com
+sudo ./deploy.sh zalcli.com your-email@example.com
 ```
 
 **Important:** You must run the script from the `plugin-registry/deploy/` directory.
@@ -47,7 +47,7 @@ After deployment, edit the environment files:
 
 ```bash
 # Server .env
-sudo nano /var/www/orvocli-registry/server/.env
+sudo nano /var/www/zalcli-registry/server/.env
 ```
 
 Update:
@@ -58,7 +58,7 @@ GITHUB_CLIENT_SECRET=your_actual_client_secret
 
 ```bash
 # Client .env
-sudo nano /var/www/orvocli-registry/client/.env
+sudo nano /var/www/zalcli-registry/client/.env
 ```
 
 Update:
@@ -70,28 +70,28 @@ VITE_GITHUB_CLIENT_ID=your_actual_client_id
 
 ```bash
 # Rebuild client with new env
-cd /var/www/orvocli-registry/client
+cd /var/www/zalcli-registry/client
 npm run build
 
 # Restart server
-sudo systemctl restart orvocli-registry
+sudo systemctl restart zalcli-registry
 ```
 
 ## Step 5: Verify
 
-Visit https://orvocli.com — you should see the landing page!
+Visit https://zalcli.com — you should see the landing page!
 
 ## Useful Commands
 
 ```bash
 # Check server logs
-sudo journalctl -u orvocli-registry -f
+sudo journalctl -u zalcli-registry -f
 
 # Restart server
-sudo systemctl restart orvocli-registry
+sudo systemctl restart zalcli-registry
 
 # Check server status
-sudo systemctl status orvocli-registry
+sudo systemctl status zalcli-registry
 
 # Nginx logs
 sudo tail -f /var/log/nginx/error.log
@@ -105,13 +105,13 @@ sudo certbot renew
 ### Server won't start
 ```bash
 # Check logs
-sudo journalctl -u orvocli-registry -n 50
+sudo journalctl -u zalcli-registry -n 50
 
 # Verify .env exists
-ls -la /var/www/orvocli-registry/server/.env
+ls -la /var/www/zalcli-registry/server/.env
 
 # Test server manually
-cd /var/www/orvocli-registry/server
+cd /var/www/zalcli-registry/server
 node dist/index.js
 ```
 
@@ -124,15 +124,15 @@ sudo nginx -t
 sudo systemctl reload nginx
 
 # Re-run certbot
-sudo certbot --nginx -d orvocli.com -d www.orvocli.com
+sudo certbot --nginx -d zalcli.com -d www.zalcli.com
 ```
 
 ### Database issues
 ```bash
 # Check database file
-ls -la /var/www/orvocli-registry/server/data/
+ls -la /var/www/zalcli-registry/server/data/
 
 # Reset database (WARNING: deletes all data)
-rm /var/www/orvocli-registry/server/data/registry.db
-sudo systemctl restart orvocli-registry
+rm /var/www/zalcli-registry/server/data/registry.db
+sudo systemctl restart zalcli-registry
 ```

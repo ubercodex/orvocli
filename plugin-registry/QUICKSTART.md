@@ -47,7 +47,7 @@ Quick deploy to Ubuntu VPS:
 # From repo root
 cd plugin-registry/deploy
 chmod +x deploy.sh
-sudo ./deploy.sh orvocli.com your-email@example.com
+sudo ./deploy.sh zalcli.com your-email@example.com
 ```
 
 **Note:** Must be run from `plugin-registry/deploy/` directory.
@@ -56,8 +56,8 @@ sudo ./deploy.sh orvocli.com your-email@example.com
 
 1. Go to https://github.com/settings/developers
 2. Create new OAuth App:
-   - **Homepage**: https://orvocli.com (or http://localhost:5173 for dev)
-   - **Callback**: https://orvocli.com/auth/callback
+   - **Homepage**: https://zalcli.com (or http://localhost:5173 for dev)
+   - **Callback**: https://zalcli.com/auth/callback
 3. Copy Client ID and Secret to `.env` files
 
 ## API Testing

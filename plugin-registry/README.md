@@ -1,6 +1,6 @@
-# Orvo Plugin Registry
+# ZAL Plugin Registry
 
-Central registry for sharing Orvo plugins. Browse, install, and publish plugins at **orvocli.com**.
+Central registry for sharing ZAL plugins. Browse, install, and publish plugins at **zalcli.com**.
 
 ## Structure
 
@@ -33,7 +33,7 @@ npm run dev
 ```bash
 cd plugin-registry/deploy
 chmod +x deploy.sh
-sudo ./deploy.sh orvocli.com your-email@example.com
+sudo ./deploy.sh zalcli.com your-email@example.com
 ```
 
 This will:
@@ -49,7 +49,7 @@ After pushing changes to GitHub:
 
 ```bash
 # On your VPS
-sudo /var/www/orvocli-registry/update.sh
+sudo /var/www/zalcli-registry/update.sh
 ```
 
 See [MAINTENANCE.md](./MAINTENANCE.md) for detailed maintenance guide.
@@ -90,6 +90,6 @@ PORT=3001
 
 ### Client (.env)
 ```
-VITE_API_URL=https://orvocli.com/api
+VITE_API_URL=https://zalcli.com/api
 VITE_GITHUB_CLIENT_ID=your-github-oauth-app-id
 ```

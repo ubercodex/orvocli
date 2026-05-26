@@ -8,9 +8,9 @@ const require = createRequire(import.meta.url);
 const { version } = require('../package.json') as { version: string };
 
 const LOGO = [
-	'▄▀▀▄ █▀▀▄ █   █ ▄▀▀▄',
-	'█  █ █▄▄▀ ▀▄ ▄▀ █  █',
-	' ▀▀  ▀  ▀   ▀    ▀▀ ',
+	'▀▀█ ▄▀▀▄ █   ',
+	'▄▀  █▀▀█ █   ',
+	'▀▀▀ ▀  ▀ ▀▀▀',
 ];
 
 interface SplashProps {
@@ -69,7 +69,7 @@ export default function Splash({ workspace = DEFAULT_WORKSPACE, animated = true 
 						{row === LOGO.length - 1 && (
 							<>
 								<Text color={theme.border}>  │  </Text>
-								<Text color={theme.primary} bold>ORVO </Text>
+								<Text color={theme.primary} bold>ZAL </Text>
 								<Text color={theme.secondary} bold>v{version}</Text>
 							</>
 						)}

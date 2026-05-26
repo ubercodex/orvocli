@@ -34,7 +34,7 @@ export default function Layout({ children }: LayoutProps) {
               <span className="text-white font-bold text-sm font-mono">O</span>
             </div>
             <div>
-              <div className="font-bold text-white tracking-tight">Orvo CLI</div>
+              <div className="font-bold text-white tracking-tight">ZAL CLI</div>
               <div className="text-xs text-slate-500">Plugin Registry</div>
             </div>
           </Link>
@@ -139,7 +139,7 @@ export default function Layout({ children }: LayoutProps) {
                   <span className="text-white font-bold text-sm font-mono">O</span>
                 </div>
                 <div>
-                  <div className="font-bold text-white">Orvo CLI</div>
+                  <div className="font-bold text-white">ZAL CLI</div>
                   <div className="text-xs text-slate-500">Plugin Registry</div>
                 </div>
               </div>
@@ -156,7 +156,7 @@ export default function Layout({ children }: LayoutProps) {
                 <li><Link to="/" className="text-slate-400 hover:text-cyan-400 transition-colors">Home</Link></li>
                 <li><Link to="/registry" className="text-slate-400 hover:text-cyan-400 transition-colors">Browse Registry</Link></li>
                 <li><Link to="/contact" className="text-slate-400 hover:text-cyan-400 transition-colors">Contact</Link></li>
-                <li><a href="https://github.com/ubercodex/orvocli#readme" target="_blank" rel="noopener noreferrer" className="text-slate-400 hover:text-cyan-400 transition-colors">Documentation</a></li>
+                <li><a href="https://github.com/ubercodex/zalcli#readme" target="_blank" rel="noopener noreferrer" className="text-slate-400 hover:text-cyan-400 transition-colors">Documentation</a></li>
               </ul>
             </div>
 
@@ -164,10 +164,10 @@ export default function Layout({ children }: LayoutProps) {
             <div>
               <h3 className="text-white font-semibold mb-3 text-sm">Community</h3>
               <ul className="space-y-2 text-sm">
-                <li><a href="https://github.com/ubercodex/orvocli" target="_blank" rel="noopener noreferrer" className="text-slate-400 hover:text-cyan-400 transition-colors">GitHub</a></li>
-                <li><a href="https://github.com/ubercodex/orvocli/issues" target="_blank" rel="noopener noreferrer" className="text-slate-400 hover:text-cyan-400 transition-colors">Issues</a></li>
-                <li><a href="https://github.com/ubercodex/orvocli/discussions" target="_blank" rel="noopener noreferrer" className="text-slate-400 hover:text-cyan-400 transition-colors">Discussions</a></li>
-                <li><a href="mailto:support@orvocli.com" className="text-slate-400 hover:text-cyan-400 transition-colors">Email</a></li>
+                <li><a href="https://github.com/ubercodex/zalcli" target="_blank" rel="noopener noreferrer" className="text-slate-400 hover:text-cyan-400 transition-colors">GitHub</a></li>
+                <li><a href="https://github.com/ubercodex/zalcli/issues" target="_blank" rel="noopener noreferrer" className="text-slate-400 hover:text-cyan-400 transition-colors">Issues</a></li>
+                <li><a href="https://github.com/ubercodex/zalcli/discussions" target="_blank" rel="noopener noreferrer" className="text-slate-400 hover:text-cyan-400 transition-colors">Discussions</a></li>
+                <li><a href="mailto:support@zalcli.com" className="text-slate-400 hover:text-cyan-400 transition-colors">Email</a></li>
               </ul>
             </div>
           </div>
@@ -175,7 +175,7 @@ export default function Layout({ children }: LayoutProps) {
           {/* Bottom Bar */}
           <div className="pt-8 border-t border-cyan-500/8 flex flex-col md:flex-row justify-between items-center gap-4 text-sm">
             <div className="flex flex-col gap-2 text-slate-500">
-              <div>© 2026 Orvo CLI. Released under the MIT License.</div>
+              <div>© 2026 ZAL CLI. Released under the MIT License.</div>
             </div>
             <div className="flex items-center gap-4 text-slate-500">
               <span>Built with ❤️ by developers, for developers</span>

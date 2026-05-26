@@ -1,10 +1,10 @@
 {
-  "name": "orvo",
-  "version": "0.1.18",
-  "description": "Orvo CLI - powered by Ink",
+  "name": "zal",
+  "version": "0.1.19",
+  "description": "ZAL CLI - powered by Ink",
   "type": "module",
   "bin": {
-    "orvo": "./bin/orvo.js"
+    "zal": "./bin/zal.js"
   },
   "scripts": {
     "start": "tsx src/cli.tsx",

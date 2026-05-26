@@ -1,7 +1,7 @@
 ```
-▄▀▀▄ █▀▀▄ █   █ ▄▀▀▄
-█  █ █▄▄▀ ▀▄ ▄▀ █  █
- ▀▀  ▀  ▀   ▀    ▀▀ 
+▀▀█ ▄▀▀▄ █   
+▄▀  █▀▀█ █   
+▀▀▀ ▀  ▀ ▀▀▀
 ```
 
 An AI-powered terminal assistant built with [Ink](https://github.com/vadimdemedes/ink) and TypeScript. Chat with multiple LLM providers, extend the AI with custom tools, and manage tool profiles — all from your terminal.
@@ -17,7 +17,7 @@ Runs natively on **Windows**, **macOS**, and **Linux**.
 - **Tool profiles** — group tools into named profiles; activate a profile to restrict the AI to only those tools
 - **Themes** — 5 built-in colour themes (Ocean Blue, Matrix Green, Neon Purple, Crimson, Amber)
 - **Encrypted API keys** — keys are stored AES-256-GCM encrypted, derived from your machine identity
-- **Per-workspace settings** — settings and plugins are stored in `.orvo/` relative to your working directory
+- **Per-workspace settings** — settings and plugins are stored in `.zal/` relative to your working directory
 
 ## Requirements
 
@@ -26,8 +26,8 @@ Runs natively on **Windows**, **macOS**, and **Linux**.
 ## Installation
 
 ```bash
-git clone https://github.com/ubercodex/orvocli.git
-cd orvocli
+git clone https://github.com/ubercodex/zalcli.git
+cd zalcli
 npm install
 npm link
 ```
@@ -35,7 +35,7 @@ npm link
 Then run from anywhere:
 
 ```bash
-orvo
+zal
 ```
 
 ## Usage
@@ -78,9 +78,9 @@ npm run build # type-check + compile
 
 ## Attribution
 
-Orvo CLI is open source. If you build a tool, product, or project on top of it, a mention of **Orvo CLI** in your README, about screen, or documentation is appreciated — it helps the project grow.
+ZAL CLI is open source. If you build a tool, product, or project on top of it, a mention of **ZAL CLI** in your README, about screen, or documentation is appreciated — it helps the project grow.
 
-> _"Built with [Orvo CLI](https://github.com/ubercodex/orvocli)"_
+> _"Built with [ZAL CLI](https://github.com/ubercodex/zalcli)"_
 
 ## License
 

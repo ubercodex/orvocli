@@ -9,9 +9,9 @@ if [ -z "$DOMAIN" ] || [ -z "$EMAIL" ]; then
   echo "Usage: ./setup-ssl.sh <domain> <email> [www|nowww|auto]"
   echo ""
   echo "Examples:"
-  echo "  ./setup-ssl.sh orvocli.com admin@orvocli.com           # Auto-detect www"
-  echo "  ./setup-ssl.sh orvocli.com admin@orvocli.com www       # Force include www"
-  echo "  ./setup-ssl.sh orvocli.com admin@orvocli.com nowww    # Skip www"
+  echo "  ./setup-ssl.sh zalcli.com admin@zalcli.com           # Auto-detect www"
+  echo "  ./setup-ssl.sh zalcli.com admin@zalcli.com www       # Force include www"
+  echo "  ./setup-ssl.sh zalcli.com admin@zalcli.com nowww    # Skip www"
   exit 1
 fi
 

@@ -78,7 +78,7 @@ export function loadWorkspaceMemory(): WorkspaceMemory {
 function getBranchMemoryPathSync(branch: string): string {
 	const sanitized = branch.replace(/[^a-zA-Z0-9._-]/g, '_').replace(/_+/g, '_');
 	const { join } = require('path');
-	return join(process.cwd(), '.orvo', 'memory', `${sanitized}.md`);
+	return join(process.cwd(), '.zal', 'memory', `${sanitized}.md`);
 }
 
 // Save memory to markdown files

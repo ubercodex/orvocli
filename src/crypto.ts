@@ -11,7 +11,7 @@ const ENCODING = 'hex';
 const PREFIX = 'enc:';
 
 function getMachineKey(): Buffer {
-	const seed = `${hostname()}::${userInfo().username}::orvo`;
+	const seed = `${hostname()}::${userInfo().username}::zal`;
 	return createHash('sha256').update(seed).digest();
 }
 

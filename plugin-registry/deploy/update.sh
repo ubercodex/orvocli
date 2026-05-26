@@ -1,14 +1,14 @@
 #!/bin/bash
 set -e
 
-echo "🔄 Orvo Plugin Registry Update Script"
+echo "🔄 ZAL Plugin Registry Update Script"
 echo "========================================"
 echo ""
 
 # Configuration
-REPO_DIR="/opt/orvocli"
-APP_DIR="/var/www/orvocli-registry"
-SERVICE_NAME="orvocli-registry"
+REPO_DIR="/opt/zalcli"
+APP_DIR="/var/www/zalcli-registry"
+SERVICE_NAME="zalcli-registry"
 
 # Check if running as root
 if [ "$EUID" -ne 0 ]; then 
@@ -20,7 +20,7 @@ fi
 if [ ! -d "$REPO_DIR" ]; then
   echo "❌ Repository not found at $REPO_DIR"
   echo "Please clone the repository first:"
-  echo "  git clone https://github.com/ubercodex/orvocli.git /opt/orvocli"
+  echo "  git clone https://github.com/ubercodex/zalcli.git /opt/zalcli"
   exit 1
 fi
 
@@ -28,7 +28,7 @@ fi
 if [ ! -d "$APP_DIR" ]; then
   echo "❌ Application not found at $APP_DIR"
   echo "Please run the initial deployment first:"
-  echo "  cd /opt/orvocli/plugin-registry/deploy"
+  echo "  cd /opt/zalcli/plugin-registry/deploy"
   echo "  sudo ./deploy.sh <domain> <email>"
   exit 1
 fi
@@ -148,7 +148,7 @@ chmod -R 755 "$APP_DIR/client/dist"
 
 # Restart service
 echo "🔄 Restarting service..."
-systemctl restart orvocli-registry
+systemctl restart zalcli-registry
 
 # Reload nginx to pick up new static files
 echo "🔄 Reloading nginx..."
@@ -156,12 +156,12 @@ nginx -t && systemctl reload nginx
 
 # Verify service status
 echo "✅ Checking service status..."
-if systemctl is-active --quiet orvocli-registry; then
+if systemctl is-active --quiet zalcli-registry; then
   echo "✅ Service is running"
-  systemctl status orvocli-registry --no-pager -l
+  systemctl status zalcli-registry --no-pager -l
 else
   echo "❌ Service failed to start"
-  journalctl -u orvocli-registry -n 50 --no-pager
+  journalctl -u zalcli-registry -n 50 --no-pager
   echo "📜 Error logs:"
   journalctl -u $SERVICE_NAME -n 20 --no-pager
   echo ""

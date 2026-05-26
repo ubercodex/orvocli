@@ -6,11 +6,11 @@ EMAIL=$2
 
 if [ -z "$DOMAIN" ] || [ -z "$EMAIL" ]; then
   echo "Usage: ./deploy.sh <domain> <email>"
-  echo "Example: ./deploy.sh orvocli.com admin@orvocli.com"
+  echo "Example: ./deploy.sh zalcli.com admin@zalcli.com"
   exit 1
 fi
 
-echo "🚀 Deploying Orvo Plugin Registry to $DOMAIN"
+echo "🚀 Deploying ZAL Plugin Registry to $DOMAIN"
 
 # Update system
 echo "📦 Updating system packages..."
@@ -58,7 +58,7 @@ fi
 echo "📂 Found plugin-registry at: $REGISTRY_DIR"
 
 # Create app directory
-APP_DIR="/var/www/orvocli-registry"
+APP_DIR="/var/www/zalcli-registry"
 echo "📁 Creating app directory at $APP_DIR..."
 mkdir -p $APP_DIR
 
@@ -136,9 +136,9 @@ npm run build
 
 # Create systemd service for server
 echo "⚙️  Creating systemd service..."
-cat > /etc/systemd/system/orvocli-registry.service << EOF
+cat > /etc/systemd/system/zalcli-registry.service << EOF
 [Unit]
-Description=Orvo Plugin Registry API
+Description=ZAL Plugin Registry API
 After=network.target
 
 [Service]
@@ -156,8 +156,8 @@ EOF
 
 # Start and enable service
 systemctl daemon-reload
-systemctl enable orvocli-registry
-systemctl start orvocli-registry
+systemctl enable zalcli-registry
+systemctl start zalcli-registry
 
 echo "✅ Server service started"
 
@@ -190,7 +190,7 @@ echo "✅ File permissions secured"
 
 # Configure Nginx
 echo "⚙️  Configuring Nginx..."
-cat > /etc/nginx/sites-available/orvocli << EOF
+cat > /etc/nginx/sites-available/zalcli << EOF
 # Rate limiting zones
 limit_req_zone \$binary_remote_addr zone=api_limit:10m rate=10r/s;
 limit_req_zone \$binary_remote_addr zone=auth_limit:10m rate=5r/m;
@@ -293,7 +293,7 @@ server {
 }
 EOF
 
-ln -sf /etc/nginx/sites-available/orvocli /etc/nginx/sites-enabled/
+ln -sf /etc/nginx/sites-available/zalcli /etc/nginx/sites-enabled/
 rm -f /etc/nginx/sites-enabled/default
 
 nginx -t
@@ -315,7 +315,7 @@ else
     echo "✅ SSL certificate installed for $DOMAIN only"
   else
     echo "❌ SSL certificate installation failed"
-    echo "You can run the SSL setup later with: sudo /var/www/orvocli-registry/setup-ssl.sh $DOMAIN $EMAIL"
+    echo "You can run the SSL setup later with: sudo /var/www/zalcli-registry/setup-ssl.sh $DOMAIN $EMAIL"
   fi
 fi
 
@@ -332,17 +332,17 @@ echo ""
 echo "⚠️  NEXT STEPS:"
 echo "1. Edit $APP_DIR/server/.env and add GitHub OAuth credentials"
 echo "2. Edit $APP_DIR/client/.env and add GitHub OAuth client ID"
-echo "3. Restart the service: systemctl restart orvocli-registry"
+echo "3. Restart the service: systemctl restart zalcli-registry"
 echo "4. Rebuild client: cd $APP_DIR/client && npm run build"
 echo ""
 echo "📊 Useful commands:"
-echo "  - Check server logs: journalctl -u orvocli-registry -f"
-echo "  - Restart server: systemctl restart orvocli-registry"
-echo "  - Check server status: systemctl status orvocli-registry"
+echo "  - Check server logs: journalctl -u zalcli-registry -f"
+echo "  - Restart server: systemctl restart zalcli-registry"
+echo "  - Check server status: systemctl status zalcli-registry"
 echo "  - Nginx logs: tail -f /var/log/nginx/error.log"
 echo ""
 echo "🔄 Update application (after pushing changes to GitHub):"
-echo "  - cd /opt/orvocli && git pull"
+echo "  - cd /opt/zalcli && git pull"
 echo "  - sudo $APP_DIR/update.sh"
 echo ""
 echo "🔒 Setup/renew SSL certificate:"

@@ -89,7 +89,7 @@ export default function MyPlugins() {
               </div>
               <h2 className="text-3xl font-black text-white mb-4">No Published Plugins Yet</h2>
               <p className="text-slate-400 text-lg mb-8 max-w-md mx-auto">
-                You haven't published any plugins yet. Create a tool in Orvo, export it with the <kbd className="px-2 py-1 bg-cyan-500/20 border border-cyan-500/30 rounded text-cyan-400 font-mono">E</kbd> key, and upload it!
+                You haven't published any plugins yet. Create a tool in ZAL, export it with the <kbd className="px-2 py-1 bg-cyan-500/20 border border-cyan-500/30 rounded text-cyan-400 font-mono">E</kbd> key, and upload it!
               </p>
               
               <div className="bg-[#0d0d24]/60 backdrop-blur-xl border border-cyan-500/12 rounded-2xl p-8 mb-8">
@@ -97,7 +97,7 @@ export default function MyPlugins() {
                 <div className="space-y-3 text-left text-sm text-slate-300">
                   <div className="flex gap-3">
                     <span className="text-cyan-400 font-bold">1.</span>
-                    <span>Open Orvo and type <code className="px-2 py-1 bg-black/30 rounded text-cyan-400">/plugins</code></span>
+                    <span>Open ZAL and type <code className="px-2 py-1 bg-black/30 rounded text-cyan-400">/plugins</code></span>
                   </div>
                   <div className="flex gap-3">
                     <span className="text-cyan-400 font-bold">2.</span>
@@ -109,7 +109,7 @@ export default function MyPlugins() {
                   </div>
                   <div className="flex gap-3">
                     <span className="text-cyan-400 font-bold">4.</span>
-                    <span>Export from <code className="px-2 py-1 bg-black/30 rounded text-cyan-400">.orvo/plugins.json</code> and upload here</span>
+                    <span>Export from <code className="px-2 py-1 bg-black/30 rounded text-cyan-400">.zal/plugins.json</code> and upload here</span>
                   </div>
                 </div>
               </div>
@@ -122,7 +122,7 @@ export default function MyPlugins() {
                   📤 Publish Your First Plugin
                 </Link>
                 <a
-                  href="https://github.com/ubercodex/orvocli#readme"
+                  href="https://github.com/ubercodex/zalcli#readme"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="px-8 py-4 bg-white/5 border border-white/12 text-slate-200 font-semibold rounded-xl hover:bg-white/9 transition"

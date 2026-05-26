@@ -35,7 +35,7 @@ Preserve unchanged fields exactly. Only modify what the user asks for.
 Respond with ONLY the raw JSON — no markdown, no explanation.`;
 
 function openInEditor(code: string, toolName: string): string {
-	const tmpFile = join(tmpdir(), `orvo_tool_${toolName}_${Date.now()}.js`);
+	const tmpFile = join(tmpdir(), `zal_tool_${toolName}_${Date.now()}.js`);
 	writeFileSync(tmpFile, code, 'utf8');
 	try {
 		const editor = process.env.EDITOR ?? process.env.VISUAL ?? (process.platform === 'win32' ? 'notepad' : 'nano');

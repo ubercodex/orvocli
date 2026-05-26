@@ -39,7 +39,7 @@ export default function Browse() {
             <div className="w-8 h-8 rounded-lg flex items-center justify-center bg-gradient-to-br from-cyan-500 to-violet-600">
               <span className="text-white font-bold text-sm font-mono">O</span>
             </div>
-            <span className="font-bold text-white">Orvo</span>
+            <span className="font-bold text-white">ZAL</span>
             <span className="text-slate-500 text-sm">Plugin Registry</span>
           </Link>
         </div>
