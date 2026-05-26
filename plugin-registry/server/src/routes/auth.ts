@@ -40,6 +40,12 @@ export async function authRoutes(fastify: FastifyInstance) {
 			avatar_url: string;
 		};
 
+		// Validate GitHub user data
+		if (!githubUser.id || !githubUser.login) {
+			console.error('Invalid GitHub user data:', githubUser);
+			return reply.code(500).send({ error: 'Failed to get user info from GitHub' });
+		}
+
 		const userId = randomBytes(16).toString('hex');
 		const existing = db
 			.prepare('SELECT * FROM users WHERE github_id = ?')
