@@ -25,7 +25,7 @@ export default function MyProfiles() {
       return;
     }
 
-    fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:3001/api'}/profiles/user`, {
+    fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:3001/api'}/profiles/my`, {
       headers: {
         Authorization: `Bearer ${token}`,
       },
