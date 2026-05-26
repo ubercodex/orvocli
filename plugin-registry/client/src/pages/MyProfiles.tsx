@@ -33,7 +33,11 @@ export default function MyProfiles() {
     })
       .then(res => res.json())
       .then(data => {
-        setProfiles(data.profiles || []);
+        const profiles = (data.profiles || []).map((p: any) => ({
+          ...p,
+          tags: typeof p.tags === 'string' ? JSON.parse(p.tags) : p.tags,
+        }));
+        setProfiles(profiles);
         setLoading(false);
       })
       .catch(() => setLoading(false));

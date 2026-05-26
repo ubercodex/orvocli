@@ -31,7 +31,11 @@ export default function ProfileDetail() {
     fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:3001/api'}/profiles/${author}/${name}`)
       .then(res => res.json())
       .then(data => {
-        setProfile(data);
+        const profile = {
+          ...data,
+          tags: typeof data.tags === 'string' ? JSON.parse(data.tags) : data.tags,
+        };
+        setProfile(profile);
         setLoading(false);
       })
       .catch(() => setLoading(false));
