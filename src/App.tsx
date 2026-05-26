@@ -5,6 +5,7 @@ import SettingsCommand from './commands/settings/index.js';
 import ChatCommand from './commands/chat/index.js';
 import PluginsCommand from './commands/plugins/index.js';
 import Installer from './commands/plugins/installer.js';
+import ProfileInstaller from './commands/plugins/profileInstaller.js';
 import MemoryCommand from './commands/memory/index.js';
 import { type Settings, THEMES } from './types/settings.js';
 import { type PluginStore } from './types/plugins.js';
@@ -13,7 +14,7 @@ import { ThemeContext } from './context/ThemeContext.js';
 import { loadSettings, saveSettings, getWorkspaceName, loadPluginStore, savePluginStore } from './store.js';
 import { loadWorkspaceMemory, saveWorkspaceMemory } from './memory.js';
 
-type Overlay = null | 'settings' | 'plugins' | 'plugin-install' | 'memory';
+type Overlay = null | 'settings' | 'plugins' | 'plugin-install' | 'profile-install' | 'memory';
 
 interface AppProps {
 	initialCommand?: string;
@@ -27,6 +28,8 @@ export default function App({ initialCommand }: AppProps = {}): React.JSX.Elemen
 	const [memory, setMemory] = useState<WorkspaceMemory>(() => loadWorkspaceMemory());
 	const [hasTyped, setHasTyped] = useState(false);
 	const [pluginToInstall, setPluginToInstall] = useState<string>('');
+	const [profileToInstall, setProfileToInstall] = useState<string>('');
+	const [setProfileAsDefault, setSetProfileAsDefault] = useState(false);
 	const workspaceName = getWorkspaceName();
 
 	// Handle initial command from CLI args
@@ -59,6 +62,24 @@ export default function App({ initialCommand }: AppProps = {}): React.JSX.Elemen
 			if (pluginName) {
 				setOverlay('plugin-install');
 				setPluginToInstall(pluginName);
+			}
+			return;
+		}
+		if (cmd.startsWith('/profiles install ')) {
+			const profileName = cmd.replace('/profiles install ', '').trim();
+			if (profileName) {
+				setOverlay('profile-install');
+				setProfileToInstall(profileName);
+				setSetProfileAsDefault(false);
+			}
+			return;
+		}
+		if (cmd.startsWith('/profiles install-default ')) {
+			const profileName = cmd.replace('/profiles install-default ', '').trim();
+			if (profileName) {
+				setOverlay('profile-install');
+				setProfileToInstall(profileName);
+				setSetProfileAsDefault(true);
 			}
 			return;
 		}
@@ -110,6 +131,20 @@ export default function App({ initialCommand }: AppProps = {}): React.JSX.Elemen
 					store={pluginStore}
 					onSave={handleSavePluginStore}
 					onBack={() => setOverlay(null)}
+				/>
+			</ThemeContext.Provider>
+		);
+	}
+
+	if (overlay === 'profile-install') {
+		return (
+			<ThemeContext.Provider value={theme}>
+				<ProfileInstaller
+					profileName={profileToInstall}
+					store={pluginStore}
+					onSave={handleSavePluginStore}
+					onBack={() => setOverlay(null)}
+					setAsDefault={setProfileAsDefault}
 				/>
 			</ThemeContext.Provider>
 		);

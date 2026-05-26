@@ -5,6 +5,7 @@ import jwt from '@fastify/jwt';
 import { initDatabase } from './db/index.js';
 import { authRoutes } from './routes/auth.js';
 import { pluginRoutes } from './routes/plugins.js';
+import { profileRoutes } from './routes/profiles.js';
 
 // Log environment variables on startup
 console.log('🔧 Environment check:');
@@ -35,6 +36,7 @@ initDatabase();
 
 await fastify.register(authRoutes, { prefix: '/api' });
 await fastify.register(pluginRoutes, { prefix: '/api' });
+await fastify.register(profileRoutes, { prefix: '/api' });
 
 fastify.get('/health', async () => ({ status: 'ok' }));
 
