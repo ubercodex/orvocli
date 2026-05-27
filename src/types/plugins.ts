@@ -17,6 +17,7 @@ export interface PluginTool {
 	enabled: boolean;
 	params: ToolParam[];
 	code?: string;
+	version?: string;
 }
 
 export interface ToolProfile {

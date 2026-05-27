@@ -43,9 +43,9 @@ export default function Installer({ pluginName, store, onSave, onBack }: Install
 				
 				const plugin = await response.json();
 				
-				// Check if plugin is approved
+				// Check if plugin is approved (only install approved plugins)
 				if (plugin.status !== 'approved') {
-					throw new Error(`Plugin "${pluginName}" is not approved yet (status: ${plugin.status})`);
+					throw new Error(`Plugin "${pluginName}" is not approved yet (status: ${plugin.status}). Only approved plugins can be installed.`);
 				}
 				
 				// Check if already installed
@@ -65,6 +65,7 @@ export default function Installer({ pluginName, store, onSave, onBack }: Install
 					code: plugin.code,
 					kind: 'custom',
 					enabled: true,
+					version: plugin.version,
 				};
 				
 				// Add tool to the active profile
@@ -89,7 +90,7 @@ export default function Installer({ pluginName, store, onSave, onBack }: Install
 				onSave(updatedStore);
 				
 				setStatus('success');
-				setMessage(`✅ Successfully installed "${plugin.name}"!`);
+				setMessage(`✅ Successfully installed "${plugin.name}" v${plugin.version}!`);
 				
 				// Auto-close after 2 seconds
 				setTimeout(() => {

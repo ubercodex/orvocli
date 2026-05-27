@@ -101,6 +101,7 @@ export default function ProfileInstaller({
 						code: plugin.code,
 						kind: 'custom',
 						enabled: true,
+						version: plugin.version,
 					};
 					
 					newTools.push(newTool);

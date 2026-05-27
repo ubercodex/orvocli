@@ -100,6 +100,7 @@ export default function ToolList({ store, onSave, onEdit, onNew, onBack }: ToolL
 							<Text color={active ? theme.secondary : theme.border} bold>{active ? '›' : ' '}</Text>
 							<Text color={t.enabled ? '#4ade80' : theme.muted}>{t.enabled ? '●' : '○'}</Text>
 							<Text color={active ? theme.accent : theme.primary} bold>{t.name.padEnd(20)}</Text>
+							{t.version && <Text color={theme.muted}>v{t.version} </Text>}
 							<Text color={theme.muted}>{t.kind === 'builtin' ? '[builtin]' : '[custom] '}</Text>
 							<Text color={active ? theme.secondary : theme.muted}>{t.description}</Text>
 						</Box>

@@ -106,48 +106,91 @@ export async function pluginRoutes(fastify: FastifyInstance) {
 
 	fastify.get('/plugins/:author/:name', async (request, reply) => {
 		const { author, name } = request.params as { author: string; name: string };
+		const { version } = request.query as { version?: string };
 
-		const row = db.prepare('SELECT * FROM plugins WHERE author = ? AND name = ?').get(author, name) as
+		// Get plugin metadata
+		const pluginRow = db.prepare('SELECT * FROM plugins WHERE author = ? AND name = ?').get(author, name) as
 			| {
 					id: string;
 					author: string;
 					name: string;
-					version: string;
 					description: string;
-					code: string;
-					parameters: string;
 					tags: string;
 					model?: string;
 					downloads: number;
-					status: string;
 					created_at: string;
 					updated_at: string;
 			  }
 			| undefined;
 
-		if (!row) {
+		if (!pluginRow) {
 			return reply.code(404).send({ error: 'Plugin not found' });
 		}
 
-		db.prepare('UPDATE plugins SET downloads = downloads + 1 WHERE id = ?').run(row.id);
+		// Get specific version or latest approved version
+		let versionRow;
+		if (version) {
+			versionRow = db.prepare('SELECT * FROM plugin_versions WHERE plugin_id = ? AND version = ?').get(pluginRow.id, version);
+		} else {
+			// Get latest approved version
+			versionRow = db.prepare(`
+				SELECT * FROM plugin_versions 
+				WHERE plugin_id = ? AND status = 'approved' 
+				ORDER BY created_at DESC 
+				LIMIT 1
+			`).get(pluginRow.id);
+		}
 
-		const profileCount = db.prepare('SELECT COUNT(*) as count FROM profile_plugins WHERE plugin_id = ?').get(row.id) as { count: number };
+		if (!versionRow) {
+			return reply.code(404).send({ error: version ? `Version ${version} not found` : 'No approved version available' });
+		}
 
-		const plugin: Plugin = {
-			id: row.id,
-			author: row.author,
-			name: row.name,
-			version: row.version,
-			description: row.description,
-			code: row.code,
-			parameters: JSON.parse(row.parameters) as PluginParameter[],
-			tags: JSON.parse(row.tags) as string[],
-			model: row.model,
-			downloads: row.downloads + 1,
+		const versionData = versionRow as {
+			id: string;
+			plugin_id: string;
+			version: string;
+			code: string;
+			parameters: string;
+			status: string;
+			approved_by?: string;
+			approved_at?: string;
+			created_at: string;
+		};
+
+		// Increment download counter
+		db.prepare('UPDATE plugins SET downloads = downloads + 1 WHERE id = ?').run(pluginRow.id);
+
+		const profileCount = db.prepare('SELECT COUNT(*) as count FROM profile_plugins WHERE plugin_id = ?').get(pluginRow.id) as { count: number };
+
+		// Get all available versions
+		const allVersions = db.prepare(`
+			SELECT version, status, created_at, approved_at 
+			FROM plugin_versions 
+			WHERE plugin_id = ? 
+			ORDER BY created_at DESC
+		`).all(pluginRow.id) as Array<{ version: string; status: string; created_at: string; approved_at?: string }>;
+
+		const plugin: Plugin & { availableVersions?: Array<{ version: string; status: string; createdAt: string; approvedAt?: string }> } = {
+			id: pluginRow.id,
+			author: pluginRow.author,
+			name: pluginRow.name,
+			version: versionData.version,
+			description: pluginRow.description,
+			code: versionData.code,
+			parameters: JSON.parse(versionData.parameters) as PluginParameter[],
+			tags: JSON.parse(pluginRow.tags) as string[],
+			model: pluginRow.model,
+			downloads: pluginRow.downloads + 1,
 			profileCount: profileCount.count,
-			createdAt: row.created_at,
-			updatedAt: row.updated_at,
-			status: row.status as 'pending' | 'approved' | 'rejected',
+			createdAt: pluginRow.created_at,
+			updatedAt: pluginRow.updated_at,
+			status: versionData.status as 'pending' | 'approved' | 'rejected',
+			availableVersions: allVersions.map(v => ({
+				version: v.version,
+				status: v.status,
+				createdAt: v.created_at,
+				approvedAt: v.approved_at,
+			})),
 		};
 
 		return plugin;
@@ -165,24 +208,36 @@ export async function pluginRoutes(fastify: FastifyInstance) {
 				return reply.code(409).send({ error: 'Plugin already exists. Use PATCH to update.' });
 			}
 
-			const id = randomBytes(16).toString('hex');
+			const pluginId = randomBytes(16).toString('hex');
+			const versionId = randomBytes(16).toString('hex');
+			
+			// Insert plugin metadata
 			db.prepare(
-				`INSERT INTO plugins (id, author, name, version, description, code, parameters, tags, model, author_id, status)
-	       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'pending')`
+				`INSERT INTO plugins (id, author, name, description, tags, model, author_id)
+	       VALUES (?, ?, ?, ?, ?, ?, ?)`
 			).run(
-				id,
+				pluginId,
 				username,
 				input.name,
-				'1.0.0',
 				input.description,
-				input.code,
-				JSON.stringify(input.parameters),
 				JSON.stringify(input.tags),
 				input.model || null,
 				userId
 			);
 
-			return { id, author: username, name: input.name, version: '1.0.0', status: 'pending', message: 'Plugin submitted for review' };
+			// Insert first version
+			db.prepare(
+				`INSERT INTO plugin_versions (id, plugin_id, version, code, parameters, status)
+	       VALUES (?, ?, ?, ?, ?, 'pending')`
+			).run(
+				versionId,
+				pluginId,
+				'1.0.0',
+				input.code,
+				JSON.stringify(input.parameters)
+			);
+
+			return { id: pluginId, author: username, name: input.name, version: '1.0.0', status: 'pending', message: 'Plugin submitted for review' };
 		} catch (error: any) {
 			console.error('Error creating plugin:', error);
 			if (error.name === 'ZodError') {
@@ -216,25 +271,51 @@ export async function pluginRoutes(fastify: FastifyInstance) {
 
 			const input = UpdatePluginSchema.parse(request.body);
 
-			const existing = db.prepare('SELECT id, version, code FROM plugins WHERE author = ? AND name = ?').get(author, name) as
-				| { id: string; version: string; code: string }
+			const plugin = db.prepare('SELECT id FROM plugins WHERE author = ? AND name = ?').get(author, name) as
+				| { id: string }
 				| undefined;
-			if (!existing) {
+			if (!plugin) {
 				return reply.code(404).send({ error: 'Plugin not found' });
+			}
+
+			// Get latest version
+			const latestVersion = db.prepare(`
+				SELECT version, code, parameters 
+				FROM plugin_versions 
+				WHERE plugin_id = ? 
+				ORDER BY created_at DESC 
+				LIMIT 1
+			`).get(plugin.id) as { version: string; code: string; parameters: string } | undefined;
+
+			if (!latestVersion) {
+				return reply.code(404).send({ error: 'No versions found for this plugin' });
 			}
 
 			const updates: string[] = ["updated_at = CURRENT_TIMESTAMP"];
 			const params: unknown[] = [];
 
-			// Auto-increment version if code changes
-			if (input.code && input.code !== existing.code) {
-				const versionParts = existing.version.split('.').map(Number);
+			let newVersionCreated = false;
+			let newVersion = latestVersion.version;
+
+			// If code changes, create new version
+			if (input.code && input.code !== latestVersion.code) {
+				const versionParts = latestVersion.version.split('.').map(Number);
 				versionParts[2]++; // Increment patch version
-				const newVersion = versionParts.join('.');
-				updates.push('version = ?');
-				params.push(newVersion);
-				updates.push('code = ?');
-				params.push(input.code);
+				newVersion = versionParts.join('.');
+
+				const versionId = randomBytes(16).toString('hex');
+				db.prepare(
+					`INSERT INTO plugin_versions (id, plugin_id, version, code, parameters, status)
+	       VALUES (?, ?, ?, ?, ?, 'pending')`
+				).run(
+					versionId,
+					plugin.id,
+					newVersion,
+					input.code,
+					input.parameters ? JSON.stringify(input.parameters) : latestVersion.parameters
+				);
+
+				newVersionCreated = true;
 			}
 
 			if (input.description) {
