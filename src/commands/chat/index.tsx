@@ -13,6 +13,7 @@ import {
 	resolveBranchKey, buildSystemPrompt, appendTurns,
 	getOrCreateBranchMemory,
 } from '../../memory.js';
+import { BASE_SYSTEM_PROMPT, buildCompleteSystemPrompt } from '../../prompts/base.js';
 import {
 	compactBranchMemory,
 } from '../../memoryCompactor.js';
@@ -107,7 +108,15 @@ export default function ChatCommand({ settings, pluginStore, onBack, onCommand, 
 			content: m.content,
 		})).filter(m => m.role === 'user' || m.role === 'assistant');
 
-		const systemPrompt = buildSystemPrompt(memory, branchKey.current);
+		// Get memory context
+		const memoryContext = buildSystemPrompt(memory, branchKey.current);
+		
+		// Get active profile's system prompt
+		const activeProfile = pluginStore.profiles.find(p => p.id === pluginStore.activeProfileId);
+		const profilePrompt = activeProfile?.systemPrompt;
+		
+		// Build complete system prompt
+		const systemPrompt = buildCompleteSystemPrompt(BASE_SYSTEM_PROMPT, profilePrompt, memoryContext);
 
 		setStatus('streaming');
 

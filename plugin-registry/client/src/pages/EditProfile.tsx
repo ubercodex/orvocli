@@ -17,6 +17,7 @@ export default function EditProfile() {
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
   const [tags, setTags] = useState('');
+  const [systemPrompt, setSystemPrompt] = useState('');
   const [selectedPlugins, setSelectedPlugins] = useState<string[]>([]);
   const [availablePlugins, setAvailablePlugins] = useState<Plugin[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
@@ -49,6 +50,7 @@ export default function EditProfile() {
         setName(profile.name);
         setDescription(profile.description);
         setTags(typeof profile.tags === 'string' ? JSON.parse(profile.tags).join(', ') : profile.tags.join(', '));
+        setSystemPrompt(profile.system_prompt || '');
         
         // Fetch profile plugins
         fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:3001/api'}/profiles/${profile.author}/${profile.name}`, {
@@ -91,6 +93,7 @@ export default function EditProfile() {
             name,
             description,
             tags: tags.split(',').map(t => t.trim()).filter(Boolean),
+            systemPrompt: systemPrompt.trim() || undefined,
             pluginIds: selectedPlugins,
           }),
         }
@@ -221,6 +224,23 @@ export default function EditProfile() {
             />
             <p className="mt-1 text-sm text-gray-500">
               Add up to 10 tags, separated by commas
+            </p>
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-300 mb-2">
+              System Prompt (Optional)
+            </label>
+            <textarea
+              value={systemPrompt}
+              onChange={(e) => setSystemPrompt(e.target.value)}
+              maxLength={2000}
+              rows={6}
+              placeholder="Add custom instructions for the AI when using this profile...&#10;&#10;Example: Focus on Windows system administration tasks. Prioritize PowerShell solutions. Always explain security implications."
+              className="w-full px-4 py-3 bg-gray-900 border border-gray-800 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-purple-500 font-mono text-sm"
+            />
+            <p className="mt-1 text-sm text-gray-500">
+              {systemPrompt.length}/2000 characters • This extends the base AI behavior with profile-specific instructions
             </p>
           </div>
 

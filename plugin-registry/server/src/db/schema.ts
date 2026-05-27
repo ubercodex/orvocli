@@ -41,6 +41,7 @@ CREATE TABLE IF NOT EXISTS profiles (
   name TEXT NOT NULL,
   description TEXT NOT NULL,
   tags TEXT NOT NULL,
+  system_prompt TEXT,
   downloads INTEGER DEFAULT 0,
   author_id TEXT NOT NULL,
   status TEXT NOT NULL DEFAULT 'pending',

@@ -24,6 +24,7 @@ export interface ToolProfile {
 	name: string;
 	description: string;
 	toolIds: string[];
+	systemPrompt?: string;
 }
 
 export interface PluginStore {

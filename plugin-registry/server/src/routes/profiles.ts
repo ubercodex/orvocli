@@ -12,6 +12,7 @@ const ProfileSchema = z.object({
 	description: z.string().min(1).max(500),
 	tags: z.array(z.string()).max(10),
 	pluginIds: z.array(z.string()).min(1).max(50),
+	systemPrompt: z.string().max(2000).optional(),
 });
 
 export async function profileRoutes(fastify: FastifyInstance) {
@@ -91,14 +92,15 @@ export async function profileRoutes(fastify: FastifyInstance) {
 		// Create profile (auto-approved since all plugins are approved)
 		// name field stores kebab-case for CLI lookup
 		db.prepare(`
-			INSERT INTO profiles (id, author, name, description, tags, author_id, status)
-			VALUES (?, ?, ?, ?, ?, ?, 'approved')
+			INSERT INTO profiles (id, author, name, description, tags, system_prompt, author_id, status)
+			VALUES (?, ?, ?, ?, ?, ?, ?, 'approved')
 		`).run(
 			profileId,
 			username,
 			kebabName,
 			data.description,
 			JSON.stringify(data.tags),
+			data.systemPrompt || null,
 			userId
 		);
 
@@ -171,9 +173,9 @@ export async function profileRoutes(fastify: FastifyInstance) {
 		// Update profile
 		db.prepare(`
 			UPDATE profiles 
-			SET name = ?, description = ?, tags = ?, updated_at = datetime('now')
+			SET name = ?, description = ?, tags = ?, system_prompt = ?, updated_at = datetime('now')
 			WHERE id = ?
-		`).run(data.name, data.description, JSON.stringify(data.tags), id);
+		`).run(data.name, data.description, JSON.stringify(data.tags), data.systemPrompt || null, id);
 
 		// Remove old plugins
 		db.prepare('DELETE FROM profile_plugins WHERE profile_id = ?').run(id);
