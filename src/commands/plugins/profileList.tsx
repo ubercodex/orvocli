@@ -9,7 +9,7 @@ interface ProfileListProps {
 	onBack: () => void;
 }
 
-type ProfileView = 'list' | 'editTools' | 'newName';
+type ProfileView = 'list' | 'editTools' | 'newName' | 'viewPrompt';
 
 export default function ProfileList({ store, onSave, onBack }: ProfileListProps): React.JSX.Element {
 	const theme = useTheme();
@@ -97,6 +97,14 @@ export default function ProfileList({ store, onSave, onBack }: ProfileListProps)
 			setCursor(Math.max(0, cursor - 1));
 			return;
 		}
+
+		if (char === 'v' || char === 'V') {
+			if (cursor >= profiles.length || !activeProfile) return;
+			if (activeProfile.systemPrompt) {
+				setView('viewPrompt');
+			}
+			return;
+		}
 	});
 
 	/* ── new profile name ── */
@@ -109,6 +117,21 @@ export default function ProfileList({ store, onSave, onBack }: ProfileListProps)
 					<Text color={theme.muted}>█</Text>
 				</Box>
 				<Box marginTop={1}><Text color={theme.muted} dimColor>Enter to confirm · Esc to cancel</Text></Box>
+			</Box>
+		);
+	}
+
+	/* ── view system prompt ── */
+	if (view === 'viewPrompt' && activeProfile && activeProfile.systemPrompt) {
+		return (
+			<Box flexDirection="column" paddingX={2} paddingY={1}>
+				<Box marginBottom={1} gap={2}>
+					<Text bold color={theme.primary}>System Prompt → {activeProfile.name}</Text>
+					<Text color={theme.muted}>Esc back</Text>
+				</Box>
+				<Box flexDirection="column" borderStyle="round" borderColor={theme.border} paddingX={2} paddingY={1}>
+					<Text color={theme.primary}>{activeProfile.systemPrompt}</Text>
+				</Box>
 			</Box>
 		);
 	}
@@ -142,24 +165,41 @@ export default function ProfileList({ store, onSave, onBack }: ProfileListProps)
 	}
 
 	/* ── profile list ── */
+	const truncatePrompt = (prompt: string | undefined, maxLength: number = 60): string => {
+		if (!prompt) return '';
+		const firstLine = prompt.split('\n')[0];
+		if (firstLine.length > maxLength) {
+			return firstLine.substring(0, maxLength) + '...';
+		}
+		return firstLine;
+	};
+
 	return (
 		<Box flexDirection="column" paddingX={2} paddingY={1}>
 			<Box marginBottom={1} gap={2}>
 				<Text bold color={theme.primary}>👤 Profiles</Text>
-				<Text color={theme.muted}>↑↓ navigate  Enter edit tools  A activate  D delete  Esc back</Text>
+				<Text color={theme.muted}>↑↓ navigate  Enter edit tools  V view prompt  A activate  D delete  Esc back</Text>
 			</Box>
 
 			<Box flexDirection="column" borderStyle="round" borderColor={theme.border} paddingX={2} paddingY={0}>
 				{profiles.map((p, i) => {
 					const active = i === cursor;
 					const isActive = p.id === store.activeProfileId;
+					const promptPreview = truncatePrompt(p.systemPrompt);
 					return (
-						<Box key={p.id} gap={2}>
-							<Text color={active ? theme.secondary : theme.border} bold>{active ? '›' : ' '}</Text>
-							<Text color={isActive ? '#4ade80' : theme.muted}>{isActive ? '★' : '☆'}</Text>
-							<Text color={active ? theme.accent : theme.primary} bold>{p.name.padEnd(18)}</Text>
-							<Text color={theme.muted}>{p.toolIds.length} tool{p.toolIds.length !== 1 ? 's' : ''}</Text>
-							{isActive && <Text color='#4ade80'> ← active</Text>}
+						<Box key={p.id} flexDirection="column">
+							<Box gap={2}>
+								<Text color={active ? theme.secondary : theme.border} bold>{active ? '›' : ' '}</Text>
+								<Text color={isActive ? '#4ade80' : theme.muted}>{isActive ? '★' : '☆'}</Text>
+								<Text color={active ? theme.accent : theme.primary} bold>{p.name.padEnd(18)}</Text>
+								<Text color={theme.muted}>{p.toolIds.length} tool{p.toolIds.length !== 1 ? 's' : ''}</Text>
+								{isActive && <Text color='#4ade80'> ← active</Text>}
+							</Box>
+							{promptPreview && (
+								<Box marginLeft={4}>
+									<Text color={theme.muted} dimColor>💬 {promptPreview}</Text>
+								</Box>
+							)}
 						</Box>
 					);
 				})}
