@@ -12,15 +12,22 @@ interface Plugin {
   status: string;
 }
 
+interface PluginData {
+  name: string;
+  description: string;
+  code: string;
+  params: Array<{ name: string; type: string; description: string; required: boolean }>;
+  tags?: string[];
+}
+
 export default function EditPlugin() {
   const { author, name } = useParams<{ author: string; name: string }>();
   const { user, token } = useAuth();
   const navigate = useNavigate();
   
   const [plugin, setPlugin] = useState<Plugin | null>(null);
-  const [description, setDescription] = useState('');
-  const [tags, setTags] = useState('');
-  const [code, setCode] = useState('');
+  const [pluginData, setPluginData] = useState<PluginData | null>(null);
+  const [file, setFile] = useState<File | null>(null);
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState('');
@@ -50,9 +57,6 @@ export default function EditPlugin() {
 
       const data = await response.json();
       setPlugin(data);
-      setDescription(data.description);
-      setTags(data.tags.join(', '));
-      setCode(data.code);
     } catch (err) {
       setError('Failed to load plugin');
     } finally {
@@ -60,30 +64,58 @@ export default function EditPlugin() {
     }
   };
 
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const selectedFile = e.target.files?.[0];
+    if (!selectedFile) return;
+
+    setFile(selectedFile);
+    setError('');
+
+    try {
+      const text = await selectedFile.text();
+      const data = JSON.parse(text) as PluginData;
+
+      if (data.name !== plugin?.name) {
+        throw new Error(`Plugin name mismatch. Expected "${plugin?.name}" but got "${data.name}"`);
+      }
+
+      if (!data.description || !data.code) {
+        throw new Error('Invalid plugin file: missing required fields');
+      }
+
+      setPluginData(data);
+    } catch (err: any) {
+      setError(err.message || 'Invalid plugin file');
+      setFile(null);
+      setPluginData(null);
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    if (!pluginData) {
+      setError('Please upload a plugin file');
+      return;
+    }
+
     setError('');
     setSubmitting(true);
 
     try {
-      const tagsArray = tags.split(',').map(t => t.trim()).filter(Boolean);
-      
-      if (tagsArray.length > 5) {
-        throw new Error('Maximum 5 tags allowed');
-      }
-
       const updates: any = {};
       
-      if (description !== plugin?.description) {
-        updates.description = description;
+      if (pluginData.description !== plugin?.description) {
+        updates.description = pluginData.description;
       }
       
-      if (tagsArray.join(',') !== plugin?.tags.join(',')) {
-        updates.tags = tagsArray;
+      const newTags = pluginData.tags || [];
+      if (JSON.stringify(newTags) !== JSON.stringify(plugin?.tags)) {
+        updates.tags = newTags;
       }
       
-      if (code !== plugin?.code) {
-        updates.code = code;
+      if (pluginData.code !== plugin?.code) {
+        updates.code = pluginData.code;
       }
 
       if (Object.keys(updates).length === 0) {
@@ -147,12 +179,25 @@ export default function EditPlugin() {
         {/* Header */}
         <div className="mb-12 animate-fade-in-down">
           <h1 className="text-6xl font-bold mb-4 bg-gradient-to-r from-purple-400 via-pink-400 to-cyan-400 bg-clip-text text-transparent leading-tight pb-2">
-            Edit Plugin
+            Update Plugin
           </h1>
           <p className="text-slate-400 text-xl">Update {plugin.name} (v{plugin.version})</p>
           <p className="text-sm text-slate-500 mt-2">
-            Note: Plugin name cannot be changed. Code changes will auto-increment the version.
+            Export your updated plugin from ZAL CLI and upload the JSON file here.
           </p>
+        </div>
+
+        {/* Quick Export Tip */}
+        <div className="mb-8 p-6 bg-[#12121a]/80 backdrop-blur-xl border border-cyan-500/20 rounded-2xl animate-fade-in-up">
+          <h3 className="text-cyan-400 font-bold mb-3 flex items-center gap-2">
+            <span>💡</span>
+            <span>Quick Export from ZAL</span>
+          </h3>
+          <div className="space-y-2 text-sm text-slate-300">
+            <p>1. Open ZAL and type <code className="px-2 py-1 bg-black/30 rounded text-cyan-400">/plugins</code></p>
+            <p>2. Select your plugin and press <kbd className="px-2 py-1 bg-cyan-500/20 border border-cyan-500/30 rounded text-cyan-400 font-mono">E</kbd> to export</p>
+            <p>3. Upload the exported JSON file below</p>
+          </div>
         </div>
 
         {error && (
@@ -162,73 +207,64 @@ export default function EditPlugin() {
         )}
 
         <form onSubmit={handleSubmit} className="space-y-6">
-          {/* Description */}
+          {/* File Upload */}
           <div className="relative group animate-fade-in-up">
             <label className="block text-sm font-semibold text-slate-300 mb-3">
-              Description *
-            </label>
-            <div className="relative">
-              <div className="absolute inset-0 bg-gradient-to-r from-purple-600/10 to-pink-600/10 rounded-xl blur group-focus-within:blur-lg transition-all"></div>
-              <textarea
-                value={description}
-                onChange={(e) => setDescription(e.target.value)}
-                required
-                maxLength={500}
-                rows={3}
-                placeholder="Describe what your plugin does..."
-                className="relative w-full px-4 py-3 bg-[#12121a]/80 backdrop-blur-xl border border-purple-500/20 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:border-purple-500/50 transition-all resize-none"
-              />
-            </div>
-            <p className="mt-2 text-sm text-slate-500">
-              {description.length}/500 characters
-            </p>
-          </div>
-
-          {/* Tags */}
-          <div className="relative group animate-fade-in-up delay-100">
-            <label className="block text-sm font-semibold text-slate-300 mb-3">
-              Tags (comma-separated, max 5)
+              Upload Updated Plugin File *
             </label>
             <div className="relative">
               <div className="absolute inset-0 bg-gradient-to-r from-purple-600/10 to-pink-600/10 rounded-xl blur group-focus-within:blur-lg transition-all"></div>
               <input
-                type="text"
-                value={tags}
-                onChange={(e) => setTags(e.target.value)}
-                placeholder="e.g., automation, productivity, utility"
-                className="relative w-full px-4 py-3 bg-[#12121a]/80 backdrop-blur-xl border border-purple-500/20 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:border-purple-500/50 transition-all"
-              />
-            </div>
-            <p className="mt-2 text-sm text-slate-500">
-              Current tags: {tags.split(',').filter(Boolean).length}/5
-            </p>
-          </div>
-
-          {/* Code */}
-          <div className="relative group animate-fade-in-up delay-200">
-            <label className="block text-sm font-semibold text-slate-300 mb-3">
-              Code (updating will auto-increment version)
-            </label>
-            <div className="relative">
-              <div className="absolute inset-0 bg-gradient-to-r from-purple-600/10 to-pink-600/10 rounded-xl blur group-focus-within:blur-lg transition-all"></div>
-              <textarea
-                value={code}
-                onChange={(e) => setCode(e.target.value)}
+                type="file"
+                accept=".json"
+                onChange={handleFileChange}
                 required
-                rows={15}
-                placeholder="Plugin code..."
-                className="relative w-full px-4 py-3 bg-[#12121a]/80 backdrop-blur-xl border border-purple-500/20 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:border-purple-500/50 transition-all resize-none font-mono text-sm"
+                className="relative w-full px-4 py-3 bg-[#12121a]/80 backdrop-blur-xl border border-purple-500/20 rounded-xl text-white file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:bg-purple-500/20 file:text-purple-300 hover:file:bg-purple-500/30 file:cursor-pointer focus:outline-none focus:border-purple-500/50 transition-all"
               />
             </div>
-            {code !== plugin.code && (
-              <p className="mt-2 text-sm text-yellow-400">
-                ⚠️ Code has been modified. Version will be auto-incremented on save.
+            {file && (
+              <p className="mt-2 text-sm text-green-400">
+                ✓ {file.name} loaded
               </p>
             )}
           </div>
 
+          {/* Preview */}
+          {pluginData && (
+            <div className="p-6 bg-[#12121a]/80 backdrop-blur-xl border border-purple-500/20 rounded-2xl animate-fade-in-up delay-100">
+              <h3 className="text-white font-bold mb-4">Preview Changes</h3>
+              <div className="space-y-3 text-sm">
+                <div>
+                  <span className="text-slate-500">Name:</span>
+                  <span className="ml-2 text-white">{pluginData.name}</span>
+                </div>
+                <div>
+                  <span className="text-slate-500">Description:</span>
+                  <span className="ml-2 text-slate-300">{pluginData.description}</span>
+                  {pluginData.description !== plugin.description && (
+                    <span className="ml-2 text-yellow-400 text-xs">• Changed</span>
+                  )}
+                </div>
+                <div>
+                  <span className="text-slate-500">Tags:</span>
+                  <span className="ml-2 text-slate-300">{(pluginData.tags || []).join(', ') || 'None'}</span>
+                  {JSON.stringify(pluginData.tags) !== JSON.stringify(plugin.tags) && (
+                    <span className="ml-2 text-yellow-400 text-xs">• Changed</span>
+                  )}
+                </div>
+                <div>
+                  <span className="text-slate-500">Code:</span>
+                  <span className="ml-2 text-slate-300">{pluginData.code.length} characters</span>
+                  {pluginData.code !== plugin.code && (
+                    <span className="ml-2 text-yellow-400 text-xs">• Changed (version will auto-increment)</span>
+                  )}
+                </div>
+              </div>
+            </div>
+          )}
+
           {/* Buttons */}
-          <div className="flex gap-4 pt-6 animate-fade-in-up delay-300">
+          <div className="flex gap-4 pt-6 animate-fade-in-up delay-200">
             <button
               type="button"
               onClick={() => navigate('/my-plugins')}
@@ -238,8 +274,8 @@ export default function EditPlugin() {
             </button>
             <button
               type="submit"
-              disabled={submitting}
-              className="flex-1 relative group"
+              disabled={submitting || !pluginData}
+              className="flex-1 relative group disabled:opacity-50 disabled:cursor-not-allowed"
             >
               <div className="absolute inset-0 bg-gradient-to-r from-purple-600 to-pink-600 rounded-xl blur opacity-50 group-hover:opacity-75 transition-opacity"></div>
               <div className="relative px-6 py-3 bg-gradient-to-r from-purple-600 to-pink-600 rounded-xl text-white font-bold shadow-lg shadow-purple-500/30 hover:shadow-purple-500/50 transition-all">
