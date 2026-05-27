@@ -413,9 +413,22 @@ export async function pluginRoutes(fastify: FastifyInstance) {
 
 	// Admin: Get pending plugins
 	fastify.get('/admin/plugins/pending', { onRequest: [fastify.authenticate, requireAdmin] }, async () => {
-		const rows = db.prepare("SELECT * FROM plugins WHERE status = 'pending' ORDER BY created_at DESC").all() as any[];
+		const rows = db.prepare(`
+			SELECT 
+				p.*,
+				pv.version,
+				pv.code,
+				pv.parameters,
+				pv.status,
+				pv.id as version_id
+			FROM plugins p
+			INNER JOIN plugin_versions pv ON p.id = pv.plugin_id
+			WHERE pv.status = 'pending'
+			ORDER BY pv.created_at DESC
+		`).all() as any[];
+		
 		const plugins: Plugin[] = rows.map((row) => ({
-			id: row.id,
+			id: row.version_id,
 			author: row.author,
 			name: row.name,
 			version: row.version,
@@ -432,65 +445,76 @@ export async function pluginRoutes(fastify: FastifyInstance) {
 		return { plugins, total: plugins.length };
 	});
 
-	// Admin: Approve plugin
+	// Admin: Approve plugin version
 	fastify.post('/admin/plugins/:id/approve', { onRequest: [fastify.authenticate, requireAdmin] }, async (request: any, reply: any) => {
 		const { id } = request.params as { id: string };
 		const username = (request.user as { userId: string; username: string }).username;
 
-		const plugin = db.prepare('SELECT id, status FROM plugins WHERE id = ?').get(id) as { id: string; status: string } | undefined;
-		if (!plugin) {
-			return reply.code(404).send({ error: 'Plugin not found' });
+		const version = db.prepare('SELECT id, status FROM plugin_versions WHERE id = ?').get(id) as { id: string; status: string } | undefined;
+		if (!version) {
+			return reply.code(404).send({ error: 'Plugin version not found' });
 		}
 
-		if (plugin.status !== 'pending') {
-			return reply.code(400).send({ error: `Plugin is already ${plugin.status}` });
+		if (version.status !== 'pending') {
+			return reply.code(400).send({ error: `Plugin version is already ${version.status}` });
 		}
 
 		db.prepare(
-			`UPDATE plugins SET status = 'approved', approved_by = ?, approved_at = datetime('now') WHERE id = ?`
+			`UPDATE plugin_versions SET status = 'approved', approved_by = ?, approved_at = CURRENT_TIMESTAMP WHERE id = ?`
 		).run(username, id);
 
-		return { success: true, message: 'Plugin approved' };
+		return { success: true, message: 'Plugin version approved' };
 	});
 
-	// Admin: Reject plugin
+	// Admin: Reject plugin version
 	fastify.post('/admin/plugins/:id/reject', { onRequest: [fastify.authenticate, requireAdmin] }, async (request: any, reply: any) => {
 		const { id } = request.params as { id: string };
 		const username = (request.user as { userId: string; username: string }).username;
 
-		const plugin = db.prepare('SELECT id, status FROM plugins WHERE id = ?').get(id) as { id: string; status: string } | undefined;
-		if (!plugin) {
-			return reply.code(404).send({ error: 'Plugin not found' });
+		const version = db.prepare('SELECT id, status FROM plugin_versions WHERE id = ?').get(id) as { id: string; status: string } | undefined;
+		if (!version) {
+			return reply.code(404).send({ error: 'Plugin version not found' });
 		}
 
-		if (plugin.status !== 'pending') {
-			return reply.code(400).send({ error: `Plugin is already ${plugin.status}` });
+		if (version.status !== 'pending') {
+			return reply.code(400).send({ error: `Plugin version is already ${version.status}` });
 		}
 
 		db.prepare(
-			`UPDATE plugins SET status = 'rejected', approved_by = ?, approved_at = datetime('now') WHERE id = ?`
+			`UPDATE plugin_versions SET status = 'rejected', approved_by = ?, approved_at = CURRENT_TIMESTAMP WHERE id = ?`
 		).run(username, id);
 
-		return { success: true, message: 'Plugin rejected' };
+		return { success: true, message: 'Plugin version rejected' };
 	});
 
-	// Admin: Get all plugins or filter by status
+	// Admin: Get all plugin versions or filter by status
 	fastify.get('/admin/plugins', { onRequest: [fastify.authenticate, requireAdmin] }, async (request: any) => {
 		const { status } = request.query as { status?: string };
 		
-		let query = 'SELECT * FROM plugins';
+		let query = `
+			SELECT 
+				p.*,
+				pv.version,
+				pv.code,
+				pv.parameters,
+				pv.status,
+				pv.id as version_id,
+				pv.created_at as version_created_at
+			FROM plugins p
+			INNER JOIN plugin_versions pv ON p.id = pv.plugin_id
+		`;
 		const params: any[] = [];
 		
 		if (status && ['pending', 'approved', 'rejected'].includes(status)) {
-			query += ' WHERE status = ?';
+			query += ' WHERE pv.status = ?';
 			params.push(status);
 		}
 		
-		query += ' ORDER BY created_at DESC';
+		query += ' ORDER BY pv.created_at DESC';
 		
 		const rows = db.prepare(query).all(...params) as any[];
 		const plugins: Plugin[] = rows.map((row) => ({
-			id: row.id,
+			id: row.version_id,
 			author: row.author,
 			name: row.name,
 			version: row.version,
@@ -499,7 +523,7 @@ export async function pluginRoutes(fastify: FastifyInstance) {
 			parameters: JSON.parse(row.parameters) as PluginParameter[],
 			tags: JSON.parse(row.tags) as string[],
 			downloads: row.downloads,
-			createdAt: row.created_at,
+			createdAt: row.version_created_at,
 			updatedAt: row.updated_at,
 			status: row.status,
 		}));
@@ -510,17 +534,17 @@ export async function pluginRoutes(fastify: FastifyInstance) {
 	// Admin: Get statistics
 	fastify.get('/admin/stats', { onRequest: [fastify.authenticate, requireAdmin] }, async () => {
 		const totalPlugins = db.prepare('SELECT COUNT(*) as count FROM plugins').get() as { count: number };
-		const pendingPlugins = db.prepare("SELECT COUNT(*) as count FROM plugins WHERE status = 'pending'").get() as { count: number };
-		const approvedPlugins = db.prepare("SELECT COUNT(*) as count FROM plugins WHERE status = 'approved'").get() as { count: number };
-		const rejectedPlugins = db.prepare("SELECT COUNT(*) as count FROM plugins WHERE status = 'rejected'").get() as { count: number };
+		const pendingVersions = db.prepare("SELECT COUNT(*) as count FROM plugin_versions WHERE status = 'pending'").get() as { count: number };
+		const approvedVersions = db.prepare("SELECT COUNT(*) as count FROM plugin_versions WHERE status = 'approved'").get() as { count: number };
+		const rejectedVersions = db.prepare("SELECT COUNT(*) as count FROM plugin_versions WHERE status = 'rejected'").get() as { count: number };
 		const totalDownloads = db.prepare('SELECT SUM(downloads) as total FROM plugins').get() as { total: number };
 		const totalUsers = db.prepare('SELECT COUNT(DISTINCT author) as count FROM plugins').get() as { count: number };
 
 		return {
 			totalPlugins: totalPlugins.count,
-			pendingPlugins: pendingPlugins.count,
-			approvedPlugins: approvedPlugins.count,
-			rejectedPlugins: rejectedPlugins.count,
+			pendingPlugins: pendingVersions.count,
+			approvedPlugins: approvedVersions.count,
+			rejectedPlugins: rejectedVersions.count,
 			totalDownloads: totalDownloads.total || 0,
 			totalUsers: totalUsers.count,
 		};
