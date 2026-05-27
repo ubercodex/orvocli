@@ -223,7 +223,7 @@ export async function pluginRoutes(fastify: FastifyInstance) {
 				return reply.code(404).send({ error: 'Plugin not found' });
 			}
 
-			const updates: string[] = ['updated_at = datetime("now")'];
+			const updates: string[] = ["updated_at = CURRENT_TIMESTAMP"];
 			const params: unknown[] = [];
 
 			// Auto-increment version if code changes
