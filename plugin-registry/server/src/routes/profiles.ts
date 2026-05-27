@@ -12,7 +12,7 @@ const ProfileSchema = z.object({
 	description: z.string().min(1).max(500),
 	tags: z.array(z.string()).max(10),
 	pluginIds: z.array(z.string()).min(1).max(50),
-	systemPrompt: z.string().max(2000).optional(),
+	systemPrompt: z.string().max(20000).optional(),
 });
 
 export async function profileRoutes(fastify: FastifyInstance) {

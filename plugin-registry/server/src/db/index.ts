@@ -16,6 +16,20 @@ db.pragma('foreign_keys = ON');
 
 db.exec(SCHEMA);
 
+// Auto-migration: Add system_prompt column if it doesn't exist
+try {
+	const tableInfo = db.prepare("PRAGMA table_info(profiles)").all() as any[];
+	const hasSystemPrompt = tableInfo.some((col: any) => col.name === 'system_prompt');
+	
+	if (!hasSystemPrompt) {
+		console.log('🔄 Running migration: Adding system_prompt column...');
+		db.prepare('ALTER TABLE profiles ADD COLUMN system_prompt TEXT').run();
+		console.log('✅ Migration complete: system_prompt column added');
+	}
+} catch (error) {
+	console.error('⚠️ Migration warning:', error);
+}
+
 export function initDatabase() {
 	console.log(`✓ Database initialized at ${DB_PATH}`);
 }

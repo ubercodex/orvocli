@@ -234,13 +234,13 @@ export default function EditProfile() {
             <textarea
               value={systemPrompt}
               onChange={(e) => setSystemPrompt(e.target.value)}
-              maxLength={2000}
+              maxLength={20000}
               rows={6}
               placeholder="Add custom instructions for the AI when using this profile...&#10;&#10;Example: Focus on Windows system administration tasks. Prioritize PowerShell solutions. Always explain security implications."
               className="w-full px-4 py-3 bg-gray-900 border border-gray-800 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-purple-500 font-mono text-sm"
             />
             <p className="mt-1 text-sm text-gray-500">
-              {systemPrompt.length}/2000 characters • This extends the base AI behavior with profile-specific instructions
+              {systemPrompt.length}/20000 characters • This extends the base AI behavior with profile-specific instructions
             </p>
           </div>
 
