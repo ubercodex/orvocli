@@ -76,7 +76,7 @@ export default function MyPlugins() {
     <div className="min-h-screen py-16 px-6">
       <div className="max-w-6xl mx-auto">
         <div className="mb-12 animate-fade-in-down">
-          <h1 className="text-6xl font-bold mb-4 bg-gradient-to-r from-purple-400 via-pink-400 to-cyan-400 bg-clip-text text-transparent">My Plugins</h1>
+          <h1 className="text-6xl font-bold mb-4 bg-gradient-to-r from-purple-400 via-pink-400 to-cyan-400 bg-clip-text text-transparent leading-tight pb-2">My Plugins</h1>
           <p className="text-slate-400 text-xl">Manage your published plugins</p>
         </div>
 

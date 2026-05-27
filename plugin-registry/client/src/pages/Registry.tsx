@@ -34,50 +34,58 @@ export default function Registry() {
   );
 
   return (
-    <div className="min-h-screen py-12 px-6">
+    <div className="min-h-screen py-16 px-6">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
-        <div className="mb-12">
-          <div className="inline-block px-4 py-2 mb-4 bg-violet-500/8 text-violet-400 border border-violet-500/20 rounded-full text-xs font-semibold uppercase tracking-wider">
+        <div className="mb-12 animate-fade-in-down">
+          <div className="inline-block px-4 py-2 mb-4 bg-purple-500/10 text-purple-400 border border-purple-500/30 rounded-full text-xs font-semibold uppercase tracking-wider">
             Plugin Registry
           </div>
-          <h1 className="text-5xl font-black mb-4 text-white">
-            Discover <span className="bg-gradient-to-r from-violet-400 to-purple-400 bg-clip-text text-transparent">Plugins</span>
+          <h1 className="text-6xl font-bold mb-6 bg-gradient-to-r from-purple-400 via-pink-400 to-cyan-400 bg-clip-text text-transparent leading-tight pb-2">
+            Discover Plugins
           </h1>
-          <p className="text-slate-400 text-lg max-w-2xl">
+          <p className="text-slate-400 text-xl max-w-2xl">
             Browse community-built tools to extend ZAL. Find plugins for APIs, automation, databases, and more.
           </p>
         </div>
         
         {/* Search */}
-        <div className="mb-8">
-          <input
-            type="text"
-            placeholder="Search by name, author, or description..."
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            className="w-full px-6 py-4 bg-[#0d0d24]/60 border border-cyan-500/20 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:border-cyan-500/50 focus:ring-2 focus:ring-cyan-500/20 transition backdrop-blur-xl"
-          />
+        <div className="mb-12 max-w-2xl mx-auto animate-fade-in-up">
+          <div className="relative group">
+            <div className="absolute inset-0 bg-gradient-to-r from-purple-600/20 to-pink-600/20 rounded-2xl blur-xl group-hover:blur-2xl transition-all"></div>
+            <input
+              type="text"
+              placeholder="Search by name, author, or description..."
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              className="relative w-full px-6 py-4 bg-[#12121a]/80 backdrop-blur-xl border border-purple-500/20 rounded-2xl text-white placeholder-slate-500 focus:outline-none focus:border-purple-500/50 transition-all"
+            />
+            <div className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-500">
+              <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+              </svg>
+            </div>
+          </div>
         </div>
 
         {/* Results */}
         {loading ? (
-          <div className="text-center py-32 text-slate-500">
-            <div className="inline-block w-8 h-8 border-4 border-cyan-500/20 border-t-cyan-500 rounded-full animate-spin mb-4"></div>
-            <div>Loading plugins...</div>
+          <div className="text-center py-32">
+            <div className="inline-block w-12 h-12 border-4 border-purple-500/20 border-t-purple-500 rounded-full animate-spin mb-4"></div>
+            <div className="text-slate-400">Loading plugins...</div>
           </div>
         ) : filtered.length === 0 ? (
-          <div className="text-center py-20">
+          <div className="text-center py-20 animate-fade-in-up">
             {search ? (
               <>
-                <div className="text-7xl mb-6">🔍</div>
-                <h2 className="text-2xl font-bold text-white mb-3">No plugins found</h2>
+                <div className="text-7xl mb-6 animate-pulse-glow">🔍</div>
+                <h2 className="text-3xl font-bold text-white mb-3">No plugins found</h2>
                 <p className="text-slate-400 text-lg mb-8">
                   No plugins match "{search}"
                 </p>
                 <button
                   onClick={() => setSearch('')}
-                  className="px-6 py-3 bg-cyan-500/20 text-cyan-400 border border-cyan-500/30 rounded-xl hover:bg-cyan-500/30 transition"
+                  className="px-6 py-3 bg-purple-500/20 text-purple-400 border border-purple-500/30 rounded-xl hover:bg-purple-500/30 transition-all"
                 >
                   Clear Search
                 </button>

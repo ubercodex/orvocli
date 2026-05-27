@@ -111,7 +111,7 @@ export default function PublishProfile() {
       <div className="min-h-screen flex items-center justify-center">
         <div className="max-w-md mx-auto px-6 text-center animate-scale-in">
           <div className="mb-8 text-7xl animate-pulse-glow">🔒</div>
-          <h1 className="text-4xl font-bold mb-4 bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">
+          <h1 className="text-4xl font-bold mb-4 bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent leading-tight pb-2">
             Login Required
           </h1>
           <p className="text-slate-400 mb-8 text-lg">
@@ -140,7 +140,7 @@ export default function PublishProfile() {
       <div className="max-w-4xl mx-auto px-6 py-16">
         {/* Header */}
         <div className="mb-12 text-center animate-fade-in-down">
-          <h1 className="text-5xl font-bold mb-4 bg-gradient-to-r from-purple-400 via-pink-400 to-cyan-400 bg-clip-text text-transparent">
+          <h1 className="text-5xl font-bold mb-4 bg-gradient-to-r from-purple-400 via-pink-400 to-cyan-400 bg-clip-text text-transparent leading-tight pb-2">
             Create Profile
           </h1>
           <p className="text-xl text-slate-400">

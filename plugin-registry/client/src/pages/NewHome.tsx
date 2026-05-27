@@ -22,14 +22,14 @@ export default function NewHome() {
         <div className="max-w-6xl mx-auto">
           <div className="grid lg:grid-cols-2 gap-12 items-center">
             {/* Left: Text */}
-            <div className="animate-fade-up">
-              <div className="inline-block px-4 py-2 mb-6 bg-cyan-500/10 text-cyan-400 border border-cyan-500/20 rounded-full text-xs font-semibold uppercase tracking-wider">
+            <div className="animate-fade-in-up">
+              <div className="inline-block px-4 py-2 mb-6 bg-purple-500/10 text-purple-400 border border-purple-500/30 rounded-full text-xs font-semibold uppercase tracking-wider">
                 Wisdom Over Force
               </div>
 
               <h1 className="text-5xl sm:text-6xl lg:text-7xl font-black leading-none tracking-tight mb-6">
                 <span className="text-white">Your terminal.</span><br/>
-                <span className="bg-gradient-to-r from-cyan-300 via-indigo-400 to-purple-400 bg-clip-text text-transparent">Supercharged.</span>
+                <span className="bg-gradient-to-r from-purple-400 via-pink-400 to-cyan-400 bg-clip-text text-transparent leading-tight pb-2 inline-block">Supercharged.</span>
               </h1>
 
               <p className="text-slate-400 text-lg leading-relaxed mb-8 max-w-lg">
@@ -40,15 +40,18 @@ export default function NewHome() {
               <div className="flex flex-wrap gap-4">
                 <Link
                   to="/registry"
-                  className="flex items-center gap-2 px-6 py-3 rounded-xl font-semibold text-sm bg-gradient-to-r from-cyan-500 to-violet-600 text-white shadow-lg shadow-cyan-500/30 hover:shadow-cyan-500/50 transition-all"
+                  className="relative group inline-block"
                 >
-                  Browse Plugins →
+                  <div className="absolute inset-0 bg-gradient-to-r from-purple-600 to-pink-600 rounded-xl blur opacity-50 group-hover:opacity-75 transition-opacity"></div>
+                  <div className="relative flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-purple-600 to-pink-600 rounded-xl text-white font-semibold shadow-lg shadow-purple-500/30 hover:shadow-purple-500/50 transition-all">
+                    Browse Plugins →
+                  </div>
                 </Link>
                 <a
                   href="https://github.com/ubercodex/zalcli#readme"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex items-center gap-2 px-6 py-3 rounded-xl font-semibold text-sm bg-white/5 border border-white/12 text-slate-200 hover:bg-white/9 transition-all"
+                  className="flex items-center gap-2 px-6 py-3 rounded-xl font-semibold text-sm bg-slate-700/50 border border-slate-600/50 text-slate-200 hover:bg-slate-700 transition-all"
                 >
                   Documentation
                 </a>
@@ -56,32 +59,32 @@ export default function NewHome() {
 
               <div className="mt-10 flex items-center gap-4 flex-wrap">
                 <span className="text-slate-600 text-xs uppercase tracking-widest font-semibold">Works with</span>
-                <span className="px-3 py-1 text-xs font-semibold bg-cyan-500/8 text-cyan-400 border border-cyan-500/20 rounded-full">Anthropic</span>
-                <span className="px-3 py-1 text-xs font-semibold bg-indigo-500/8 text-indigo-400 border border-indigo-500/20 rounded-full">Google</span>
-                <span className="px-3 py-1 text-xs font-semibold bg-violet-500/8 text-violet-400 border border-violet-500/20 rounded-full">OpenAI</span>
+                <span className="px-3 py-1 text-xs font-semibold bg-purple-500/10 text-purple-400 border border-purple-500/30 rounded-full">Anthropic</span>
+                <span className="px-3 py-1 text-xs font-semibold bg-pink-500/10 text-pink-400 border border-pink-500/30 rounded-full">Google</span>
+                <span className="px-3 py-1 text-xs font-semibold bg-cyan-500/10 text-cyan-400 border border-cyan-500/30 rounded-full">OpenAI</span>
               </div>
             </div>
 
             {/* Right: Terminal mockup */}
-            <div className="animate-float">
-              <div className="bg-[#050510] border border-cyan-500/25 rounded-xl overflow-hidden shadow-2xl shadow-cyan-500/8">
-                <div className="flex items-center gap-2 px-4 py-3 border-b border-cyan-500/12 bg-cyan-500/3">
+            <div className="animate-float-gentle">
+              <div className="bg-[#12121a]/80 backdrop-blur-xl border border-purple-500/30 rounded-2xl overflow-hidden shadow-2xl shadow-purple-500/20">
+                <div className="flex items-center gap-2 px-4 py-3 border-b border-purple-500/20 bg-purple-500/5">
                   <div className="w-3 h-3 rounded-full bg-red-500"></div>
                   <div className="w-3 h-3 rounded-full bg-yellow-500"></div>
                   <div className="w-3 h-3 rounded-full bg-green-500"></div>
                   <span className="ml-2 text-xs text-slate-500 font-mono">zal /plugins</span>
                 </div>
-                <div className="p-5 font-mono text-sm leading-7">
-                  <div><span className="text-slate-500">$</span> <span className="text-cyan-400">zal</span></div>
+                <div className="p-6 font-mono text-sm leading-7">
+                  <div><span className="text-slate-500">$</span> <span className="text-purple-400">zal</span></div>
                   <div className="text-slate-500 text-xs">ZAL v0.1.2 · claude-sonnet-4-5</div>
                   <div className="mt-2"><span className="text-slate-500">&gt;</span> <span className="text-white">/plugins</span></div>
                   <div className="text-slate-500 text-xs mt-1">→ + New tool</div>
                   <div className="mt-2 text-slate-300 text-xs">Describe what the tool should do:</div>
-                  <div className="text-violet-400 text-xs">Calculate compound interest with principal and rate</div>
+                  <div className="text-pink-400 text-xs">Calculate compound interest with principal and rate</div>
                   <div className="mt-1 text-slate-500 text-xs">⟳ Generating with AI...</div>
-                  <div className="text-cyan-400 text-xs mt-1">✓ <span className="text-slate-300">Created</span> <span className="text-green-400">calculateInterest.ts</span></div>
+                  <div className="text-purple-400 text-xs mt-1">✓ <span className="text-slate-300">Created</span> <span className="text-green-400">calculateInterest.ts</span></div>
                   <div className="mt-2 text-slate-300 text-xs">Tool ready! Now you can calculate interest.</div>
-                  <div className="mt-3"><span className="text-slate-500">&gt;</span> <span className="animate-blink text-cyan-400">▌</span></div>
+                  <div className="mt-3"><span className="text-slate-500">&gt;</span> <span className="animate-pulse text-purple-400">▌</span></div>
                 </div>
               </div>
             </div>
@@ -93,27 +96,27 @@ export default function NewHome() {
       <section className="py-28 px-6">
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-16 reveal opacity-0 translate-y-5 transition-all duration-600">
-            <div className="inline-block px-4 py-2 mb-4 bg-cyan-500/8 text-cyan-400 border border-cyan-500/20 rounded-full text-xs font-semibold uppercase tracking-wider">
+            <div className="inline-block px-4 py-2 mb-4 bg-purple-500/10 text-purple-400 border border-purple-500/30 rounded-full text-xs font-semibold uppercase tracking-wider">
               Features
             </div>
-            <h2 className="text-4xl sm:text-5xl font-black text-white mb-4">Built for builders</h2>
+            <h2 className="text-4xl sm:text-5xl font-black mb-4 bg-gradient-to-r from-purple-400 via-pink-400 to-cyan-400 bg-clip-text text-transparent leading-tight pb-2">Built for builders</h2>
             <p className="text-slate-400 text-lg max-w-2xl mx-auto">
               Powerful features designed to enhance your terminal workflow
             </p>
           </div>
 
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {[
               { icon: '🌉', title: 'Connect Many Worlds', desc: 'Switch between Anthropic, Google, and OpenAI. One workflow, multiple providers.' },
               { icon: '⚡', title: 'Innovation Through AI', desc: 'Describe what you need. AI generates custom terminal tools instantly.' },
-              { icon: '�', title: 'Strategic Profiles', desc: 'Curate plugin collections for specific use cases. Share with the community.' },
+              { icon: '📋', title: 'Strategic Profiles', desc: 'Curate plugin collections for specific use cases. Share with the community.' },
               { icon: '🧠', title: 'Wisdom & Memory', desc: 'Context-aware workspace memory. Remembers what matters across sessions.' },
               { icon: '🎨', title: 'Built Different', desc: 'Customizable themes and encrypted API keys. Security meets style.' },
               { icon: '🌐', title: 'Community Ecosystem', desc: 'Browse, install, and publish plugins. Build bridges between developers.' },
             ].map((feature, i) => (
-              <div key={i} className="reveal opacity-0 translate-y-5 transition-all duration-600 bg-[#0d0d24]/60 backdrop-blur-xl border border-cyan-500/12 rounded-2xl p-6 hover:border-cyan-500/30 hover:shadow-lg hover:shadow-cyan-500/10 transition-all group">
-                <div className="text-3xl mb-4">{feature.icon}</div>
-                <h3 className="text-white font-bold mb-2">{feature.title}</h3>
+              <div key={i} className="reveal opacity-0 translate-y-5 transition-all duration-600 bg-[#12121a]/80 backdrop-blur-xl border border-purple-500/20 rounded-2xl p-6 hover:border-purple-500/40 hover:shadow-lg hover:shadow-purple-500/20 transition-all group">
+                <div className="text-4xl mb-4">{feature.icon}</div>
+                <h3 className="text-white font-bold mb-2 text-lg">{feature.title}</h3>
                 <p className="text-slate-400 text-sm leading-relaxed">{feature.desc}</p>
               </div>
             ))}
@@ -124,8 +127,8 @@ export default function NewHome() {
       {/* CTA Section */}
       <section className="py-20 px-6">
         <div className="max-w-4xl mx-auto text-center reveal opacity-0 translate-y-5 transition-all duration-600">
-          <div className="bg-gradient-to-br from-cyan-500/10 to-violet-500/10 border border-cyan-500/20 rounded-3xl p-12">
-            <h2 className="text-4xl font-black text-white mb-4">Think. Create. Automate.</h2>
+          <div className="bg-gradient-to-br from-purple-500/10 to-pink-500/10 border border-purple-500/30 rounded-3xl p-12 backdrop-blur-xl">
+            <h2 className="text-5xl font-black mb-6 bg-gradient-to-r from-purple-400 via-pink-400 to-cyan-400 bg-clip-text text-transparent leading-tight pb-2">Think. Create. Automate.</h2>
             <p className="text-slate-400 text-lg mb-8">
               Join developers who choose wisdom over force. Start building with ZAL today.
             </p>
@@ -134,13 +137,16 @@ export default function NewHome() {
                 href="https://github.com/ubercodex/zalcli#installation"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="px-8 py-4 rounded-xl font-semibold bg-gradient-to-r from-cyan-500 to-violet-600 text-white shadow-lg shadow-cyan-500/30 hover:shadow-cyan-500/50 transition-all"
+                className="relative group inline-block"
               >
-                Install Now
+                <div className="absolute inset-0 bg-gradient-to-r from-purple-600 to-pink-600 rounded-xl blur opacity-50 group-hover:opacity-75 transition-opacity"></div>
+                <div className="relative px-8 py-4 bg-gradient-to-r from-purple-600 to-pink-600 rounded-xl text-white font-semibold shadow-lg shadow-purple-500/30 hover:shadow-purple-500/50 transition-all">
+                  Install Now
+                </div>
               </a>
               <Link
                 to="/registry"
-                className="px-8 py-4 rounded-xl font-semibold bg-white/5 border border-white/12 text-slate-200 hover:bg-white/9 transition-all"
+                className="px-8 py-4 rounded-xl font-semibold bg-slate-700/50 border border-slate-600/50 text-slate-200 hover:bg-slate-700 transition-all"
               >
                 Browse Plugins
               </Link>

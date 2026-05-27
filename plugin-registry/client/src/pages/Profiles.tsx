@@ -43,7 +43,7 @@ export default function Profiles() {
       <div className="max-w-7xl mx-auto px-6 py-16">
         {/* Header */}
         <div className="mb-16 text-center animate-fade-in-down">
-          <h1 className="text-6xl font-bold mb-6 bg-gradient-to-r from-purple-400 via-pink-400 to-cyan-400 bg-clip-text text-transparent">
+          <h1 className="text-6xl font-bold mb-6 bg-gradient-to-r from-purple-400 via-pink-400 to-cyan-400 bg-clip-text text-transparent leading-tight pb-2">
             Plugin Profiles
           </h1>
           <p className="text-xl text-slate-400 max-w-2xl mx-auto">

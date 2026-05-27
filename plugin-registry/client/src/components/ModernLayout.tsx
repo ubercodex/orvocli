@@ -59,7 +59,7 @@ export default function ModernLayout({ children }: ModernLayoutProps) {
       {/* Header */}
       <header className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
         scrolled 
-          ? 'bg-[#0a0a0f]/80 backdrop-blur-xl border-b border-purple-500/20 shadow-lg shadow-purple-500/5' 
+          ? 'bg-[#0a0a0f]/90 backdrop-blur-xl border-b border-purple-500/10 shadow-lg shadow-purple-500/5' 
           : 'bg-transparent'
       }`}>
         <div className="max-w-7xl mx-auto px-6 py-4">
