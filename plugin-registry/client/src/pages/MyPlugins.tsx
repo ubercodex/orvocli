@@ -9,6 +9,7 @@ interface Plugin {
   version: string;
   status: 'pending' | 'approved' | 'rejected';
   downloads: number;
+  profileCount?: number;
   tags: string[];
   createdAt: string;
 }
@@ -18,6 +19,7 @@ export default function MyPlugins() {
   const navigate = useNavigate();
   const [plugins, setPlugins] = useState<Plugin[]>([]);
   const [loading, setLoading] = useState(true);
+  const [deleting, setDeleting] = useState<string | null>(null);
 
   useEffect(() => {
     if (!user || !token) {
@@ -61,6 +63,40 @@ export default function MyPlugins() {
       case 'pending': return '⏳';
       case 'rejected': return '❌';
       default: return '❓';
+    }
+  };
+
+  const handleDelete = async (pluginName: string, status: string, profileCount: number) => {
+    // Only check profile usage for approved plugins
+    if (status === 'approved' && profileCount > 0) {
+      alert(`Cannot delete this approved plugin. It is used in ${profileCount} profile${profileCount > 1 ? 's' : ''}. Remove it from all profiles before deleting.`);
+      return;
+    }
+
+    const statusText = status === 'pending' ? 'pending' : status === 'rejected' ? 'rejected' : 'approved';
+    if (!confirm(`Are you sure you want to delete "${pluginName}" (${statusText})? This action cannot be undone.`)) {
+      return;
+    }
+
+    setDeleting(pluginName);
+    try {
+      const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:3001/api';
+      const response = await fetch(`${apiUrl}/plugins/${user?.username}/${pluginName}`, {
+        method: 'DELETE',
+        headers: { 'Authorization': `Bearer ${token}` },
+      });
+
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.message || 'Failed to delete plugin');
+      }
+
+      setPlugins(plugins.filter(p => p.name !== pluginName));
+      alert('Plugin deleted successfully!');
+    } catch (err: any) {
+      alert(err.message || 'Failed to delete plugin');
+    } finally {
+      setDeleting(null);
     }
   };
 
@@ -151,10 +187,9 @@ export default function MyPlugins() {
 
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
               {plugins.map(plugin => (
-                <Link
+                <div
                   key={plugin.id}
-                  to={`/plugins/${user?.username}/${plugin.name}`}
-                  className="p-6 bg-[#0d0d24]/60 backdrop-blur-xl border border-cyan-500/12 rounded-2xl hover:border-cyan-500/30 transition block"
+                  className="p-6 bg-[#12121a]/80 backdrop-blur-xl border border-purple-500/20 rounded-2xl hover:border-purple-500/40 transition-all"
                 >
                   <div className="flex items-start justify-between mb-3">
                     <div className="flex-1">
@@ -163,7 +198,7 @@ export default function MyPlugins() {
                       </h3>
                       <p className="text-sm text-slate-500">v{plugin.version}</p>
                     </div>
-                    <div className={`px-3 py-1 rounded-full text-xs font-semibold border flex items-center gap-1 ${getStatusColor(plugin.status)}`}>
+                    <div className={`px-3 py-1 rounded-xl text-xs font-semibold border flex items-center gap-1 ${getStatusColor(plugin.status)}`}>
                       <span>{getStatusIcon(plugin.status)}</span>
                       <span className="capitalize">{plugin.status}</span>
                     </div>
@@ -180,13 +215,13 @@ export default function MyPlugins() {
                       {plugin.downloads.toLocaleString()} views
                     </div>
                     <div className="text-xs">
-                      {new Date(plugin.createdAt).toLocaleDateString()}
+                      📂 {plugin.profileCount || 0} profiles
                     </div>
                   </div>
 
                   <div className="flex flex-wrap gap-2 mb-4">
                     {plugin.tags.slice(0, 3).map(tag => (
-                      <span key={tag} className="px-2 py-1 bg-cyan-500/10 text-cyan-400 text-xs rounded-full border border-cyan-500/20">
+                      <span key={tag} className="px-2 py-1 bg-purple-500/10 border border-purple-500/30 text-purple-300 text-xs rounded-lg">
                         {tag}
                       </span>
                     ))}
@@ -197,7 +232,28 @@ export default function MyPlugins() {
                     )}
                   </div>
 
-                </Link>
+                  <div className="flex gap-2 pt-4 border-t border-purple-500/20">
+                    <Link
+                      to={`/plugins/${user?.username}/${plugin.name}`}
+                      className="flex-1 text-center px-4 py-2 bg-purple-500/20 border border-purple-500/30 text-purple-300 rounded-xl hover:bg-purple-500/30 transition-all text-sm font-semibold"
+                    >
+                      View
+                    </Link>
+                    <Link
+                      to={`/edit-plugin/${user?.username}/${plugin.name}`}
+                      className="px-4 py-2 bg-cyan-500/20 border border-cyan-500/30 text-cyan-300 rounded-xl hover:bg-cyan-500/30 transition-all text-sm font-semibold"
+                    >
+                      ✏️
+                    </Link>
+                    <button
+                      onClick={() => handleDelete(plugin.name, plugin.status, plugin.profileCount || 0)}
+                      disabled={deleting === plugin.name}
+                      className="px-4 py-2 bg-red-500/20 border border-red-500/30 text-red-300 rounded-xl hover:bg-red-500/30 transition-all text-sm font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                      {deleting === plugin.name ? '...' : '🗑️'}
+                    </button>
+                  </div>
+                </div>
               ))}
             </div>
           </>

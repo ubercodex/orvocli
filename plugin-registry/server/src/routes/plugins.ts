@@ -48,7 +48,6 @@ const CreatePluginSchema = z.object({
 });
 
 const UpdatePluginSchema = z.object({
-	version: z.string().regex(/^\d+\.\d+\.\d+$/),
 	description: z.string().min(1).max(500).optional(),
 	code: z.string().min(1).optional(),
 	parameters: z.array(PluginParamSchema).optional(),
@@ -216,23 +215,30 @@ export async function pluginRoutes(fastify: FastifyInstance) {
 
 		const input = UpdatePluginSchema.parse(request.body);
 
-		const existing = db.prepare('SELECT id FROM plugins WHERE author = ? AND name = ?').get(author, name) as
-			| { id: string }
+		const existing = db.prepare('SELECT id, version, code FROM plugins WHERE author = ? AND name = ?').get(author, name) as
+			| { id: string; version: string; code: string }
 			| undefined;
 		if (!existing) {
 			return reply.code(404).send({ error: 'Plugin not found' });
 		}
 
-		const updates: string[] = ['version = ?', 'updated_at = datetime("now")'];
-		const params: unknown[] = [input.version];
+		const updates: string[] = ['updated_at = datetime("now")'];
+		const params: unknown[] = [];
+
+		// Auto-increment version if code changes
+		if (input.code && input.code !== existing.code) {
+			const versionParts = existing.version.split('.').map(Number);
+			versionParts[2]++; // Increment patch version
+			const newVersion = versionParts.join('.');
+			updates.push('version = ?');
+			params.push(newVersion);
+			updates.push('code = ?');
+			params.push(input.code);
+		}
 
 		if (input.description) {
 			updates.push('description = ?');
 			params.push(input.description);
-		}
-		if (input.code) {
-			updates.push('code = ?');
-			params.push(input.code);
 		}
 		if (input.parameters) {
 			updates.push('parameters = ?');
@@ -243,11 +249,15 @@ export async function pluginRoutes(fastify: FastifyInstance) {
 			params.push(JSON.stringify(input.tags));
 		}
 
+		if (params.length === 0) {
+			return reply.code(400).send({ error: 'No fields to update' });
+		}
+
 		params.push(existing.id);
 
 		db.prepare(`UPDATE plugins SET ${updates.join(', ')} WHERE id = ?`).run(...params);
 
-		return { success: true };
+		return { success: true, message: 'Plugin updated successfully' };
 	});
 
 	fastify.delete('/plugins/:author/:name', { onRequest: [fastify.authenticate] }, async (request, reply) => {
@@ -258,21 +268,28 @@ export async function pluginRoutes(fastify: FastifyInstance) {
 			return reply.code(403).send({ error: 'You can only delete your own plugins' });
 		}
 
-		const plugin = db.prepare('SELECT id FROM plugins WHERE author = ? AND name = ?').get(author, name) as { id: string } | undefined;
+		const plugin = db.prepare('SELECT id, status FROM plugins WHERE author = ? AND name = ?').get(author, name) as { id: string; status: string } | undefined;
 		
 		if (!plugin) {
 			return reply.code(404).send({ error: 'Plugin not found' });
 		}
 
-		const profileUsage = db.prepare('SELECT COUNT(*) as count FROM profile_plugins WHERE plugin_id = ?').get(plugin.id) as { count: number };
-		
-		if (profileUsage.count > 0) {
-			return reply.code(409).send({ 
-				error: 'Cannot delete plugin', 
-				message: `This plugin is used in ${profileUsage.count} profile${profileUsage.count > 1 ? 's' : ''}. Remove it from all profiles before deleting.`,
-				profileCount: profileUsage.count
-			});
+		// Check if plugin is approved
+		if (plugin.status === 'approved') {
+			const profileUsage = db.prepare('SELECT COUNT(*) as count FROM profile_plugins WHERE plugin_id = ?').get(plugin.id) as { count: number };
+			
+			if (profileUsage.count > 0) {
+				return reply.code(409).send({ 
+					error: 'Cannot delete plugin', 
+					message: `This approved plugin is used in ${profileUsage.count} profile${profileUsage.count > 1 ? 's' : ''}. Remove it from all profiles before deleting.`,
+					profileCount: profileUsage.count
+				});
+			}
 		}
+
+		// Allow deletion if:
+		// 1. Plugin is not approved (pending/rejected) - can always delete
+		// 2. Plugin is approved but not used in any profiles
 
 		const result = db.prepare('DELETE FROM plugins WHERE author = ? AND name = ?').run(author, name);
 
@@ -280,7 +297,7 @@ export async function pluginRoutes(fastify: FastifyInstance) {
 			return reply.code(404).send({ error: 'Plugin not found' });
 		}
 
-		return { success: true };
+		return { success: true, message: 'Plugin deleted successfully' };
 	});
 
 	// Admin: Get pending plugins
