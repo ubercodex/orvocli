@@ -48,18 +48,25 @@ Remember: You're here to augment the user's capabilities, not replace their judg
 
 /**
  * Build the complete system prompt by combining base prompt with profile prompt
+ * Profile prompt takes priority and can override base behavior
  */
 export function buildCompleteSystemPrompt(
 	basePrompt: string,
 	profilePrompt?: string,
 	memoryContext?: string
 ): string {
-	const parts: string[] = [basePrompt];
+	const parts: string[] = [];
 
+	// Profile prompt comes FIRST - highest priority
 	if (profilePrompt) {
-		parts.push('\n## Profile-Specific Instructions\n\n' + profilePrompt);
+		parts.push('# PRIMARY INSTRUCTIONS (Profile-Specific)\n\n' + profilePrompt);
+		parts.push('\n---\n');
 	}
 
+	// Base prompt comes second - provides defaults
+	parts.push('# Base System Behavior\n\n' + basePrompt);
+
+	// Memory context comes last - provides workspace context
 	if (memoryContext) {
 		parts.push('\n' + memoryContext);
 	}

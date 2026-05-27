@@ -15,6 +15,7 @@ interface Profile {
   name: string;
   description: string;
   tags: string[];
+  system_prompt?: string;
   downloads: number;
   plugins: Plugin[];
   created_at: string;
@@ -98,6 +99,18 @@ export default function ProfileDetail() {
           <h2 className="text-2xl font-bold text-white mb-4">Description</h2>
           <p className="text-gray-300">{profile.description}</p>
         </div>
+
+        {profile.system_prompt && (
+          <div className="bg-gray-900 border border-gray-800 rounded-xl p-8 mb-8">
+            <h2 className="text-2xl font-bold text-white mb-4">System Prompt</h2>
+            <div className="bg-gray-950 rounded-lg p-6 border border-gray-800">
+              <pre className="text-gray-300 text-sm font-mono whitespace-pre-wrap">{profile.system_prompt}</pre>
+            </div>
+            <p className="text-xs text-gray-500 mt-3">
+              This profile includes custom AI behavior instructions that will be applied when using it.
+            </p>
+          </div>
+        )}
 
         {profile.tags.length > 0 && (
           <div className="mb-8">
