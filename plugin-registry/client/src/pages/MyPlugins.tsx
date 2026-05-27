@@ -67,17 +67,17 @@ export default function MyPlugins() {
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <div className="inline-block w-8 h-8 border-4 border-cyan-500/20 border-t-cyan-500 rounded-full animate-spin"></div>
+        <div className="inline-block w-12 h-12 border-4 border-purple-500/20 border-t-purple-500 rounded-full animate-spin"></div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen py-12 px-6">
+    <div className="min-h-screen py-16 px-6">
       <div className="max-w-6xl mx-auto">
-        <div className="mb-8">
-          <h1 className="text-4xl font-black text-white mb-2">My Plugins</h1>
-          <p className="text-slate-400">Manage your published plugins</p>
+        <div className="mb-12 animate-fade-in-down">
+          <h1 className="text-6xl font-bold mb-4 bg-gradient-to-r from-purple-400 via-pink-400 to-cyan-400 bg-clip-text text-transparent">My Plugins</h1>
+          <p className="text-slate-400 text-xl">Manage your published plugins</p>
         </div>
 
         {plugins.length === 0 ? (
@@ -92,24 +92,24 @@ export default function MyPlugins() {
                 You haven't published any plugins yet. Create a tool in ZAL, export it with the <kbd className="px-2 py-1 bg-cyan-500/20 border border-cyan-500/30 rounded text-cyan-400 font-mono">E</kbd> key, and upload it!
               </p>
               
-              <div className="bg-[#0d0d24]/60 backdrop-blur-xl border border-cyan-500/12 rounded-2xl p-8 mb-8">
-                <h3 className="text-white font-bold mb-4 text-left">Quick Start:</h3>
+              <div className="bg-[#12121a]/80 backdrop-blur-xl border border-purple-500/20 rounded-2xl p-8 mb-8">
+                <h3 className="text-white font-bold mb-4 text-left text-xl">Quick Start:</h3>
                 <div className="space-y-3 text-left text-sm text-slate-300">
                   <div className="flex gap-3">
-                    <span className="text-cyan-400 font-bold">1.</span>
-                    <span>Open ZAL and type <code className="px-2 py-1 bg-black/30 rounded text-cyan-400">/plugins</code></span>
+                    <span className="text-purple-400 font-bold">1.</span>
+                    <span>Open ZAL and type <code className="px-2 py-1 bg-black/30 rounded text-purple-400">/plugins</code></span>
                   </div>
                   <div className="flex gap-3">
-                    <span className="text-cyan-400 font-bold">2.</span>
+                    <span className="text-purple-400 font-bold">2.</span>
                     <span>Select "+ New tool" and describe what you want to create</span>
                   </div>
                   <div className="flex gap-3">
-                    <span className="text-cyan-400 font-bold">3.</span>
+                    <span className="text-purple-400 font-bold">3.</span>
                     <span>AI will generate the plugin code for you</span>
                   </div>
                   <div className="flex gap-3">
-                    <span className="text-cyan-400 font-bold">4.</span>
-                    <span>Export from <code className="px-2 py-1 bg-black/30 rounded text-cyan-400">.zal/plugins.json</code> and upload here</span>
+                    <span className="text-purple-400 font-bold">4.</span>
+                    <span>Export from <code className="px-2 py-1 bg-black/30 rounded text-purple-400">.zal/plugins.json</code> and upload here</span>
                   </div>
                 </div>
               </div>
@@ -117,15 +117,18 @@ export default function MyPlugins() {
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
                 <Link
                   to="/publish"
-                  className="px-8 py-4 bg-gradient-to-r from-cyan-500 to-violet-600 text-white font-bold rounded-xl hover:shadow-lg hover:shadow-cyan-500/30 transition"
+                  className="relative group inline-block"
                 >
-                  📤 Publish Your First Plugin
+                  <div className="absolute inset-0 bg-gradient-to-r from-purple-600 to-pink-600 rounded-xl blur opacity-50 group-hover:opacity-75 transition-opacity"></div>
+                  <div className="relative px-8 py-4 bg-gradient-to-r from-purple-600 to-pink-600 text-white font-bold rounded-xl shadow-lg shadow-purple-500/30 hover:shadow-purple-500/50 transition-all">
+                    📤 Publish Your First Plugin
+                  </div>
                 </Link>
                 <a
                   href="https://github.com/ubercodex/zalcli#readme"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="px-8 py-4 bg-white/5 border border-white/12 text-slate-200 font-semibold rounded-xl hover:bg-white/9 transition"
+                  className="px-8 py-4 bg-slate-700/50 border border-slate-600/50 text-slate-200 font-semibold rounded-xl hover:bg-slate-700 transition-all"
                 >
                   📖 Read Guide
                 </a>
@@ -134,13 +137,13 @@ export default function MyPlugins() {
           </div>
         ) : (
           <>
-            <div className="mb-6 flex items-center justify-between">
+            <div className="mb-6 flex items-center justify-between animate-fade-in-up">
               <div className="text-slate-500 text-sm">
                 {plugins.length} {plugins.length === 1 ? 'plugin' : 'plugins'}
               </div>
               <Link
                 to="/publish"
-                className="px-4 py-2 bg-cyan-500/20 text-cyan-400 border border-cyan-500/30 rounded-lg text-sm hover:bg-cyan-500/30 transition"
+                className="px-4 py-2 bg-purple-500/20 text-purple-400 border border-purple-500/30 rounded-xl text-sm hover:bg-purple-500/30 transition-all font-medium"
               >
                 + New Plugin
               </Link>

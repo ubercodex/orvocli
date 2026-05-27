@@ -35,19 +35,26 @@ export default function PluginDetail() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-950 flex items-center justify-center">
-        <div className="text-gray-500">Loading...</div>
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="inline-block w-12 h-12 border-4 border-purple-500/20 border-t-purple-500 rounded-full animate-spin"></div>
       </div>
     );
   }
 
   if (!plugin) {
     return (
-      <div className="min-h-screen bg-gray-950 flex items-center justify-center">
-        <div className="text-center">
-          <div className="text-gray-500 mb-4">Plugin not found</div>
-          <Link to="/browse" className="text-purple-400 hover:text-purple-300">
-            ← Back to browse
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center animate-scale-in">
+          <div className="text-6xl mb-6 animate-pulse-glow">🔍</div>
+          <div className="text-slate-400 mb-6 text-lg">Plugin not found</div>
+          <Link 
+            to="/registry" 
+            className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-purple-600 to-pink-600 rounded-xl text-white font-medium hover:shadow-lg hover:shadow-purple-500/30 transition-all"
+          >
+            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+            </svg>
+            Back to browse
           </Link>
         </div>
       </div>
@@ -55,48 +62,70 @@ export default function PluginDetail() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-950">
-      <div className="max-w-5xl mx-auto px-6 py-12">
+    <div className="min-h-screen">
+      <div className="max-w-5xl mx-auto px-6 py-16">
+        {/* Back Button */}
         <button 
           onClick={() => navigate(-1)} 
-          className="text-gray-500 hover:text-white mb-6 inline-flex items-center gap-2"
+          className="group inline-flex items-center gap-2 text-slate-400 hover:text-purple-400 mb-8 transition-colors animate-fade-in-down"
         >
-          ← Back
+          <svg className="w-4 h-4 group-hover:-translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+          </svg>
+          Back
         </button>
 
-        <div className="mb-8">
-          <h1 className="text-5xl font-bold text-white mb-2">{plugin.name}</h1>
-          <p className="text-xl text-gray-400">by {plugin.author}</p>
+        {/* Header */}
+        <div className="mb-12 animate-fade-in-up">
+          <h1 className="text-6xl font-bold mb-4 bg-gradient-to-r from-purple-400 via-pink-400 to-cyan-400 bg-clip-text text-transparent">
+            {plugin.name}
+          </h1>
+          <p className="text-2xl text-slate-400">by {plugin.author}</p>
         </div>
 
-        <div className="grid md:grid-cols-3 gap-4 mb-8">
-          <div className="p-4 bg-gray-900 border border-gray-800 rounded-lg">
-            <div className="text-sm text-gray-500">Version</div>
-            <div className="text-lg font-semibold text-white">{plugin.version}</div>
+        {/* Stats Grid */}
+        <div className="grid md:grid-cols-3 gap-6 mb-12 animate-fade-in-up delay-100">
+          <div className="relative group">
+            <div className="absolute inset-0 bg-gradient-to-r from-purple-600/20 to-pink-600/20 rounded-2xl blur-xl opacity-0 group-hover:opacity-100 transition-opacity"></div>
+            <div className="relative p-6 bg-[#12121a]/80 backdrop-blur-xl border border-purple-500/20 rounded-2xl">
+              <div className="text-sm text-slate-500 mb-2">Version</div>
+              <div className="text-2xl font-bold text-white">{plugin.version}</div>
+            </div>
           </div>
-          <div className="p-4 bg-gray-900 border border-gray-800 rounded-lg">
-            <div className="text-sm text-gray-500">Views</div>
-            <div className="text-lg font-semibold text-white">{plugin.downloads.toLocaleString()}</div>
+          <div className="relative group">
+            <div className="absolute inset-0 bg-gradient-to-r from-purple-600/20 to-pink-600/20 rounded-2xl blur-xl opacity-0 group-hover:opacity-100 transition-opacity"></div>
+            <div className="relative p-6 bg-[#12121a]/80 backdrop-blur-xl border border-purple-500/20 rounded-2xl">
+              <div className="text-sm text-slate-500 mb-2">Views</div>
+              <div className="text-2xl font-bold text-white">{plugin.downloads.toLocaleString()}</div>
+            </div>
           </div>
-          <div className="p-4 bg-gray-900 border border-gray-800 rounded-lg">
-            <div className="text-sm text-gray-500">Updated</div>
-            <div className="text-lg font-semibold text-white">
-              {new Date(plugin.updatedAt).toLocaleDateString()}
+          <div className="relative group">
+            <div className="absolute inset-0 bg-gradient-to-r from-purple-600/20 to-pink-600/20 rounded-2xl blur-xl opacity-0 group-hover:opacity-100 transition-opacity"></div>
+            <div className="relative p-6 bg-[#12121a]/80 backdrop-blur-xl border border-purple-500/20 rounded-2xl">
+              <div className="text-sm text-slate-500 mb-2">Updated</div>
+              <div className="text-2xl font-bold text-white">
+                {new Date(plugin.updatedAt).toLocaleDateString()}
+              </div>
             </div>
           </div>
         </div>
 
-        <div className="bg-gray-900 border border-gray-800 rounded-xl p-8 mb-8">
-          <h2 className="text-2xl font-bold text-white mb-4">Description</h2>
-          <p className="text-gray-300">{plugin.description}</p>
+        {/* Description */}
+        <div className="bg-[#12121a]/80 backdrop-blur-xl border border-purple-500/20 rounded-2xl p-8 mb-8 animate-fade-in-up delay-200">
+          <h2 className="text-3xl font-bold text-white mb-4">Description</h2>
+          <p className="text-slate-300 text-lg leading-relaxed">{plugin.description}</p>
         </div>
 
+        {/* Tags */}
         {plugin.tags.length > 0 && (
-          <div className="mb-8">
-            <h3 className="text-lg font-semibold text-white mb-3">Tags</h3>
-            <div className="flex flex-wrap gap-2">
+          <div className="mb-8 animate-fade-in-up delay-300">
+            <h3 className="text-xl font-semibold text-white mb-4">Tags</h3>
+            <div className="flex flex-wrap gap-3">
               {plugin.tags.map(tag => (
-                <span key={tag} className="px-3 py-1 bg-gray-800 text-gray-300 rounded-full text-sm">
+                <span 
+                  key={tag} 
+                  className="px-4 py-2 bg-purple-500/10 border border-purple-500/30 text-purple-300 rounded-xl text-sm font-medium hover:bg-purple-500/20 transition-colors"
+                >
                   {tag}
                 </span>
               ))}
@@ -104,42 +133,48 @@ export default function PluginDetail() {
           </div>
         )}
 
+        {/* Parameters */}
         {plugin.parameters.length > 0 && (
-          <div className="bg-gray-900 border border-gray-800 rounded-xl p-8 mb-8">
-            <h2 className="text-2xl font-bold text-white mb-4">Parameters</h2>
-            <div className="space-y-4">
+          <div className="bg-[#12121a]/80 backdrop-blur-xl border border-purple-500/20 rounded-2xl p-8 mb-8 animate-fade-in-up delay-400">
+            <h2 className="text-3xl font-bold text-white mb-6">Parameters</h2>
+            <div className="space-y-6">
               {plugin.parameters.map(param => (
-                <div key={param.name} className="border-l-2 border-purple-500 pl-4">
-                  <div className="flex items-center gap-2 mb-1">
-                    <span className="font-mono text-purple-400">{param.name}</span>
-                    <span className="text-xs text-gray-500">{param.type}</span>
+                <div key={param.name} className="relative pl-6 border-l-2 border-purple-500/50 hover:border-purple-500 transition-colors">
+                  <div className="flex items-center gap-3 mb-2">
+                    <span className="font-mono text-lg text-purple-400 font-semibold">{param.name}</span>
+                    <span className="text-sm px-2 py-0.5 bg-slate-700/50 text-slate-400 rounded">{param.type}</span>
                     {param.required && (
-                      <span className="text-xs bg-red-900/30 text-red-400 px-2 py-0.5 rounded">required</span>
+                      <span className="text-xs bg-red-500/20 border border-red-500/30 text-red-400 px-2 py-0.5 rounded-full font-medium">required</span>
                     )}
                   </div>
-                  <p className="text-sm text-gray-400">{param.description}</p>
+                  <p className="text-slate-400">{param.description}</p>
                 </div>
               ))}
             </div>
           </div>
         )}
 
-        <div className="bg-gray-900 border border-gray-800 rounded-xl p-8 mb-8">
-          <h2 className="text-2xl font-bold text-white mb-4">Installation</h2>
-          <div className="bg-gray-950 rounded-lg p-4 font-mono text-sm">
-            <span className="text-purple-400">zal /plugins install {author}-{plugin.name}</span>
+        {/* Installation */}
+        <div className="bg-[#12121a]/80 backdrop-blur-xl border border-purple-500/20 rounded-2xl p-8 mb-8 animate-fade-in-up delay-500">
+          <h2 className="text-3xl font-bold text-white mb-6">Installation</h2>
+          <div className="relative group">
+            <div className="absolute inset-0 bg-gradient-to-r from-purple-600/20 to-pink-600/20 rounded-xl blur-lg opacity-0 group-hover:opacity-100 transition-opacity"></div>
+            <div className="relative bg-[#0a0a0f] rounded-xl p-6 font-mono text-base border border-purple-500/30">
+              <span className="text-purple-400">zal /plugins install {author}-{plugin.name}</span>
+            </div>
           </div>
         </div>
 
-        <div className="bg-gray-900 border border-gray-800 rounded-xl p-8">
-          <h2 className="text-2xl font-bold text-white mb-4">Source Code</h2>
-          <div className="rounded-lg overflow-hidden">
+        {/* Source Code */}
+        <div className="bg-[#12121a]/80 backdrop-blur-xl border border-purple-500/20 rounded-2xl p-8 animate-fade-in-up delay-500">
+          <h2 className="text-3xl font-bold text-white mb-6">Source Code</h2>
+          <div className="rounded-xl overflow-hidden border border-purple-500/30">
             <SyntaxHighlighter
               language="javascript"
               style={vscDarkPlus}
               customStyle={{
                 margin: 0,
-                padding: '1.5rem',
+                padding: '2rem',
                 fontSize: '0.875rem',
                 background: '#0a0a0f',
               }}
