@@ -206,58 +206,66 @@ export async function pluginRoutes(fastify: FastifyInstance) {
 	});
 
 	fastify.patch('/plugins/:author/:name', { onRequest: [fastify.authenticate] }, async (request, reply) => {
-		const { author, name } = request.params as { author: string; name: string };
-		const username = (request.user as { userId: string; username: string }).username;
+		try {
+			const { author, name } = request.params as { author: string; name: string };
+			const username = (request.user as { userId: string; username: string }).username;
 
-		if (author !== username) {
-			return reply.code(403).send({ error: 'You can only update your own plugins' });
+			if (author !== username) {
+				return reply.code(403).send({ error: 'You can only update your own plugins' });
+			}
+
+			const input = UpdatePluginSchema.parse(request.body);
+
+			const existing = db.prepare('SELECT id, version, code FROM plugins WHERE author = ? AND name = ?').get(author, name) as
+				| { id: string; version: string; code: string }
+				| undefined;
+			if (!existing) {
+				return reply.code(404).send({ error: 'Plugin not found' });
+			}
+
+			const updates: string[] = ['updated_at = datetime("now")'];
+			const params: unknown[] = [];
+
+			// Auto-increment version if code changes
+			if (input.code && input.code !== existing.code) {
+				const versionParts = existing.version.split('.').map(Number);
+				versionParts[2]++; // Increment patch version
+				const newVersion = versionParts.join('.');
+				updates.push('version = ?');
+				params.push(newVersion);
+				updates.push('code = ?');
+				params.push(input.code);
+			}
+
+			if (input.description) {
+				updates.push('description = ?');
+				params.push(input.description);
+			}
+			if (input.parameters) {
+				updates.push('parameters = ?');
+				params.push(JSON.stringify(input.parameters));
+			}
+			if (input.tags) {
+				updates.push('tags = ?');
+				params.push(JSON.stringify(input.tags));
+			}
+
+			if (params.length === 0) {
+				return reply.code(400).send({ error: 'No fields to update' });
+			}
+
+			params.push(existing.id);
+
+				db.prepare(`UPDATE plugins SET ${updates.join(', ')} WHERE id = ?`).run(...params);
+
+			return { success: true, message: 'Plugin updated successfully' };
+		} catch (error: any) {
+			console.error('Plugin update error:', error);
+			if (error.name === 'ZodError') {
+				return reply.code(400).send({ error: 'Invalid input', details: error.errors });
+			}
+			return reply.code(500).send({ error: error.message || 'Internal server error' });
 		}
-
-		const input = UpdatePluginSchema.parse(request.body);
-
-		const existing = db.prepare('SELECT id, version, code FROM plugins WHERE author = ? AND name = ?').get(author, name) as
-			| { id: string; version: string; code: string }
-			| undefined;
-		if (!existing) {
-			return reply.code(404).send({ error: 'Plugin not found' });
-		}
-
-		const updates: string[] = ['updated_at = datetime("now")'];
-		const params: unknown[] = [];
-
-		// Auto-increment version if code changes
-		if (input.code && input.code !== existing.code) {
-			const versionParts = existing.version.split('.').map(Number);
-			versionParts[2]++; // Increment patch version
-			const newVersion = versionParts.join('.');
-			updates.push('version = ?');
-			params.push(newVersion);
-			updates.push('code = ?');
-			params.push(input.code);
-		}
-
-		if (input.description) {
-			updates.push('description = ?');
-			params.push(input.description);
-		}
-		if (input.parameters) {
-			updates.push('parameters = ?');
-			params.push(JSON.stringify(input.parameters));
-		}
-		if (input.tags) {
-			updates.push('tags = ?');
-			params.push(JSON.stringify(input.tags));
-		}
-
-		if (params.length === 0) {
-			return reply.code(400).send({ error: 'No fields to update' });
-		}
-
-		params.push(existing.id);
-
-		db.prepare(`UPDATE plugins SET ${updates.join(', ')} WHERE id = ?`).run(...params);
-
-		return { success: true, message: 'Plugin updated successfully' };
 	});
 
 	fastify.delete('/plugins/:author/:name', { onRequest: [fastify.authenticate] }, async (request, reply) => {

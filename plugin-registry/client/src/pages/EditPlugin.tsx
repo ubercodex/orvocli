@@ -28,6 +28,7 @@ export default function EditPlugin() {
   const [plugin, setPlugin] = useState<Plugin | null>(null);
   const [pluginData, setPluginData] = useState<PluginData | null>(null);
   const [file, setFile] = useState<File | null>(null);
+  const [description, setDescription] = useState('');
   const [tags, setTags] = useState('');
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
@@ -58,6 +59,7 @@ export default function EditPlugin() {
 
       const data = await response.json();
       setPlugin(data);
+      setDescription(data.description);
       setTags(data.tags.join(', '));
     } catch (err) {
       setError('Failed to load plugin');
@@ -102,24 +104,23 @@ export default function EditPlugin() {
     try {
       const updates: any = {};
       
+      // Handle description from input field
+      if (description.trim() && description !== plugin?.description) {
+        updates.description = description.trim();
+      }
+      
       // Handle tags from input field
       const tagsArray = tags.split(',').map(t => t.trim()).filter(Boolean);
       if (tagsArray.length > 5) {
         throw new Error('Maximum 5 tags allowed');
       }
-      if (JSON.stringify(tagsArray) !== JSON.stringify(plugin?.tags)) {
+      if (JSON.stringify(tagsArray.sort()) !== JSON.stringify(plugin?.tags.sort())) {
         updates.tags = tagsArray;
       }
       
-      // Handle description and code from uploaded file (if any)
-      if (pluginData) {
-        if (pluginData.description !== plugin?.description) {
-          updates.description = pluginData.description;
-        }
-        
-        if (pluginData.code !== plugin?.code) {
-          updates.code = pluginData.code;
-        }
+      // Handle code from uploaded file (if any)
+      if (pluginData && pluginData.code !== plugin?.code) {
+        updates.code = pluginData.code;
       }
 
       if (Object.keys(updates).length === 0) {
@@ -211,8 +212,30 @@ export default function EditPlugin() {
         )}
 
         <form onSubmit={handleSubmit} className="space-y-6">
-          {/* Tags Input */}
+          {/* Description Input */}
           <div className="relative group animate-fade-in-up">
+            <label className="block text-sm font-semibold text-slate-300 mb-3">
+              Description
+            </label>
+            <div className="relative">
+              <div className="absolute inset-0 bg-gradient-to-r from-purple-600/10 to-pink-600/10 rounded-xl blur group-focus-within:blur-lg transition-all"></div>
+              <textarea
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
+                required
+                maxLength={500}
+                rows={3}
+                placeholder="Describe what your plugin does..."
+                className="relative w-full px-4 py-3 bg-[#12121a]/80 backdrop-blur-xl border border-purple-500/20 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:border-purple-500/50 transition-all resize-none"
+              />
+            </div>
+            <p className="mt-2 text-sm text-slate-500">
+              {description.length}/500 characters
+            </p>
+          </div>
+
+          {/* Tags Input */}
+          <div className="relative group animate-fade-in-up delay-100">
             <label className="block text-sm font-semibold text-slate-300 mb-3">
               Tags (comma-separated, max 5)
             </label>
@@ -232,9 +255,9 @@ export default function EditPlugin() {
           </div>
 
           {/* File Upload */}
-          <div className="relative group animate-fade-in-up delay-100">
+          <div className="relative group animate-fade-in-up delay-200">
             <label className="block text-sm font-semibold text-slate-300 mb-3">
-              Upload Updated Plugin File (optional - for code/description updates)
+              Upload Updated Plugin File (optional - for code updates only)
             </label>
             <div className="relative">
               <div className="absolute inset-0 bg-gradient-to-r from-purple-600/10 to-pink-600/10 rounded-xl blur group-focus-within:blur-lg transition-all"></div>
@@ -253,35 +276,37 @@ export default function EditPlugin() {
           </div>
 
           {/* Preview */}
-          {pluginData && (
-            <div className="p-6 bg-[#12121a]/80 backdrop-blur-xl border border-purple-500/20 rounded-2xl animate-fade-in-up delay-100">
+          {plugin && (
+            <div className="p-6 bg-[#12121a]/80 backdrop-blur-xl border border-purple-500/20 rounded-2xl animate-fade-in-up delay-300">
               <h3 className="text-white font-bold mb-4">Preview Changes</h3>
               <div className="space-y-3 text-sm">
                 <div>
                   <span className="text-slate-500">Name:</span>
-                  <span className="ml-2 text-white">{pluginData.name}</span>
+                  <span className="ml-2 text-white">{plugin.name}</span>
                 </div>
                 <div>
                   <span className="text-slate-500">Description:</span>
-                  <span className="ml-2 text-slate-300">{pluginData.description}</span>
-                  {pluginData.description !== plugin.description && (
+                  <span className="ml-2 text-slate-300">{description}</span>
+                  {description !== plugin.description && (
                     <span className="ml-2 text-yellow-400 text-xs">• Changed</span>
                   )}
                 </div>
                 <div>
                   <span className="text-slate-500">Tags:</span>
-                  <span className="ml-2 text-slate-300">{(pluginData.tags || []).join(', ') || 'None'}</span>
-                  {JSON.stringify(pluginData.tags) !== JSON.stringify(plugin.tags) && (
+                  <span className="ml-2 text-slate-300">{tags || 'None'}</span>
+                  {JSON.stringify(tags.split(',').map(t => t.trim()).filter(Boolean).sort()) !== JSON.stringify(plugin.tags.sort()) && (
                     <span className="ml-2 text-yellow-400 text-xs">• Changed</span>
                   )}
                 </div>
-                <div>
-                  <span className="text-slate-500">Code:</span>
-                  <span className="ml-2 text-slate-300">{pluginData.code.length} characters</span>
-                  {pluginData.code !== plugin.code && (
-                    <span className="ml-2 text-yellow-400 text-xs">• Changed (version will auto-increment)</span>
-                  )}
-                </div>
+                {pluginData && (
+                  <div>
+                    <span className="text-slate-500">Code:</span>
+                    <span className="ml-2 text-slate-300">{pluginData.code.length} characters</span>
+                    {pluginData.code !== plugin.code && (
+                      <span className="ml-2 text-yellow-400 text-xs">• Changed (version will auto-increment)</span>
+                    )}
+                  </div>
+                )}
               </div>
             </div>
           )}
