@@ -28,6 +28,7 @@ export default function EditPlugin() {
   const [plugin, setPlugin] = useState<Plugin | null>(null);
   const [pluginData, setPluginData] = useState<PluginData | null>(null);
   const [file, setFile] = useState<File | null>(null);
+  const [tags, setTags] = useState('');
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState('');
@@ -57,6 +58,7 @@ export default function EditPlugin() {
 
       const data = await response.json();
       setPlugin(data);
+      setTags(data.tags.join(', '));
     } catch (err) {
       setError('Failed to load plugin');
     } finally {
@@ -93,11 +95,6 @@ export default function EditPlugin() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
-    if (!pluginData) {
-      setError('Please upload a plugin file');
-      return;
-    }
 
     setError('');
     setSubmitting(true);
@@ -105,17 +102,24 @@ export default function EditPlugin() {
     try {
       const updates: any = {};
       
-      if (pluginData.description !== plugin?.description) {
-        updates.description = pluginData.description;
+      // Handle tags from input field
+      const tagsArray = tags.split(',').map(t => t.trim()).filter(Boolean);
+      if (tagsArray.length > 5) {
+        throw new Error('Maximum 5 tags allowed');
+      }
+      if (JSON.stringify(tagsArray) !== JSON.stringify(plugin?.tags)) {
+        updates.tags = tagsArray;
       }
       
-      const newTags = pluginData.tags || [];
-      if (JSON.stringify(newTags) !== JSON.stringify(plugin?.tags)) {
-        updates.tags = newTags;
-      }
-      
-      if (pluginData.code !== plugin?.code) {
-        updates.code = pluginData.code;
+      // Handle description and code from uploaded file (if any)
+      if (pluginData) {
+        if (pluginData.description !== plugin?.description) {
+          updates.description = pluginData.description;
+        }
+        
+        if (pluginData.code !== plugin?.code) {
+          updates.code = pluginData.code;
+        }
       }
 
       if (Object.keys(updates).length === 0) {
@@ -207,10 +211,30 @@ export default function EditPlugin() {
         )}
 
         <form onSubmit={handleSubmit} className="space-y-6">
-          {/* File Upload */}
+          {/* Tags Input */}
           <div className="relative group animate-fade-in-up">
             <label className="block text-sm font-semibold text-slate-300 mb-3">
-              Upload Updated Plugin File *
+              Tags (comma-separated, max 5)
+            </label>
+            <div className="relative">
+              <div className="absolute inset-0 bg-gradient-to-r from-purple-600/10 to-pink-600/10 rounded-xl blur group-focus-within:blur-lg transition-all"></div>
+              <input
+                type="text"
+                value={tags}
+                onChange={(e) => setTags(e.target.value)}
+                placeholder="e.g., automation, productivity, utility"
+                className="relative w-full px-4 py-3 bg-[#12121a]/80 backdrop-blur-xl border border-purple-500/20 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:border-purple-500/50 transition-all"
+              />
+            </div>
+            <p className="mt-2 text-sm text-slate-500">
+              Current tags: {tags.split(',').filter(Boolean).length}/5
+            </p>
+          </div>
+
+          {/* File Upload */}
+          <div className="relative group animate-fade-in-up delay-100">
+            <label className="block text-sm font-semibold text-slate-300 mb-3">
+              Upload Updated Plugin File (optional - for code/description updates)
             </label>
             <div className="relative">
               <div className="absolute inset-0 bg-gradient-to-r from-purple-600/10 to-pink-600/10 rounded-xl blur group-focus-within:blur-lg transition-all"></div>
@@ -218,7 +242,6 @@ export default function EditPlugin() {
                 type="file"
                 accept=".json"
                 onChange={handleFileChange}
-                required
                 className="relative w-full px-4 py-3 bg-[#12121a]/80 backdrop-blur-xl border border-purple-500/20 rounded-xl text-white file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:bg-purple-500/20 file:text-purple-300 hover:file:bg-purple-500/30 file:cursor-pointer focus:outline-none focus:border-purple-500/50 transition-all"
               />
             </div>
@@ -274,7 +297,7 @@ export default function EditPlugin() {
             </button>
             <button
               type="submit"
-              disabled={submitting || !pluginData}
+              disabled={submitting}
               className="flex-1 relative group disabled:opacity-50 disabled:cursor-not-allowed"
             >
               <div className="absolute inset-0 bg-gradient-to-r from-purple-600 to-pink-600 rounded-xl blur opacity-50 group-hover:opacity-75 transition-opacity"></div>

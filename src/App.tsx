@@ -178,16 +178,16 @@ export default function App({ initialCommand }: AppProps = {}): React.JSX.Elemen
 
 	return (
 		<ThemeContext.Provider value={theme}>
-			<Box flexDirection="column">
-				<Splash workspace={{ name: workspaceName, model: activeModel, profile: activeProfile }} animated={!hasTyped} />
-				<ChatCommand
-					settings={settings}
-					pluginStore={pluginStore}
-					onBack={exit}
-					onCommand={handleChatCommand}
-					onFirstInput={() => setHasTyped(true)}
-				/>
-			</Box>
+			<ChatCommand
+				settings={settings}
+				pluginStore={pluginStore}
+				onBack={exit}
+				onCommand={handleChatCommand}
+				onFirstInput={() => setHasTyped(true)}
+				workspaceName={workspaceName}
+				activeModel={activeModel}
+				activeProfile={activeProfile}
+			/>
 		</ThemeContext.Provider>
 	);
 }

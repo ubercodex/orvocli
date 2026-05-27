@@ -25,11 +25,14 @@ interface ChatCommandProps {
 	onBack: () => void;
 	onCommand?: (cmd: string) => void;
 	onFirstInput?: () => void;
+	workspaceName?: string;
+	activeModel?: string;
+	activeProfile?: string;
 }
 
 type ChatStatus = 'idle' | 'streaming' | 'thinking' | 'compacting';
 
-export default function ChatCommand({ settings, pluginStore, onBack, onCommand, onFirstInput }: ChatCommandProps): React.JSX.Element {
+export default function ChatCommand({ settings, pluginStore, onBack, onCommand, onFirstInput, workspaceName, activeModel, activeProfile }: ChatCommandProps): React.JSX.Element {
 	const theme = useTheme();
 	const [messages, setMessages] = useState<ChatMessageData[]>([]);
 	const [input, setInput] = useState('');
@@ -299,36 +302,49 @@ export default function ChatCommand({ settings, pluginStore, onBack, onCommand, 
 		<Box flexDirection="column" paddingX={1} paddingTop={1}>
 
 			{/* Header */}
-			<Box borderStyle="single" borderColor={theme.border} paddingX={2} marginBottom={1}>
-				<Text color={theme.primary} bold>Chat</Text>
-				{provider ? (
-					<>
-						<Text color={theme.muted}>  │  </Text>
-						<Text color={theme.secondary}>{provider.name}</Text>
-						<Text color={theme.muted}>  ›  </Text>
-						<Text color={theme.accent}>{provider.model}</Text>
-					</>
-				) : (
-					<Text color="#ef4444">  No provider configured — run /settings first</Text>
-				)}
-				<Text color={theme.muted}>  │  </Text>
-				<Text color={theme.muted} dimColor>mem:</Text>
-				<Text color={branchKey.current === '__default__' ? theme.muted : theme.secondary} dimColor>
-					{branchKey.current === '__default__' ? 'global' : branchKey.current}
-				</Text>
-				<Text color={theme.muted}>  │  </Text>
-				<Text color={theme.muted} dimColor>type / for commands · Esc to exit</Text>
+			<Box borderStyle="single" borderColor={theme.border} paddingX={2} marginBottom={1} flexDirection="column">
+				{/* Line 1: ZAL CLI */}
+				<Box>
+					<Text color={theme.primary} bold>ZAL CLI</Text>
+					<Text color={theme.secondary} bold> v0.1.61</Text>
+				</Box>
+				{/* Line 2: Workspace info */}
+				<Box>
+					<Text color={theme.primary} bold>Workspace</Text>
+					<Text color={theme.muted}>  │  </Text>
+					<Text color={theme.accent} bold>{workspaceName || 'unknown'}</Text>
+					<Text color={theme.muted}>  ·  </Text>
+					<Text color={theme.muted}>profile</Text>
+					<Text color={theme.muted}> › </Text>
+					<Text color={theme.secondary} bold>{activeProfile || 'Default'}</Text>
+				</Box>
+				{/* Line 3: Chat provider */}
+				<Box>
+					<Text color={theme.primary} bold>Chat</Text>
+					{provider ? (
+						<>
+							<Text color={theme.muted}>  │  </Text>
+							<Text color={theme.secondary}>{provider.name}</Text>
+							<Text color={theme.muted}>  ›  </Text>
+							<Text color={theme.accent}>{provider.model}</Text>
+						</>
+					) : (
+						<Text color="#ef4444">  No provider configured — run /settings first</Text>
+					)}
+					<Text color={theme.muted}>  │  </Text>
+					<Text color={theme.muted} dimColor>mem:</Text>
+					<Text color={branchKey.current === '__default__' ? theme.muted : theme.secondary} dimColor>
+						{branchKey.current === '__default__' ? 'global' : branchKey.current}
+					</Text>
+				</Box>
+				{/* Line 4: Commands help */}
+				<Box>
+					<Text color={theme.muted} dimColor>type / for commands · Esc to exit</Text>
+				</Box>
 			</Box>
 
 			{/* Message history */}
 			<Box flexDirection="column" gap={1} marginBottom={1}>
-				{messages.length === 0 && (
-					<Text color={theme.muted} dimColor>
-						{provider
-							? `Ask anything… (${provider.name} / ${provider.model})`
-							: 'Configure a provider in /settings to start chatting.'}
-					</Text>
-				)}
 				{messages.map(msg => (
 					<ChatMessage key={msg.id} message={msg} />
 				))}
