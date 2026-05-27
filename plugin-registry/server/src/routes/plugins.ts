@@ -76,18 +76,15 @@ export async function pluginRoutes(fastify: FastifyInstance) {
 				pv.status,
 				pv.created_at as version_created_at
 			FROM plugins p
-			LEFT JOIN plugin_versions pv ON p.id = pv.plugin_id
-			LEFT JOIN (
-				SELECT plugin_id, MAX(created_at) as max_created
+			INNER JOIN plugin_versions pv ON p.id = pv.plugin_id
+			WHERE pv.created_at = (
+				SELECT MAX(created_at)
 				FROM plugin_versions
-				GROUP BY plugin_id
-			) latest ON pv.plugin_id = latest.plugin_id AND pv.created_at = latest.max_created
+				WHERE plugin_id = p.id
+			)
 		`;
 		const params: any[] = [];
 		const conditions: string[] = [];
-		
-		// Only show plugins that have at least one version
-		conditions.push("pv.id IS NOT NULL");
 		
 		if (author) {
 			// If author is specified, show all their plugins (any status)
@@ -98,7 +95,9 @@ export async function pluginRoutes(fastify: FastifyInstance) {
 			conditions.push("pv.status = 'approved'");
 		}
 		
-		query += " WHERE " + conditions.join(" AND ");
+		if (conditions.length > 0) {
+			query += " AND " + conditions.join(" AND ");
+		}
 		
 		query += " ORDER BY p.created_at DESC";
 		
@@ -392,20 +391,22 @@ export async function pluginRoutes(fastify: FastifyInstance) {
 			return reply.code(403).send({ error: 'You can only delete your own plugins' });
 		}
 
-		const plugin = db.prepare('SELECT id, status FROM plugins WHERE author = ? AND name = ?').get(author, name) as { id: string; status: string } | undefined;
+		const plugin = db.prepare('SELECT id FROM plugins WHERE author = ? AND name = ?').get(author, name) as { id: string } | undefined;
 		
 		if (!plugin) {
 			return reply.code(404).send({ error: 'Plugin not found' });
 		}
 
-		// Check if plugin is approved
-		if (plugin.status === 'approved') {
+		// Check if plugin has any approved versions
+		const approvedVersion = db.prepare("SELECT id FROM plugin_versions WHERE plugin_id = ? AND status = 'approved' LIMIT 1").get(plugin.id);
+		
+		if (approvedVersion) {
 			const profileUsage = db.prepare('SELECT COUNT(*) as count FROM profile_plugins WHERE plugin_id = ?').get(plugin.id) as { count: number };
 			
 			if (profileUsage.count > 0) {
 				return reply.code(409).send({ 
 					error: 'Cannot delete plugin', 
-					message: `This approved plugin is used in ${profileUsage.count} profile${profileUsage.count > 1 ? 's' : ''}. Remove it from all profiles before deleting.`,
+					message: `This plugin has approved versions and is used in ${profileUsage.count} profile${profileUsage.count > 1 ? 's' : ''}. Remove it from all profiles before deleting.`,
 					profileCount: profileUsage.count
 				});
 			}
