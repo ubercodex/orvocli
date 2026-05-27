@@ -30,12 +30,12 @@ interface Stats {
   profileDownloads?: number;
 }
 
-type Tab = 'pending' | 'approved' | 'rejected' | 'all' | 'stats';
+type Tab = 'dashboard' | 'pending' | 'approved' | 'rejected' | 'all';
 
 export default function AdminPanel() {
   const { token } = useAuth();
   const navigate = useNavigate();
-  const [activeTab, setActiveTab] = useState<Tab>('pending');
+  const [activeTab, setActiveTab] = useState<Tab>('dashboard');
   const [plugins, setPlugins] = useState<Plugin[]>([]);
   const [stats, setStats] = useState<Stats | null>(null);
   const [loading, setLoading] = useState(true);
@@ -59,31 +59,32 @@ export default function AdminPanel() {
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), 30000);
       
-      if (activeTab === 'stats') {
-        const [pluginStatsRes, profileStatsRes] = await Promise.all([
-          fetch(`${apiUrl}/admin/stats`, {
-            headers: { 'Authorization': `Bearer ${token}` },
-            signal: controller.signal,
-          }),
-          fetch(`${apiUrl}/admin/profile-stats`, {
-            headers: { 'Authorization': `Bearer ${token}` },
-            signal: controller.signal,
-          }),
-        ]);
-        clearTimeout(timeoutId);
-        
-        if (pluginStatsRes.ok && profileStatsRes.ok) {
-          const pluginData = await pluginStatsRes.json();
-          const profileData = await profileStatsRes.json();
-          setStats({
-            ...pluginData,
-            totalProfiles: profileData.total || 0,
-            pendingProfiles: profileData.pending || 0,
-            approvedProfiles: profileData.approved || 0,
-            profileDownloads: profileData.total_downloads || 0,
-          });
-        }
-      } else {
+      // Always fetch stats for badges
+      const [pluginStatsRes, profileStatsRes] = await Promise.all([
+        fetch(`${apiUrl}/admin/stats`, {
+          headers: { 'Authorization': `Bearer ${token}` },
+          signal: controller.signal,
+        }),
+        fetch(`${apiUrl}/admin/profile-stats`, {
+          headers: { 'Authorization': `Bearer ${token}` },
+          signal: controller.signal,
+        }),
+      ]);
+      
+      if (pluginStatsRes.ok && profileStatsRes.ok) {
+        const pluginData = await pluginStatsRes.json();
+        const profileData = await profileStatsRes.json();
+        setStats({
+          ...pluginData,
+          totalProfiles: profileData.total || 0,
+          pendingProfiles: profileData.pending || 0,
+          approvedProfiles: profileData.approved || 0,
+          profileDownloads: profileData.total_downloads || 0,
+        });
+      }
+      
+      // Fetch plugins for non-dashboard tabs
+      if (activeTab !== 'dashboard') {
         const endpoint = activeTab === 'all' 
           ? `${apiUrl}/admin/plugins`
           : `${apiUrl}/admin/plugins?status=${activeTab}`;
@@ -92,13 +93,14 @@ export default function AdminPanel() {
           headers: { 'Authorization': `Bearer ${token}` },
           signal: controller.signal,
         });
-        clearTimeout(timeoutId);
 
         if (response.ok) {
           const data = await response.json();
           setPlugins(data.plugins || []);
         }
       }
+      
+      clearTimeout(timeoutId);
     } catch (err) {
       if (err instanceof Error && err.name === 'AbortError') {
         console.error('Request timeout - server took too long to respond');
@@ -168,12 +170,12 @@ export default function AdminPanel() {
     }
   };
 
-  const tabs: { id: Tab; label: string; icon: string }[] = [
-    { id: 'pending', label: 'Pending', icon: '⏳' },
-    { id: 'approved', label: 'Approved', icon: '✅' },
-    { id: 'rejected', label: 'Rejected', icon: '❌' },
-    { id: 'all', label: 'All Plugins', icon: '📦' },
-    { id: 'stats', label: 'Statistics', icon: '📊' },
+  const tabs: { id: Tab; label: string; icon: string; count?: number }[] = [
+    { id: 'dashboard', label: 'Dashboard', icon: '📊' },
+    { id: 'pending', label: 'Pending', icon: '⏳', count: stats?.pendingPlugins },
+    { id: 'approved', label: 'Approved', icon: '✅', count: stats?.approvedPlugins },
+    { id: 'rejected', label: 'Rejected', icon: '❌', count: stats?.rejectedPlugins },
+    { id: 'all', label: 'All Plugins', icon: '📦', count: stats?.totalPlugins },
   ];
 
   return (
@@ -199,13 +201,22 @@ export default function AdminPanel() {
             <button
               key={tab.id}
               onClick={() => setActiveTab(tab.id)}
-              className={`px-4 py-2 rounded-lg font-semibold whitespace-nowrap transition ${
+              className={`px-4 py-2 rounded-lg font-semibold whitespace-nowrap transition flex items-center gap-2 ${
                 activeTab === tab.id
                   ? 'bg-cyan-500 text-white'
                   : 'bg-white/5 text-slate-400 hover:bg-white/9'
               }`}
             >
-              {tab.icon} {tab.label}
+              <span>{tab.icon} {tab.label}</span>
+              {tab.count !== undefined && (
+                <span className={`px-2 py-0.5 rounded-full text-xs font-bold ${
+                  activeTab === tab.id 
+                    ? 'bg-white/20 text-white' 
+                    : 'bg-cyan-500/20 text-cyan-400'
+                }`}>
+                  {tab.count}
+                </span>
+              )}
             </button>
           ))}
         </div>
@@ -214,8 +225,8 @@ export default function AdminPanel() {
           <div className="flex items-center justify-center py-32">
             <div className="inline-block w-8 h-8 border-4 border-cyan-500/20 border-t-cyan-500 rounded-full animate-spin"></div>
           </div>
-        ) : activeTab === 'stats' ? (
-          /* Statistics View */
+        ) : activeTab === 'dashboard' ? (
+          /* Dashboard View */
           <div className="space-y-8">
             {/* Overview Cards */}
             <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4">
