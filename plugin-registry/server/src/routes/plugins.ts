@@ -66,19 +66,36 @@ export async function pluginRoutes(fastify: FastifyInstance) {
 	fastify.get('/plugins', async (request: any) => {
 		const { author } = request.query as { author?: string };
 		
-		let query = "SELECT * FROM plugins";
+		// Get plugins with their latest version info
+		let query = `
+			SELECT 
+				p.*,
+				pv.version,
+				pv.code,
+				pv.parameters,
+				pv.status,
+				pv.created_at as version_created_at
+			FROM plugins p
+			LEFT JOIN plugin_versions pv ON p.id = pv.plugin_id
+			WHERE pv.id = (
+				SELECT id FROM plugin_versions 
+				WHERE plugin_id = p.id 
+				ORDER BY created_at DESC 
+				LIMIT 1
+			)
+		`;
 		const params: any[] = [];
 		
 		if (author) {
 			// If author is specified, show all their plugins (any status)
-			query += " WHERE author = ?";
+			query += " AND p.author = ?";
 			params.push(author);
 		} else {
-			// Otherwise, only show approved plugins
-			query += " WHERE status = 'approved'";
+			// Otherwise, only show plugins with approved versions
+			query += " AND pv.status = 'approved'";
 		}
 		
-		query += " ORDER BY created_at DESC";
+		query += " ORDER BY p.created_at DESC";
 		
 		const rows = db.prepare(query).all(...params) as any[];
 		const plugins: Plugin[] = rows.map((row) => {
@@ -90,8 +107,8 @@ export async function pluginRoutes(fastify: FastifyInstance) {
 				version: row.version,
 				description: row.description,
 				code: row.code,
-				parameters: JSON.parse(row.parameters) as PluginParameter[],
-				tags: JSON.parse(row.tags) as string[],
+				parameters: JSON.parse(row.parameters || '[]') as PluginParameter[],
+				tags: JSON.parse(row.tags || '[]') as string[],
 				model: row.model,
 				downloads: row.downloads,
 				profileCount: profileCount.count,
