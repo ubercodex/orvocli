@@ -33,7 +33,7 @@ interface Stats {
 type Tab = 'dashboard' | 'pending' | 'approved' | 'rejected' | 'all';
 
 export default function AdminPanel() {
-  const { token } = useAuth();
+  const { token, isLoading: authLoading } = useAuth();
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState<Tab>('dashboard');
   const [plugins, setPlugins] = useState<Plugin[]>([]);
@@ -42,6 +42,8 @@ export default function AdminPanel() {
   const [selectedPlugin, setSelectedPlugin] = useState<Plugin | null>(null);
 
   useEffect(() => {
+    if (authLoading) return; // Wait for auth to load
+    
     if (!token) {
       navigate('/');
       return;

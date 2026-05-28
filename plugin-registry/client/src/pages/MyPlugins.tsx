@@ -17,13 +17,15 @@ interface Plugin {
 }
 
 export default function MyPlugins() {
-  const { user, token } = useAuth();
+  const { user, token, isLoading: authLoading } = useAuth();
   const navigate = useNavigate();
   const [plugins, setPlugins] = useState<Plugin[]>([]);
   const [loading, setLoading] = useState(true);
   const [deleting, setDeleting] = useState<string | null>(null);
 
   useEffect(() => {
+    if (authLoading) return; // Wait for auth to load
+    
     if (!user || !token) {
       navigate('/');
       return;
