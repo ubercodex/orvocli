@@ -45,12 +45,27 @@ export async function profileRoutes(fastify: FastifyInstance) {
 			return reply.code(404).send({ error: 'Profile not found' });
 		}
 
-		// Get plugins in this profile
+		// Get plugins in this profile with their latest approved version
 		const plugins = db.prepare(`
-			SELECT pl.* 
+			SELECT 
+				pl.id,
+				pl.author,
+				pl.name,
+				pl.description,
+				pl.tags,
+				pv.version,
+				pv.code,
+				pv.parameters
 			FROM plugins pl
 			JOIN profile_plugins pp ON pl.id = pp.plugin_id
-			WHERE pp.profile_id = ? AND pl.status = 'approved'
+			JOIN plugin_versions pv ON pl.id = pv.plugin_id
+			WHERE pp.profile_id = ? 
+			AND pv.status = 'approved'
+			AND pv.created_at = (
+				SELECT MAX(created_at)
+				FROM plugin_versions
+				WHERE plugin_id = pl.id AND status = 'approved'
+			)
 			ORDER BY pp.added_at ASC
 		`).all(profile.id);
 

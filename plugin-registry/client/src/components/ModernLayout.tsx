@@ -130,9 +130,17 @@ export default function ModernLayout({ children }: ModernLayoutProps) {
                   onClick={() => setShowUserMenu(!showUserMenu)}
                   className="flex items-center gap-3 px-4 py-2.5 rounded-xl bg-gradient-to-r from-purple-500/10 to-pink-500/10 border border-purple-500/30 hover:border-purple-500/50 hover:shadow-lg hover:shadow-purple-500/20 transition-all group"
                 >
-                  <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center text-white font-bold shadow-lg shadow-purple-500/40 group-hover:shadow-purple-500/60 transition-all">
-                    {user.username.substring(0, 2).toUpperCase()}
-                  </div>
+                  {user.avatarUrl ? (
+                    <img 
+                      src={user.avatarUrl} 
+                      alt={user.username}
+                      className="w-9 h-9 rounded-xl shadow-lg shadow-purple-500/40 group-hover:shadow-purple-500/60 transition-all"
+                    />
+                  ) : (
+                    <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center text-white font-bold shadow-lg shadow-purple-500/40 group-hover:shadow-purple-500/60 transition-all">
+                      {user.username.slice(0, 2).toUpperCase()}
+                    </div>
+                  )}
                   <span className="text-sm font-semibold text-white">{user.username}</span>
                   <svg className={`w-4 h-4 text-purple-300 transition-transform ${showUserMenu ? 'rotate-180' : ''}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
@@ -144,9 +152,17 @@ export default function ModernLayout({ children }: ModernLayoutProps) {
                     {/* User Info Header */}
                     <div className="px-4 py-3 bg-gradient-to-r from-purple-500/20 to-pink-500/20 border-b border-purple-500/30">
                       <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center text-white font-bold shadow-lg">
-                          {user.username.substring(0, 2).toUpperCase()}
-                        </div>
+                        {user.avatarUrl ? (
+                          <img 
+                            src={user.avatarUrl} 
+                            alt={user.username}
+                            className="w-10 h-10 rounded-xl shadow-lg"
+                          />
+                        ) : (
+                          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center text-white font-bold shadow-lg">
+                            {user.username.slice(0, 2).toUpperCase()}
+                          </div>
+                        )}
                         <div>
                           <div className="text-sm font-bold text-white">{user.username}</div>
                           <div className="text-xs text-purple-300">ZAL Developer</div>
@@ -194,7 +210,7 @@ export default function ModernLayout({ children }: ModernLayoutProps) {
                         onClick={() => setShowUserMenu(false)}
                         className="flex items-center gap-3 px-4 py-3 text-sm font-medium text-slate-200 hover:bg-purple-500/20 hover:text-white rounded-xl transition-all group"
                       >
-                        <span className="text-lg">�</span>
+                        <span className="text-lg">📋</span>
                         <span>My Profiles</span>
                         <svg className="w-4 h-4 ml-auto text-slate-500 group-hover:text-purple-300 transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
